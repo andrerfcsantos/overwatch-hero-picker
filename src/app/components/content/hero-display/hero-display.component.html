@@ -1,0 +1,8 @@
+<div class="container">
+    <h1>You should play</h1>
+    <div class="hero-display" *ngIf="hero">
+        <img class="hero-image" src="../../../../assets/imgs/heroes/icons/{{hero.key}}.png"/><br>
+        <span class="hero-name">{{hero.name}}</span>
+    </div>
+    <button (click)="randomHero()">Get Random Hero</button>
+</div>

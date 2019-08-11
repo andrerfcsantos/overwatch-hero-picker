@@ -1,0 +1,32 @@
+nav {
+    height: 5vh;
+    display: flex;
+    background: #000a9c;
+    color: #f99e1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;    
+}
+
+div.left {
+    height: 5vh;
+    display: flex;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+
+.ow-logo {
+    max-height: 4vh;
+}
+
+span {
+    padding-left: 0.5rem;
+    font-size: 3vh;
+}
+
+.github-logo {
+    max-height: 3vh;
+    justify-self: flex-end;
+}

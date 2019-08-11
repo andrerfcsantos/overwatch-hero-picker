@@ -1,0 +1,62 @@
+<div class="container">
+  <h1>Filter Heroes</h1>
+  <p>
+    Select the heroes you wish to play and click in the "Get Random Hero" button
+    to get a random hero from the selected ones. If no hero is selected, all heroes are taken into account.
+  </p>
+
+  <div class="unselectable">
+
+    <div class="filter-header">
+      <img src="../../../../assets/imgs/roles/tank.png"/>
+      <h2>Tank</h2>
+      <button class="select" (click)="setSelectedTanks(true)">
+        Select All
+      </button>
+      <button class="unselect" (click)="setSelectedTanks(false)">
+        Unselect All
+      </button>
+    </div>
+
+    <div class="card-container">
+      <span *ngFor="let hero of getTanks()">
+        <app-hero-card [hero]="hero"></app-hero-card>
+      </span>
+    </div>
+
+    <div class="filter-header">
+      <img src="../../../../assets/imgs/roles/damage.png"/>
+      <h2>Damage</h2>
+      <button class="select" (click)="setSelectedDamage(true)">
+        Select All
+      </button>
+      <button button class="unselect" (click)="setSelectedDamage(false)">
+        Unselect All
+      </button>
+    </div>
+
+    <div class="card-container">
+      <span *ngFor="let hero of getDamage()">
+        <app-hero-card [hero]="hero"></app-hero-card>
+      </span>
+    </div>
+
+    <div class="filter-header">
+      <img src="../../../../assets/imgs/roles/support.png"/>
+      <h2>Support</h2>
+      <button class="select" (click)="setSelectedSupport(true)">
+        Select All
+      </button>
+      <button button class="unselect" (click)="setSelectedSupport(false)">
+        Unselect All
+      </button>
+    </div>
+
+    <div class="card-container">
+      <span *ngFor="let hero of getSupport()">
+        <app-hero-card [hero]="hero"></app-hero-card>
+      </span>
+    </div>
+
+  </div>
+</div>

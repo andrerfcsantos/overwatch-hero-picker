@@ -1,0 +1,52 @@
+.container {
+    display: inline-block;
+    padding: 0.5em;
+}
+
+p {
+    font-size: 1.25em;
+}
+
+h2 {
+    margin: 0.5em 0.5em 0.5em 0;
+}
+
+button {
+    color: white;
+    border: none;
+    font-family: 'Big Noodle Too Oblique';
+    font-size: 1.25em;
+    background-color: #0192c7;
+    outline: none;
+    padding: 0.1em 0.3em;
+    margin: 0 0.1em;
+    height: min-content;
+    transform: skewX(-10deg);
+}
+
+button.select {
+    background-color: rgb(51, 150, 31);
+}
+
+button.unselect {
+    background-color: rgb(231, 117, 9);
+}
+
+button:active {
+    transform: skewX(-10deg) translate(1px, 1px);
+}
+
+img:hover,button:hover {
+    cursor: pointer;
+}
+
+
+.filter-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.filter-header img {
+    max-height: 2em;
+}

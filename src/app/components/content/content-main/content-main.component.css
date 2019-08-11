@@ -1,0 +1,44 @@
+.container {
+    width: 100vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: row;
+}
+
+app-hero-display {
+    display: inline-block;
+    color: white;
+    flex: 1 0 auto;
+    max-width: 15vw;
+}
+
+app-hero-filters {
+    display: inline-block;
+    color: white;
+    flex: 2 1 auto;
+    max-width: 70vw;
+}
+
+@media (max-width: 710px) {
+    .container {
+        width: 100vw;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+    app-hero-display {
+        display: inline-block;
+        color: white;
+        flex: 1 0 auto;
+        max-width: 100vw;
+    }
+    
+    app-hero-filters {
+        display: inline-block;
+        color: white;
+        flex: 2 1 auto;
+        max-width: 100vw;
+    }
+}
+
+

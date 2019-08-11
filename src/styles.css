@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('./fonts.css');
+
+body {
+    padding: 0;
+    margin: 0;
+    background:
+        url("./assets/imgs/bg/blackiconbg.jpg") center -200px no-repeat,
+        url("./assets/imgs/bg/repeat.jpg") center -200px repeat-y;
+        font-family:'Big Noodle Titling', Arial, Helvetica, sans-serif;
+}
+ 
+
+h1 {
+    font-size: 2.5em;
+    font-family:'Big Noodle Too Oblique Italic', 'Big Noodle Titling', Arial, Helvetica, sans-serif;
+    margin-top: 0;
+    text-decoration: underline;
+}
+
+h2 {
+    font-family: 'Big Noodle Too Oblique Italic', 'Big Noodle Titling', Arial, Helvetica, sans-serif;
+    margin: 0;
+    font-size: 2em;
+    color: orange;
+
+}
+
+.unselectable {
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */      
+}
+
+/*
+font-family:'Big Noodle Too Oblique Italic','Big Noodle Titling', Arial, Helvetica, sans-serif;        
+font-family:'Big Noodle Titling', Arial, Helvetica, sans-serif;
+*/
