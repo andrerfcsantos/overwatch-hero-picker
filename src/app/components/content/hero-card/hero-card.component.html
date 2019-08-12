@@ -1,6 +1,6 @@
 
 <div [class.selected]="hero.selected === true" class="card" (click)="toggle(hero)">
     <img src="../../../../assets/imgs/heroes/icons/{{hero.key}}.png">
-    <button [class.selected]="hero.selected === true">{{hero.name}}</button>
+    <div class="hero-name" [class.selected]="hero.selected === true">{{hero.name}}</div>
 </div>
 
