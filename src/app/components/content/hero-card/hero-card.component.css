@@ -7,6 +7,7 @@
     outline: none;
     min-height: 100%;
     padding: 0 0.2em 0 0.2em;
+    white-space: nowrap;
 }
 
 .hero-name.selected {
@@ -26,7 +27,8 @@ img {
 .card {
     margin: 0.25em;
     display: inline-flex;
-    background-color: red;
+    background-color: #0192c7;
+    width: 95%;
 }
 
 .card.selected {

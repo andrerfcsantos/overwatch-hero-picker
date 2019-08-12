@@ -50,3 +50,33 @@ img:hover,button:hover {
 .filter-header img {
     max-height: 2em;
 }
+
+.card-container {
+    display: grid;
+    grid-auto-rows: max-content;
+    grid-template-columns: repeat(5, max-content);
+}
+
+@media (max-width: 820px) {
+    .card-container {
+        grid-template-columns: repeat(4, max-content);
+    }
+}
+
+@media (max-width: 600px) {
+    .card-container {
+        grid-template-columns: repeat(3, max-content);
+    }
+}
+
+@media (max-width: 460px) {
+    .card-container {
+        grid-template-columns: repeat(2, max-content);
+    }
+}
+
+@media (max-width: 345px) {
+    .card-container {
+        grid-template-columns: repeat(1, max-content);
+    }
+}
