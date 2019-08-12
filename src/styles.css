@@ -8,6 +8,7 @@ body {
         url("./assets/imgs/bg/blackiconbg.jpg") center -200px no-repeat,
         url("./assets/imgs/bg/repeat.jpg") center -200px repeat-y;
         font-family:'Big Noodle Titling', Arial, Helvetica, sans-serif;
+    background-color: #1f2326;
 }
  
 
