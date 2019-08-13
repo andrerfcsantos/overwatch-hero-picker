@@ -2,7 +2,7 @@
     color: white;
     border: none;
     font-family: 'Big Noodle Too Oblique';
-    font-size: 1.75em;
+    font-size: 2em;
     background-color: #0192c7;
     outline: none;
     min-height: 100%;
@@ -14,12 +14,12 @@
     background-color: green;
 }
 
-img:hover,.hero-name:hover {
+.hero-image:hover,.hero-name:hover {
     cursor: pointer;
 }
 
-img {
-    height: 2em;
+.hero-image {
+    height: 3em;
     vertical-align: bottom;
     background: black;
 }
@@ -28,7 +28,9 @@ img {
     margin: 0.25em;
     display: inline-flex;
     background-color: #0192c7;
-    width: 95%;
+    width: 13em;
+    align-content: center;
+    align-items: center;
 }
 
 .card.selected {
@@ -41,4 +43,34 @@ img {
 
 .card:active {
     transform: translate(1px, 1px);
+}
+
+@media (max-width: 1360px) {
+    .hero-name {
+        font-size: 2em;
+    }
+    .hero-image {
+        height: 3em;
+    }
+    .card {
+        width: 13em;
+    }
+}
+
+@media (max-width: 1090px) {
+    .hero-name {
+        font-size: 1.75em;
+    }
+    .hero-image {
+        height: 2.75em;
+    }
+    .card {
+        width: 12em;
+    }
+}
+
+@media (max-width: 710px) {
+    .hero-image {
+        height: 2em;
+    }
 }

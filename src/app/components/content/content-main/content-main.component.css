@@ -9,7 +9,7 @@ app-hero-display {
     display: inline-block;
     color: white;
     flex: 1 0 auto;
-    max-width: 15vw;
+    max-width: 20vw;
 }
 
 app-hero-filters {
