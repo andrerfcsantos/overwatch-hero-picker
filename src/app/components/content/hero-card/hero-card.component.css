@@ -39,12 +39,12 @@
 
 /*  ------- */
 
-@media (max-width: 1360px) {
+@media (max-width: 1375px) {
     .hero-name {
-        font-size: 2em;
+        font-size: 1.75em;
     }
     .hero-image {
-        height: 3em;
+        height: 2.75em;
     }
     .card {
         width: 13em;

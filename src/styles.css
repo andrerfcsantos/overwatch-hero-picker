@@ -35,6 +35,11 @@ h2 {
     user-select: none;          /* Likely future */      
 }
 
+* {
+    box-sizing: border-box;
+}
+
+
 /*
 font-family:'Big Noodle Too Oblique Italic','Big Noodle Titling', Arial, Helvetica, sans-serif;        
 font-family:'Big Noodle Titling', Arial, Helvetica, sans-serif;

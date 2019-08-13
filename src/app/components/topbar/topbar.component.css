@@ -29,4 +29,5 @@ span {
 .github-logo {
     max-height: 3vh;
     justify-self: flex-end;
+    margin-right: 1em;
 }

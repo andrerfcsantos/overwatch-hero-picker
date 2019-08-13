@@ -5,6 +5,7 @@
 
 p {
     font-size: 1.25em;
+    max-width: 90%;
 }
 
 h2 {
@@ -57,7 +58,7 @@ img:hover,button:hover {
     grid-template-columns: repeat(5, max-content);
 }
 
-@media (max-width: 1360px) {
+@media (max-width: 1375px) {
     .card-container {
         grid-template-columns: repeat(4, max-content);
     }
@@ -71,13 +72,13 @@ img:hover,button:hover {
 }
 */
 
-@media (max-width: 1020px) {
+@media (max-width: 1130px) {
     .card-container {
         grid-template-columns: repeat(3, max-content);
     }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 860px) {
     .card-container {
         grid-template-columns: repeat(2, max-content);
     }
