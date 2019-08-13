@@ -1,7 +1,6 @@
 .hero-name {
     color: white;
     border: none;
-    font-family: 'Big Noodle Too Oblique';
     font-size: 2em;
     background-color: #0192c7;
     outline: none;
@@ -12,10 +11,6 @@
 
 .hero-name.selected {
     background-color: green;
-}
-
-.hero-image:hover,.hero-name:hover {
-    cursor: pointer;
 }
 
 .hero-image {
@@ -29,8 +24,8 @@
     display: inline-flex;
     background-color: #0192c7;
     width: 13em;
-    align-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .card.selected {
