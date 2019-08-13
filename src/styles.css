@@ -39,6 +39,9 @@ h2 {
     box-sizing: border-box;
 }
 
+body {
+    overflow-x: hidden;
+  }
 
 /*
 font-family:'Big Noodle Too Oblique Italic','Big Noodle Titling', Arial, Helvetica, sans-serif;        
