@@ -74,3 +74,18 @@
         height: 2em;
     }
 }
+
+@media (max-width: 420px) {
+    .card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 320px) {
+    .hero-name {
+        font-size: 1.5em;
+    }
+    .card {
+        width: 100%;
+    }
+}
