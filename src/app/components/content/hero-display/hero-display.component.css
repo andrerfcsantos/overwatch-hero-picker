@@ -1,20 +1,15 @@
-.container {
+.display-container {
     display: flex;
     flex-direction: column;
-    padding: 0.5em;
+    align-items: center;
+    padding: 0.5em 1em;
 }
 
-.hero-image {
-    width: 70%;
-    height: auto;
+.display-header {
+    align-self: flex-start;
 }
 
-@media (max-width: 710px) {
-    .hero-image {
-        width: 50%;
-        height: auto;
-    }
-}
+/*
 
 .hero-display {
     display: flex;
@@ -22,28 +17,41 @@
     align-items: center;
 }
 
+*/
+
+.hero-image {
+    max-height: 17em;
+}
+
 .hero-name {
+    margin-top: 0;
     text-align: center;
     font-size: 2em;
-    margin-top: 0;
     text-shadow: 0px 0px 4px white;
 }
 
-button {
-    color: white;
+.get-button {
+    margin-top: 0.5em;
+    padding: 0.1em;
+    color: inherit;
     border: none;
     font-family: 'Big Noodle Too Oblique';
     font-size: 2em;
     background-color: orangered;
     outline: none;
-    margin-top: 0.5em;
-    padding: 0.1em;
+    min-width: 95%;
 }
 
-button:active {
+.get-button:active {
     box-shadow: 0px 0px 3px orange;
 }
 
-button:hover {
+.get-button:hover {
     cursor: pointer;
+}
+
+@media (max-width: 710px) {
+    .hero-image {
+        max-height: 12em;
+    }
 }

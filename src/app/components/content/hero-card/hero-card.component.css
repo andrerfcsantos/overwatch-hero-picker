@@ -1,29 +1,8 @@
-.hero-name {
-    color: white;
-    border: none;
-    font-size: 2em;
-    background-color: #0192c7;
-    outline: none;
-    min-height: 100%;
-    padding: 0 0.2em 0 0.2em;
-    white-space: nowrap;
-}
-
-.hero-name.selected {
-    background-color: green;
-}
-
-.hero-image {
-    height: 3em;
-    vertical-align: bottom;
-    background: black;
-}
-
 .card {
-    margin: 0.25em;
     display: inline-flex;
-    background-color: #0192c7;
+    margin: 0.25em;
     width: 13em;
+    background-color: #0192c7;
     align-items: center;
     cursor: pointer;
 }
@@ -39,6 +18,26 @@
 .card:active {
     transform: translate(1px, 1px);
 }
+
+/*  ------- */
+
+.hero-image {
+    height: 3em;
+    vertical-align: bottom;
+    background: black;
+}
+
+/*  ------- */
+
+.hero-name {
+    min-height: 100%;
+    padding: 0 0.2em;
+    font-size: 2em;
+    white-space: nowrap;
+    outline: none;
+}
+
+/*  ------- */
 
 @media (max-width: 1360px) {
     .hero-name {
