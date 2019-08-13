@@ -192,6 +192,12 @@ export class HeroesService {
       role: Role.TANK,
       selected: false,
       key: 'sigma',
+    },
+    {
+      name: 'Ashe',
+      role: Role.DAMAGE,
+      selected: false,
+      key: 'ashe',
     }
   ];
 
