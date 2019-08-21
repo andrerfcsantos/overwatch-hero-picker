@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ContentMainComponent } from './components/content/content-main/content-main.component';
-import { HeroDisplayComponent } from './components/content/hero-display/hero-display.component';
-import { HeroFiltersComponent } from './components/content/hero-filters/hero-filters.component';
+import { ContentMainComponent } from './components/pages/randomizer/content-main/content-main.component';
+import { HeroDisplayComponent } from './components/pages/randomizer/hero-display/hero-display.component';
+import { HeroFiltersComponent } from './components/pages/randomizer/hero-filters/hero-filters.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
-import { HeroCardComponent } from './components/content/hero-card/hero-card.component';
+import { HeroCardComponent } from './components/pages/randomizer/hero-card/hero-card.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { AboutMainComponent } from './components/pages/about/about-main/about-main.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { FooterComponent } from './components/footer/footer.component';
     HeroFiltersComponent,
     ContentMainComponent,
     HeroCardComponent,
-    FooterComponent
+    FooterComponent,
+    AboutMainComponent
   ],
   imports: [
     BrowserModule,

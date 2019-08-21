@@ -1,21 +1,20 @@
-.container {
+.filter-main-container {
     display: inline-block;
     padding: 0.5em;
 }
 
-p {
+.filter-description {
     font-size: 1.25em;
     max-width: 90%;
 }
 
-h2 {
+.role-header {
     margin: 0.5em 0.5em 0.5em 0;
 }
 
-button {
+.all-button {
     color: white;
     border: none;
-    font-family: 'Big Noodle Too Oblique';
     font-size: 1.25em;
     background-color: #0192c7;
     outline: none;
@@ -25,19 +24,20 @@ button {
     transform: skewX(-10deg);
 }
 
-button.select {
-    background-color: rgb(51, 150, 31);
-}
-
-button.unselect {
-    background-color: rgb(231, 117, 9);
-}
-
-button:active {
+.all-button:active {
     transform: skewX(-10deg) translate(1px, 1px);
 }
 
-img:hover,button:hover {
+.select-all-button {
+    background-color: rgb(51, 150, 31);
+}
+
+.unselect-all-button {
+    background-color: rgb(231, 117, 9);
+}
+
+
+.all-button:hover {
     cursor: pointer;
 }
 
@@ -48,7 +48,7 @@ img:hover,button:hover {
     align-items: center;
 }
 
-.filter-header img {
+.role-icon {
     max-height: 2em;
 }
 
@@ -63,14 +63,6 @@ img:hover,button:hover {
         grid-template-columns: repeat(4, max-content);
     }
 }
-
-/*
-@media (max-width: 1090px) {
-    .card-container {
-        grid-template-columns: repeat(3, max-content);
-    }
-}
-*/
 
 @media (max-width: 1130px) {
     .card-container {

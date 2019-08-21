@@ -1,4 +1,4 @@
-.main-container {
+.randomizer-main-container {
     display: flex;
     width: 100vw;
 
@@ -19,7 +19,7 @@ app-hero-filters {
 }
 
 @media (max-width: 710px) {
-    .main-container {
+    .randomizer-main-container {
         flex-direction: column;
     }
 

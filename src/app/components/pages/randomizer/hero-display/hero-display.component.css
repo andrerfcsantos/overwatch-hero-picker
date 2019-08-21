@@ -1,23 +1,13 @@
-.display-container {
+.display-main-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0.5em 1em;
 }
 
-.display-header {
+.display-main-header {
     align-self: flex-start;
 }
-
-/*
-
-.hero-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-*/
 
 .hero-image {
     max-height: 17em;
@@ -35,7 +25,6 @@
     padding: 0.1em;
     color: inherit;
     border: none;
-    font-family: 'Big Noodle Too Oblique';
     font-size: 2em;
     background-color: orangered;
     outline: none;

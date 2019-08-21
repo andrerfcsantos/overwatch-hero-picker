@@ -1,0 +1,14 @@
+.about-main-container {
+    padding: 1em;
+    max-width: 75%;
+}
+
+.title {
+    color:rgb(248, 158, 74);
+    text-decoration: underline;
+}
+
+.paragraph-text {
+    font-size: 1.1em;
+    font-family: 'Roboto', sans-serif;
+}

@@ -1,4 +1,4 @@
-.card {
+.hero-card {
     display: inline-flex;
     margin: 0.25em;
     width: 13em;
@@ -7,15 +7,15 @@
     cursor: pointer;
 }
 
-.card.selected {
+.hero-card.selected {
     background-color: green;
 }
 
-.card:hover {
+.hero-card:hover {
     box-shadow: 0px 0px 0.5em #21c0fa;
 }
 
-.card:active {
+.hero-card:active {
     transform: translate(1px, 1px);
 }
 
@@ -40,26 +40,26 @@
 /*  ------- */
 
 @media (max-width: 1375px) {
+    .hero-card {
+        width: 13em;
+    }
     .hero-name {
         font-size: 1.75em;
     }
     .hero-image {
         height: 2.75em;
-    }
-    .card {
-        width: 13em;
     }
 }
 
 @media (max-width: 1090px) {
+    .hero-card {
+        width: 12em;
+    }
     .hero-name {
         font-size: 1.75em;
     }
     .hero-image {
         height: 2.75em;
-    }
-    .card {
-        width: 12em;
     }
 }
 
@@ -70,16 +70,16 @@
 }
 
 @media (max-width: 420px) {
-    .card {
+    .hero-card {
         width: 100%;
     }
 }
 
 @media (max-width: 320px) {
+    .hero-card {
+        width: 100%;
+    }
     .hero-name {
         font-size: 1.5em;
-    }
-    .card {
-        width: 100%;
     }
 }

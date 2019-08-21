@@ -1,33 +1,56 @@
-nav {
+.topbar-main-container {
     height: 5vh;
     display: flex;
     background: #000a9c;
     color: #f99e1a;
-    display: flex;
     align-items: center;
     justify-content: space-between;    
 }
 
-div.left {
+.left-container {
     height: 5vh;
     display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: inherit;
+}
+
+.left-container:visited {
+    text-decoration: none;
+}
+
+.right-container {
+    height: 5vh;
     display: flex;
     align-items: center;
     justify-content: flex-start;
 }
 
-
 .ow-logo {
     max-height: 4vh;
 }
 
-span {
-    padding-left: 0.5rem;
+.main-title {
     font-size: 3vh;
+    margin: 0 0.5em;
+    padding: 0;
+    text-decoration: none;
+}
+
+.img-link {
+    max-height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .github-logo {
-    max-height: 3vh;
+    height: 3vh;
     justify-self: flex-end;
-    margin-right: 1em;
+    padding: 0 0.25em;
+}
+
+.info-icon {
+    height: 3vh;
+    justify-self: flex-end;
 }

@@ -1,10 +1,29 @@
-<nav class="unselectable">
-  <div class="left">
-    <img alt="Overwatch Logo" class="ow-logo" src="../../../assets/imgs/logo.svg" />
-    <span>Overwatch Hero Picker</span>
-  </div>
-
-  <a target="_blank" href="https://github.com/andrerfcsantos/overwatch-hero-picker">
-    <img title="See this project on github" alt="Github Logo" class="github-logo" src="../../../assets/imgs/github.png" />
+<nav class="topbar-main-container unselectable">
+  <a class="left-container" [routerLink]="['/']">
+    <img
+      class="ow-logo"
+      alt="Overwatch Logo"
+      src="../../../assets/imgs/logo.svg"
+    />
+    <h1 class="main-title">Overwatch Hero Picker</h1>
   </a>
+
+  <div class="right-container">
+
+    <a class="img-link" [routerLink]="['/about']" >
+      <img
+        class="info-icon"
+        title="About"
+        alt="About"
+        src="../../../assets/imgs/info-icon.png"/>
+    </a>
+
+    <a class="img-link" target="_blank" href="https://github.com/andrerfcsantos/overwatch-hero-picker">
+      <img
+        class="github-logo"
+        title="See this project on github"
+        alt="Github Logo"
+        src="../../../assets/imgs/github.png"/>
+    </a>
+  </div>
 </nav>

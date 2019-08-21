@@ -1,15 +1,4 @@
 @font-face {
-    font-family: 'Big Noodle Too Oblique';
-    src: url('./assets/fonts/big_noodle_titling_oblique-webfont.woff2') format('woff2'),
-         url('./assets/fonts/big_noodle_titling_oblique-webfont.woff') format('woff'),
-         url('./assets/fonts/big_noodle_titling_oblique-webfont.ttf') format('truetype'),
-         url('./assets/fonts/big_noodle_titling_oblique-webfont.svg#bignoodletitlingoblique') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-@font-face {
     font-family: 'Big Noodle Titling';
     src: url('./assets/fonts/big_noodle_titling-webfont.woff2') format('woff2'),
          url('./assets/fonts/big_noodle_titling-webfont.woff') format('woff'),
@@ -17,53 +6,4 @@
          url('./assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
-
-@font-face {
-    font-family: 'Big Noodle Too Oblique Italic';
-    src: url('./assets/fonts/bignoodletoo-webfont.woff2') format('woff2'),
-         url('./assets/fonts/bignoodletoo-webfont.woff') format('woff'),
-         url('./assets/fonts/bignoodletoo-webfont.ttf') format('truetype'),
-         url('./assets/fonts/bignoodletoo-webfont.svg#bignoodletooobliqueitalic') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-/*
-Possible fonts to use in the future
-
-@font-face {
-    font-family: 'Coalition';
-    src: url('./assets/fonts/coalition_v2.-webfont.woff2') format('woff2'),
-         url('./assets/fonts/coalition_v2.-webfont.woff') format('woff'),
-         url('./assets/fonts/coalition_v2.-webfont.ttf') format('truetype'),
-         url('./assets/fonts/coalition_v2.-webfont.svg#coalitionregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-@font-face {
-    font-family: 'Koverwatch';
-    src: url('./assets/fonts/koverwatch-webfont.woff2') format('woff2'),
-         url('./assets/fonts/koverwatch-webfont.woff') format('woff'),
-         url('./assets/fonts/koverwatch-webfont.ttf') format('truetype'),
-         url('./assets/fonts/koverwatch-webfont.svg#koverwatchregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-@font-face {
-    font-family: 'Overwatch';
-    src: url('./assets/fonts/overwatch-webfont.woff2') format('woff2'),
-         url('./assets/fonts/overwatch-webfont.woff') format('woff'),
-         url('./assets/fonts/overwatch-webfont.ttf') format('truetype'),
-         url('./assets/fonts/overwatch-webfont.svg#overwatchregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-*/
