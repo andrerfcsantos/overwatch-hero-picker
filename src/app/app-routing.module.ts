@@ -5,7 +5,6 @@ import { AboutMainComponent } from './components/pages/about/about-main/about-ma
 
 const routes: Routes = [
   { path: '', component: ContentMainComponent },
-  { path: 'picker', component: ContentMainComponent },
   { path: 'about', component: AboutMainComponent },
 ];
 
