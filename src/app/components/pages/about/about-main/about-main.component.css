@@ -3,6 +3,12 @@
     max-width: 75%;
 }
 
+@media(max-width: 1000px){
+    .about-main-container {
+        max-width: 100%;
+    }
+}
+
 .title {
     color:rgb(248, 158, 74);
     text-decoration: underline;
@@ -10,7 +16,11 @@
 
 .paragraph-text {
     font-size: 1.1em;
-    font-family: 'Roboto', sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.copyright-notice {
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 form {

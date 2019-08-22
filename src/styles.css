@@ -1,49 +1,56 @@
-/* You can add global styles to this file, and also import other style files */
-@import url('./fonts.css');
-
-body {
-    padding: 0;
-    margin: 0;
-    font-family:'Big Noodle Titling', Arial, Helvetica, sans-serif;
-    background-color: #1f2326;
-    color: white;
-}
-
-button {
+/* FONTS */
+@font-face {
     font-family: 'Big Noodle Titling';
+    src: local('Big Noodle Titling'),
+        url('./assets/fonts/big_noodle_titling-webfont.woff2') format('woff2'),
+        url('./assets/fonts/big_noodle_titling-webfont.woff') format('woff'),
+        url('./assets/fonts/big_noodle_titling-webfont.ttf') format('truetype'),
+        url('./assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
-h1 {
-    font-size: 2.5em;
-    font-family: 'Big Noodle Titling', Arial, Helvetica, sans-serif;
-    margin-top: 0;
-    text-decoration: underline;
-}
 
-h2 {
-    font-family: 'Big Noodle Titling', Arial, Helvetica, sans-serif;
-    margin: 0;
-    font-size: 2em;
-    color: orange;
-
-}
-
-.unselectable {
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
-    user-select: none;          /* Likely future */      
-}
-
+/* GLOBAL STYLES */
 * {
     box-sizing: border-box;
 }
 
 body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Big Noodle Titling', Arial, Helvetica, sans-serif;
+    background-color: #1f2326;
+    color: white;
     overflow-x: hidden;
-  }
+}
 
-/*
-font-family:'Big Noodle Too Oblique Italic','Big Noodle Titling', Arial, Helvetica, sans-serif;        
-font-family:'Big Noodle Titling', Arial, Helvetica, sans-serif;
-*/
+/* Force browser overwrites for buttons on some browsers*/
+button {
+    font-family: 'Big Noodle Titling', Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-top: 0;
+    text-decoration: underline;
+}
+
+h2 {
+    font-size: 2em;
+    margin: 0;
+    color: orange;
+}
+
+/* Use this class to user selection */
+.unselectable {
+    -webkit-user-select: none;
+    /* Chrome all / Safari all */
+    -moz-user-select: none;
+    /* Firefox all */
+    -ms-user-select: none;
+    /* IE 10+ */
+    user-select: none;
+    /* Likely future */
+}
