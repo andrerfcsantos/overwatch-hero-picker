@@ -16,10 +16,6 @@
     color: inherit;
 }
 
-.left-container:visited {
-    text-decoration: none;
-}
-
 .right-container {
     height: 5vh;
     display: flex;
@@ -44,13 +40,21 @@
     align-items: center;
 }
 
+.img-link:visited {
+    text-decoration: none;
+    color: #f99e1a;
+}
+
+img {
+    text-decoration: none;
+}
+
 .github-logo {
-    height: 3vh;
-    justify-self: flex-end;
-    padding: 0 0.25em;
+    height: 2.5vh;
+    padding: 0 0.2em;
 }
 
 .info-icon {
-    height: 3vh;
-    justify-self: flex-end;
+    height: 3.5vh;
+    padding: 0 0.2em;
 }
