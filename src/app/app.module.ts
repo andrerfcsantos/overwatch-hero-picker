@@ -9,6 +9,7 @@ import { TopbarComponent } from './components/topbar/topbar.component';
 import { HeroCardComponent } from './components/pages/randomizer/hero-card/hero-card.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AboutMainComponent } from './components/pages/about/about-main/about-main.component';
+import { Main404Component } from './components/pages/404/main404/main404.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { AboutMainComponent } from './components/pages/about/about-main/about-ma
     ContentMainComponent,
     HeroCardComponent,
     FooterComponent,
-    AboutMainComponent
+    AboutMainComponent,
+    Main404Component
   ],
   imports: [
     BrowserModule,
