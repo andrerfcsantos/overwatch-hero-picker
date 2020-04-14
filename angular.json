@@ -18,12 +18,20 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              {"glob": "robots.txt", "input": ".", "output": "."},
-              {"glob": "sitemap.xml", "input": ".", "output": "."}
+              {
+                "glob": "robots.txt",
+                "input": ".",
+                "output": "."
+              },
+              {
+                "glob": "sitemap.xml",
+                "input": ".",
+                "output": "."
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -43,7 +51,6 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -122,6 +129,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "overwatch-hero-picker"
+    }
+  },
+  "defaultProject": "overwatch-hero-picker",
+  "cli": {
+    "analytics": false
+  }
 }
