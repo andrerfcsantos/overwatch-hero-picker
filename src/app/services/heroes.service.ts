@@ -198,6 +198,12 @@ export class HeroesService {
       role: Role.DAMAGE,
       selected: false,
       key: 'ashe',
+    },
+    {
+      name: 'Echo',
+      role: Role.DAMAGE,
+      selected: false,
+      key: 'echo',
     }
   ];
 
