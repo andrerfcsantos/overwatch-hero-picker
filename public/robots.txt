@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://www.owheropicker.com/sitemap.xml

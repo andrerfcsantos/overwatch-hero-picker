@@ -4,7 +4,7 @@ Repository for the [Random Hero Picker](https://owheropicker.com/) for Overwatch
 
 ## Usage
 
-The easiest way to use is to go to the [Random Hero Picker website](https://owheropicker.com/) directly. Alternatively, you can follow the instructions below to run this on your machine/server.
+The easiest way to use is to go to the [Random Hero Picker](https://owheropicker.com/) website directly. Alternatively, you can follow the instructions below to run this on your machine/server.
 
 ## Running on your machine
 
@@ -12,22 +12,14 @@ If for some reason you prefer to running the site on your machine rather than vi
 
 ### Prerequisites
 
-* [Node](https://nodejs.org/en/) (Tested with the most recent LTS version, others might work too)
-* [Angular Cli](https://cli.angular.io/)
+* [Node](https://nodejs.org/en/)
+* [Vue Cli](https://cli.vuejs.org/guide/installation.html)
 
-    `npm install -g @angular/cli`
-
-### Instalation
+### Running the site
 
 * Clone the repo
 * `cd` into the repo folder
 * `npm install` to install the dependencies
-
-### Running
-
-* `ng serve -o` 
-
-  This runs the site on your localhost and makes it available at http://localhost:4200/. The `-o` flag will open the site on your default browser automatically as soon as it is finished building.
-
-More advanced users can also use `ng build --prod` to generate static files for the site. If you choose this method you might need to change the `baseHref` and allow CORS. See the [ng build documentation](https://angular.io/cli/build) for more info on how to use this for your specific needs.
-
+* You can now run the site using `npm` directly or generate static files that can be served by a webserver:
+    * `npm run serve` to serve the site on localhost
+    * `npm run build --prod` to generate the site static files. This command will put all the files under a `dist` directory. These files should then be put behind a webserver to serve the site.
