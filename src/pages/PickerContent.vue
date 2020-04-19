@@ -18,7 +18,7 @@
         <img
           key="hero-image"
           class="chosen-hero-image img-fluid"
-          :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.png'"
+          :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
         >
         <h2
           key="hero-name"

@@ -7,7 +7,7 @@
     <img
       class="hero-image"
       :alt="hero.name + ' icon'"
-      :src="`${publicPath}assets/imgs/heroes/icons/` + hero.key + '.png'"
+      :src="`${publicPath}assets/imgs/heroes/icons/` + hero.key + '.webp'"
     >
     <div
       class="hero-name"
