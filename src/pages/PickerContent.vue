@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container col-12 h-100 m-0 p-0">
+  <div class="main-container col-12 h-100 m-0 p-0 unselectable">
     <b-alert
       variant="danger"
       dismissible
@@ -15,7 +15,24 @@
         <h1 class="left-title">
           You should play
         </h1>
+
+        <b-form-checkbox
+          id="checkbox-show-portrait"
+          v-model="showPortrait"
+          name="checkbox-show-portrait"
+          :value="true"
+          :unchecked-value="false"
+        >
+          <span id="show-portrait-text" class="show-portrait-text">Show hero portrait</span>
+          <sup>
+            <b-icon-info-fill
+              id="show-portrait-help"
+              v-b-tooltip.hover.bottom="'Show/hide the hero portrait. Hiding the portrait can be useful for slow connections.'"/>
+          </sup>
+        </b-form-checkbox>
+
         <img
+          v-if="showPortrait"
           key="hero-image"
           class="chosen-hero-image img-fluid"
           :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
@@ -34,6 +51,9 @@
         >
           Get Random Hero
         </div>
+
+
+
       </div>
 
       <div class="right-content col-lg-9">
@@ -148,11 +168,13 @@
     unselectAllDamage,unselectAllSupports, unselectAllTanks
   } from '../services/heroes_service';
   import HeroCard from "@/components/HeroCard";
+  import { BIconInfoFill } from 'bootstrap-vue'
 
   export default {
     name: "PickerPageContent",
     components: {
-      HeroCard
+      HeroCard,
+      BIconInfoFill
     },
     data() {
       return {
@@ -161,11 +183,25 @@
           role: '',
           selected: false,
           key: '',
-        }
+        },
+        showPortrait: true
       };
     },
     created() {
       this.selectedHero = randomHero()
+      let showPortraitLS = localStorage.getItem('showPortrait')
+
+      if(showPortraitLS !== null) {
+        this.showPortrait = showPortraitLS === "true"
+      } else {
+        localStorage.setItem('showPortrait', this.showPortrait)
+      }
+
+    },
+    watch: {
+      showPortrait: function (newValue) {
+        localStorage.setItem('showPortrait', newValue)
+      }
     },
     methods: {
       randomHero: function (event) {
@@ -215,7 +251,7 @@
   .left-content {
     display: flex;
     flex-direction: column;
-    padding: 0 5% 0 5%;
+    padding: 0 3% 0 3%;
   }
 
   .left-title, .right-title {
@@ -316,6 +352,10 @@
 
   .all-button:hover {
     cursor: pointer;
+  }
+
+  .random-hero-button {
+    margin-bottom: 5%;
   }
 
 </style>
