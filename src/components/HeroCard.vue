@@ -8,11 +8,8 @@
       class="hero-image"
       :alt="hero.name + ' icon'"
       :src="`${publicPath}assets/imgs/heroes/icons/` + hero.key + '.webp'"
-    >
-    <div
-      class="hero-name"
-      :class="{ selected: heroSelectedState }"
-    >
+    />
+    <div class="hero-name" :class="{ selected: heroSelectedState }">
       {{ hero.name }}
     </div>
   </div>
@@ -26,24 +23,24 @@ export default {
   props: {
     hero: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
     };
   },
   computed: {
     heroSelectedState() {
       return this.$store.state.heroes.heroes[this.hero.key].selected;
-    }
+    },
   },
   methods: {
-    toggleHeroAction: function(event) {
+    toggleHeroAction: function (event) {
       toggleHero(this.hero.key);
-    }
-  }
+    },
+  },
 };
 </script>
 

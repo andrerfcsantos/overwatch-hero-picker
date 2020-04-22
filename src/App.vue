@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="app"
-    class="container-fluid"
-  >
+  <div id="app" class="container-fluid">
     <PickerPage />
   </div>
 </template>
@@ -13,8 +10,8 @@ import PickerPage from "./pages/RouterMain";
 export default {
   name: "App",
   components: {
-    PickerPage
-  }
+    PickerPage,
+  },
 };
 </script>
 

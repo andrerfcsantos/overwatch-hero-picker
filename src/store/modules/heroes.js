@@ -4,195 +4,195 @@ const state = {
       name: "D.Va",
       role: "TANK",
       selected: false,
-      key: "dva"
+      key: "dva",
     },
     orisa: {
       name: "Orisa",
       role: "TANK",
       selected: false,
-      key: "orisa"
+      key: "orisa",
     },
     reinhardt: {
       name: "Reinhardt",
       role: "TANK",
       selected: false,
-      key: "reinhardt"
+      key: "reinhardt",
     },
     roadhog: {
       name: "Roadhog",
       role: "TANK",
       selected: false,
-      key: "roadhog"
+      key: "roadhog",
     },
     winston: {
       name: "Winston",
       role: "TANK",
       selected: false,
-      key: "winston"
+      key: "winston",
     },
     wreckingball: {
       name: "Wrecking Ball",
       role: "TANK",
       selected: false,
-      key: "wreckingball"
+      key: "wreckingball",
     },
     zarya: {
       name: "Zarya",
       role: "TANK",
       selected: false,
-      key: "zarya"
+      key: "zarya",
     },
     bastion: {
       name: "Bastion",
       role: "DAMAGE",
       selected: false,
-      key: "bastion"
+      key: "bastion",
     },
     doomfist: {
       name: "Doomfist",
       role: "DAMAGE",
       selected: false,
-      key: "doomfist"
+      key: "doomfist",
     },
     genji: {
       name: "Genji",
       role: "DAMAGE",
       selected: false,
-      key: "genji"
+      key: "genji",
     },
     hanzo: {
       name: "Hanzo",
       role: "DAMAGE",
       selected: false,
-      key: "hanzo"
+      key: "hanzo",
     },
     junkrat: {
       name: "Junkrat",
       role: "DAMAGE",
       selected: false,
-      key: "junkrat"
+      key: "junkrat",
     },
     mccree: {
       name: "McCree",
       role: "DAMAGE",
       selected: false,
-      key: "mccree"
+      key: "mccree",
     },
     mei: {
       name: "Mei",
       role: "DAMAGE",
       selected: false,
-      key: "mei"
+      key: "mei",
     },
     pharah: {
       name: "Pharah",
       role: "DAMAGE",
       selected: false,
-      key: "pharah"
+      key: "pharah",
     },
     reaper: {
       name: "Reaper",
       role: "DAMAGE",
       selected: false,
-      key: "reaper"
+      key: "reaper",
     },
     soldier76: {
       name: "Soldier: 76",
       role: "DAMAGE",
       selected: false,
-      key: "soldier76"
+      key: "soldier76",
     },
     sombra: {
       name: "Sombra",
       role: "DAMAGE",
       selected: false,
-      key: "sombra"
+      key: "sombra",
     },
     symmetra: {
       name: "Symmetra",
       role: "DAMAGE",
       selected: false,
-      key: "symmetra"
+      key: "symmetra",
     },
     torbjorn: {
       name: "Torbjörn",
       role: "DAMAGE",
       selected: false,
-      key: "torbjorn"
+      key: "torbjorn",
     },
     tracer: {
       name: "Tracer",
       role: "DAMAGE",
       selected: false,
-      key: "tracer"
+      key: "tracer",
     },
     widowmaker: {
       name: "Widowmaker",
       role: "DAMAGE",
       selected: false,
-      key: "widowmaker"
+      key: "widowmaker",
     },
     ana: {
       name: "Ana",
       role: "SUPPORT",
       selected: false,
-      key: "ana"
+      key: "ana",
     },
     brigitte: {
       name: "Brigitte",
       role: "SUPPORT",
       selected: false,
-      key: "brigitte"
+      key: "brigitte",
     },
     lucio: {
       name: "Lúcio",
       role: "SUPPORT",
       selected: false,
-      key: "lucio"
+      key: "lucio",
     },
     mercy: {
       name: "Mercy",
       role: "SUPPORT",
       selected: false,
-      key: "mercy"
+      key: "mercy",
     },
     moira: {
       name: "Moira",
       role: "SUPPORT",
       selected: false,
-      key: "moira"
+      key: "moira",
     },
     zenyatta: {
       name: "Zenyatta",
       role: "SUPPORT",
       selected: false,
-      key: "zenyatta"
+      key: "zenyatta",
     },
     baptiste: {
       name: "Baptiste",
       role: "SUPPORT",
       selected: false,
-      key: "baptiste"
+      key: "baptiste",
     },
     sigma: {
       name: "Sigma",
       role: "TANK",
       selected: false,
-      key: "sigma"
+      key: "sigma",
     },
     ashe: {
       name: "Ashe",
       role: "DAMAGE",
       selected: false,
-      key: "ashe"
+      key: "ashe",
     },
     echo: {
       name: "Echo",
       role: "DAMAGE",
       selected: false,
-      key: "echo"
-    }
-  }
+      key: "echo",
+    },
+  },
 };
 
 function hero_comparator_by_key(hero1, hero2) {
@@ -200,13 +200,13 @@ function hero_comparator_by_key(hero1, hero2) {
 }
 
 const getters = {
-  getHeroes: state => {
+  getHeroes: (state) => {
     return Object.keys(state.heroes)
-      .map(key => state.heroes[key])
+      .map((key) => state.heroes[key])
       .sort(hero_comparator_by_key);
   },
-  getByRole: (state, getters) => role => {
-    return getters.getHeroes.filter(hero => hero.role == role);
+  getByRole: (state, getters) => (role) => {
+    return getters.getHeroes.filter((hero) => hero.role == role);
   },
   getTanks: (state, getters) => {
     return getters.getByRole("TANK");
@@ -220,37 +220,37 @@ const getters = {
   getSelected: (state, getters) => {
     return getters.getBySelectedStatus(true);
   },
-  getBySelectedStatus: state => selected => {
+  getBySelectedStatus: (state) => (selected) => {
     return Object.keys(state.heroes)
-      .map(key => state.heroes[key])
-      .filter(hero => hero.selected == selected)
+      .map((key) => state.heroes[key])
+      .filter((hero) => hero.selected == selected)
       .sort(hero_comparator_by_key);
-  }
+  },
 };
 
 // actions
 const actions = {
-  toggleHero({ commit, state }, hero_key) {
+  toggleHero({ commit }, hero_key) {
     commit("toggleHero", hero_key);
   },
-  selectTanks({ commit, state }) {
+  selectTanks({ commit }) {
     commit("setStateByRole", { role: "TANK", selectedState: true });
   },
-  selectSupports({ commit, state }) {
+  selectSupports({ commit }) {
     commit("setStateByRole", { role: "SUPPORT", selectedState: true });
   },
-  selectDamage({ commit, state }) {
+  selectDamage({ commit }) {
     commit("setStateByRole", { role: "DAMAGE", selectedState: true });
   },
-  unselectTanks({ commit, state }) {
+  unselectTanks({ commit }) {
     commit("setStateByRole", { role: "TANK", selectedState: false });
   },
-  unselectSupports({ commit, state }) {
+  unselectSupports({ commit }) {
     commit("setStateByRole", { role: "SUPPORT", selectedState: false });
   },
-  unselectDamage({ commit, state }) {
+  unselectDamage({ commit }) {
     commit("setStateByRole", { role: "DAMAGE", selectedState: false });
-  }
+  },
 };
 
 // mutations
@@ -264,7 +264,7 @@ const mutations = {
         state.heroes[hero_key].selected = selectedState;
       }
     }
-  }
+  },
 };
 
 export default {
@@ -272,5 +272,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

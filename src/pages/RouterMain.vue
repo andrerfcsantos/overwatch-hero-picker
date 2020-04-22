@@ -1,16 +1,13 @@
 <template>
   <div>
     <Navbar />
-    <b-alert
-      show
-      dismissible
-      fade
-      variant="success"
-    >
-      <span>Overwatch Hero Picker now has a new look! I would love to hear your
+    <b-alert show dismissible fade variant="success">
+      <span
+        >Overwatch Hero Picker now has a new look! I would love to hear your
         thoughts, please send any feedback to owheropicker@gmail.com. You can
         still visit the old version
-        <a href="https://legacy.owheropicker.com">here</a>.</span>
+        <a href="https://legacy.owheropicker.com">here</a>.</span
+      >
     </b-alert>
     <router-view />
   </div>
@@ -22,8 +19,8 @@ import Navbar from "../components/Navbar";
 export default {
   name: "PickerPage",
   components: {
-    Navbar
-  }
+    Navbar,
+  },
 };
 </script>
 
