@@ -17,18 +17,18 @@ Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 // Use localstorage and create computed members
 Vue.use(VueLocalStorage, {
-  bind: true
+  bind: true,
 });
 
 Vue.localStorage.set("someNumber", 123);
 
 new Vue({
-  render: h => h(App),
+  render: (h) => h(App),
   router,
-  store
+  store,
 }).$mount("#app");

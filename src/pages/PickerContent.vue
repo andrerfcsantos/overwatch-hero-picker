@@ -1,5 +1,8 @@
 <template>
-  <div class="main-container col-12 h-100 m-0 p-0 unselectable">
+  <div
+    class="main-container col-12 h-100 m-0 p-0 unselectable"
+    @keydown.82="randomHero"
+  >
     <b-alert
       variant="danger"
       dismissible
@@ -23,12 +26,11 @@
           :value="true"
           :unchecked-value="false"
         >
-          <span
-            id="show-portrait-text"
-            class="show-portrait-text"
-          >Show hero portrait</span>
+          <span id="show-portrait-text" class="show-portrait-text"
+            >Show hero portrait</span
+          >
           <sup>
-            <b-icon-info-fill
+            <BIconInfoFill
               id="show-portrait-help"
               v-b-tooltip.hover.bottom="
                 'Show/hide the hero portrait. Hiding the portrait can be useful for slow connections.'
@@ -42,12 +44,9 @@
           key="hero-image"
           class="chosen-hero-image img-fluid"
           :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
-        >
+        />
 
-        <transition
-          name="hero-name-transition"
-          mode="out-in"
-        >
+        <transition name="hero-name-transition" mode="out-in">
           <h2
             :key="`hero-name-${selectedHero.name}-${heroCount}`"
             class="chosen-hero-name"
@@ -56,11 +55,7 @@
           </h2>
         </transition>
 
-        <div
-          type="button"
-          class="random-hero-button btn"
-          @click="randomHero"
-        >
+        <div type="button" class="random-hero-button btn" @click="randomHero">
           Get Random Hero
         </div>
       </div>
@@ -84,7 +79,7 @@
             class="role-icon"
             alt="Tank role icon"
             src="assets/imgs/roles/tank.png"
-          >
+          />
           <h2 class="role-header">
             Tank
           </h2>
@@ -102,18 +97,14 @@
           </button>
         </div>
 
-        <hero-card
-          v-for="h in getTankHeroes()"
-          :key="h.key"
-          :hero="h"
-        />
+        <HeroCard v-for="h in getTankHeroes()" :key="h.key" :hero="h" />
 
         <div class="filter-header">
           <img
             class="role-icon"
             alt="Damage role icon"
             src="assets/imgs/roles/damage.png"
-          >
+          />
           <h2 class="role-header">
             Damage
           </h2>
@@ -131,18 +122,14 @@
           </button>
         </div>
 
-        <hero-card
-          v-for="h in getDamageHeroes()"
-          :key="h.key"
-          :hero="h"
-        />
+        <HeroCard v-for="h in getDamageHeroes()" :key="h.key" :hero="h" />
 
         <div class="filter-header">
           <img
             class="role-icon"
             alt="Support role icon"
             src="assets/imgs/roles/support.png"
-          >
+          />
           <h2 class="role-header">
             Support
           </h2>
@@ -159,11 +146,7 @@
             Unselect All
           </button>
         </div>
-        <hero-card
-          v-for="h in getSupportHeroes()"
-          :key="h.key"
-          :hero="h"
-        />
+        <HeroCard v-for="h in getSupportHeroes()" :key="h.key" :hero="h" />
       </div>
     </div>
   </div>
@@ -180,7 +163,7 @@ import {
   selectAllTanks,
   unselectAllDamage,
   unselectAllSupports,
-  unselectAllTanks
+  unselectAllTanks,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
 import { BIconInfoFill } from "bootstrap-vue";
@@ -189,7 +172,7 @@ export default {
   name: "PickerPageContent",
   components: {
     HeroCard,
-    BIconInfoFill
+    BIconInfoFill,
   },
   data() {
     return {
@@ -197,16 +180,16 @@ export default {
         name: "",
         role: "",
         selected: false,
-        key: ""
+        key: "",
       },
       heroCount: 0,
-      showPortrait: true
+      showPortrait: true,
     };
   },
   watch: {
-    showPortrait: function(newValue) {
+    showPortrait: function (newValue) {
       localStorage.setItem("showPortrait", newValue);
-    }
+    },
   },
   created() {
     this.selectedHero = randomHero();
@@ -219,38 +202,38 @@ export default {
     }
   },
   methods: {
-    randomHero: function(event) {
+    randomHero: function (event) {
       this.selectedHero = randomHero();
       this.heroCount += 1;
     },
-    getDamageHeroes: function() {
+    getDamageHeroes: function () {
       return getDamage();
     },
-    getTankHeroes: function() {
+    getTankHeroes: function () {
       return getTanks();
     },
-    getSupportHeroes: function() {
+    getSupportHeroes: function () {
       return getSupport();
     },
-    selectAllDamageHeroes: function() {
+    selectAllDamageHeroes: function () {
       selectAllDamage();
     },
-    selectAllSupportHeroes: function() {
+    selectAllSupportHeroes: function () {
       selectAllSupports();
     },
-    selectAllTankHeroes: function() {
+    selectAllTankHeroes: function () {
       selectAllTanks();
     },
-    unselectAllDamageHeroes: function() {
+    unselectAllDamageHeroes: function () {
       unselectAllDamage();
     },
-    unselectAllSupportHeroes: function() {
+    unselectAllSupportHeroes: function () {
       unselectAllSupports();
     },
-    unselectAllTankHeroes: function() {
+    unselectAllTankHeroes: function () {
       unselectAllTanks();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -381,5 +364,4 @@ export default {
   transform: scaleY(1) translateZ(0);
   opacity: 1;
 }
-
 </style>
