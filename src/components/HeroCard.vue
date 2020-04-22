@@ -8,8 +8,11 @@
       class="hero-image"
       :alt="hero.name + ' icon'"
       :src="`${publicPath}assets/imgs/heroes/icons/` + hero.key + '.webp'"
-    />
-    <div class="hero-name" :class="{ selected: heroSelectedState }">
+    >
+    <div
+      class="hero-name"
+      :class="{ selected: heroSelectedState }"
+    >
       {{ hero.name }}
     </div>
   </div>

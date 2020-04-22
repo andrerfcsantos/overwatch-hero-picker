@@ -23,9 +23,10 @@
           :value="true"
           :unchecked-value="false"
         >
-          <span id="show-portrait-text" class="show-portrait-text"
-            >Show hero portrait</span
-          >
+          <span
+            id="show-portrait-text"
+            class="show-portrait-text"
+          >Show hero portrait</span>
           <sup>
             <b-icon-info-fill
               id="show-portrait-help"
@@ -41,12 +42,19 @@
           key="hero-image"
           class="chosen-hero-image img-fluid"
           :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
-        />
-        <h2 key="hero-name" class="chosen-hero-name">
+        >
+        <h2
+          key="hero-name"
+          class="chosen-hero-name"
+        >
           {{ selectedHero.name }}
         </h2>
 
-        <div type="button" class="random-hero-button btn" @click="randomHero">
+        <div
+          type="button"
+          class="random-hero-button btn"
+          @click="randomHero"
+        >
           Get Random Hero
         </div>
       </div>
@@ -70,7 +78,7 @@
             class="role-icon"
             alt="Tank role icon"
             src="assets/imgs/roles/tank.png"
-          />
+          >
           <h2 class="role-header">
             Tank
           </h2>
@@ -88,14 +96,18 @@
           </button>
         </div>
 
-        <hero-card v-for="h in getTankHeroes()" :key="h.key" :hero="h" />
+        <hero-card
+          v-for="h in getTankHeroes()"
+          :key="h.key"
+          :hero="h"
+        />
 
         <div class="filter-header">
           <img
             class="role-icon"
             alt="Damage role icon"
             src="assets/imgs/roles/damage.png"
-          />
+          >
           <h2 class="role-header">
             Damage
           </h2>
@@ -113,14 +125,18 @@
           </button>
         </div>
 
-        <hero-card v-for="h in getDamageHeroes()" :key="h.key" :hero="h" />
+        <hero-card
+          v-for="h in getDamageHeroes()"
+          :key="h.key"
+          :hero="h"
+        />
 
         <div class="filter-header">
           <img
             class="role-icon"
             alt="Support role icon"
             src="assets/imgs/roles/support.png"
-          />
+          >
           <h2 class="role-header">
             Support
           </h2>
@@ -137,7 +153,11 @@
             Unselect All
           </button>
         </div>
-        <hero-card v-for="h in getSupportHeroes()" :key="h.key" :hero="h" />
+        <hero-card
+          v-for="h in getSupportHeroes()"
+          :key="h.key"
+          :hero="h"
+        />
       </div>
     </div>
   </div>
@@ -176,6 +196,11 @@ export default {
       showPortrait: true
     };
   },
+  watch: {
+    showPortrait: function(newValue) {
+      localStorage.setItem("showPortrait", newValue);
+    }
+  },
   created() {
     this.selectedHero = randomHero();
     let showPortraitLS = localStorage.getItem("showPortrait");
@@ -184,11 +209,6 @@ export default {
       this.showPortrait = showPortraitLS === "true";
     } else {
       localStorage.setItem("showPortrait", this.showPortrait);
-    }
-  },
-  watch: {
-    showPortrait: function(newValue) {
-      localStorage.setItem("showPortrait", newValue);
     }
   },
   methods: {
