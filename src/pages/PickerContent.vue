@@ -1,18 +1,5 @@
 <template>
-  <div
-    class="main-container col-12 h-100 m-0 p-0 unselectable"
-    @keydown.82="randomHero"
-  >
-    <b-alert
-      variant="danger"
-      dismissible
-      fade
-      :show="showDismissibleAlert"
-      @dismissed="showDismissibleAlert = false"
-    >
-      Dismissible Alert!
-    </b-alert>
-
+  <div class="main-container col-12 h-100 m-0 p-0 unselectable">
     <div class="row col-12 m-0 p-0">
       <div class="left-content col-lg-3">
         <h1 class="left-title">
@@ -164,6 +151,8 @@ import {
   unselectAllDamage,
   unselectAllSupports,
   unselectAllTanks,
+  saveSelectedHeroesToLS,
+  getSelectedLSHeroes,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
 import { BIconInfoFill } from "bootstrap-vue";
@@ -192,6 +181,7 @@ export default {
     },
   },
   created() {
+    getSelectedLSHeroes();
     this.selectedHero = randomHero();
     let showPortraitLS = localStorage.getItem("showPortrait");
 
@@ -202,7 +192,7 @@ export default {
     }
   },
   methods: {
-    randomHero: function (event) {
+    randomHero: function () {
       this.selectedHero = randomHero();
       this.heroCount += 1;
     },
@@ -217,21 +207,27 @@ export default {
     },
     selectAllDamageHeroes: function () {
       selectAllDamage();
+      saveSelectedHeroesToLS();
     },
     selectAllSupportHeroes: function () {
       selectAllSupports();
+      saveSelectedHeroesToLS();
     },
     selectAllTankHeroes: function () {
       selectAllTanks();
+      saveSelectedHeroesToLS();
     },
     unselectAllDamageHeroes: function () {
       unselectAllDamage();
+      saveSelectedHeroesToLS();
     },
     unselectAllSupportHeroes: function () {
       unselectAllSupports();
+      saveSelectedHeroesToLS();
     },
     unselectAllTankHeroes: function () {
       unselectAllTanks();
+      saveSelectedHeroesToLS();
     },
   },
 };

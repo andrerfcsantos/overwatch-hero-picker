@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { toggleHero } from "../services/heroes_service";
+import { toggleHero, saveSelectedHeroesToLS } from "../services/heroes_service";
 
 export default {
   name: "HeroCard",
@@ -37,8 +37,9 @@ export default {
     },
   },
   methods: {
-    toggleHeroAction: function (event) {
+    toggleHeroAction: function () {
       toggleHero(this.hero.key);
+      saveSelectedHeroesToLS();
     },
   },
 };
