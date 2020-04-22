@@ -11,6 +11,23 @@ export function randomHero() {
   return selected[Math.floor(Math.random() * selected.length)];
 }
 
+export function getSelectedLSHeroes() {
+  let selected_heroes = localStorage.getItem("selectedHeroes");
+  if (selected_heroes) {
+    selected_heroes = JSON.parse(selected_heroes);
+  }
+  if (Array.isArray(selected_heroes)) {
+    selected_heroes.forEach((hero) => {
+      toggleHero(hero.key);
+    });
+  }
+}
+
+export function saveSelectedHeroesToLS() {
+  const selected = store.getters["heroes/getSelected"];
+  localStorage.setItem("selectedHeroes", JSON.stringify(selected));
+}
+
 export function getTanks() {
   return store.getters["heroes/getTanks"];
 }

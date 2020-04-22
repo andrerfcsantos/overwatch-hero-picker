@@ -164,6 +164,8 @@ import {
   unselectAllDamage,
   unselectAllSupports,
   unselectAllTanks,
+  saveSelectedHeroesToLS,
+  getSelectedLSHeroes,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
 import { BIconInfoFill } from "bootstrap-vue";
@@ -192,6 +194,7 @@ export default {
     },
   },
   created() {
+    getSelectedLSHeroes();
     this.selectedHero = randomHero();
     let showPortraitLS = localStorage.getItem("showPortrait");
 
@@ -217,21 +220,27 @@ export default {
     },
     selectAllDamageHeroes: function () {
       selectAllDamage();
+      saveSelectedHeroesToLS();
     },
     selectAllSupportHeroes: function () {
       selectAllSupports();
+      saveSelectedHeroesToLS();
     },
     selectAllTankHeroes: function () {
       selectAllTanks();
+      saveSelectedHeroesToLS();
     },
     unselectAllDamageHeroes: function () {
       unselectAllDamage();
+      saveSelectedHeroesToLS();
     },
     unselectAllSupportHeroes: function () {
       unselectAllSupports();
+      saveSelectedHeroesToLS();
     },
     unselectAllTankHeroes: function () {
       unselectAllTanks();
+      saveSelectedHeroesToLS();
     },
   },
 };
