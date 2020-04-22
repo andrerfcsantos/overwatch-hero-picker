@@ -43,12 +43,18 @@
           class="chosen-hero-image img-fluid"
           :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
         >
-        <h2
-          key="hero-name"
-          class="chosen-hero-name"
+
+        <transition
+          name="hero-name-transition"
+          mode="out-in"
         >
-          {{ selectedHero.name }}
-        </h2>
+          <h2
+            :key="`hero-name-${selectedHero.name}-${heroCount}`"
+            class="chosen-hero-name"
+          >
+            {{ selectedHero.name }}
+          </h2>
+        </transition>
 
         <div
           type="button"
@@ -193,6 +199,7 @@ export default {
         selected: false,
         key: ""
       },
+      heroCount: 0,
       showPortrait: true
     };
   },
@@ -214,6 +221,7 @@ export default {
   methods: {
     randomHero: function(event) {
       this.selectedHero = randomHero();
+      this.heroCount += 1;
     },
     getDamageHeroes: function() {
       return getDamage();
@@ -339,17 +347,6 @@ export default {
   transform: skewX(-10deg) translate(1px, 1px);
 }
 
-/*
-
-  .select-all-button {
-    background-color: rgb(51, 150, 31);
-  }
-
-  .unselect-all-button {
-    background-color: rgb(231, 117, 9);
-  }
-  */
-
 .select-all-button {
   background-color: rgb(51, 150, 31);
 }
@@ -365,4 +362,24 @@ export default {
 .random-hero-button {
   margin-bottom: 5%;
 }
+
+.hero-name-transition-enter-active {
+  transition: all 0.1s ease-out;
+}
+
+.hero-name-transition-leave-active {
+  transition: all 0.1s ease-in;
+}
+
+.hero-name-transition-enter,
+.hero-name-transition-leave-to {
+  transform: scaleY(0) translateZ(0);
+  opacity: 0;
+}
+
+.hero-name-transition-enter-to {
+  transform: scaleY(1) translateZ(0);
+  opacity: 1;
+}
+
 </style>
