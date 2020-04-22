@@ -1,18 +1,5 @@
 <template>
-  <div
-    class="main-container col-12 h-100 m-0 p-0 unselectable"
-    @keydown.82="randomHero"
-  >
-    <b-alert
-      variant="danger"
-      dismissible
-      fade
-      :show="showDismissibleAlert"
-      @dismissed="showDismissibleAlert = false"
-    >
-      Dismissible Alert!
-    </b-alert>
-
+  <div class="main-container col-12 h-100 m-0 p-0 unselectable">
     <div class="row col-12 m-0 p-0">
       <div class="left-content col-lg-3">
         <h1 class="left-title">
@@ -205,7 +192,7 @@ export default {
     }
   },
   methods: {
-    randomHero: function (event) {
+    randomHero: function () {
       this.selectedHero = randomHero();
       this.heroCount += 1;
     },
