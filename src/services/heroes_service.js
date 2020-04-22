@@ -1,26 +1,26 @@
-import store from '../store'
+import store from "../store";
 
 export function randomHero() {
-    const selected = store.getters['heroes/getSelected'];
+  const selected = store.getters["heroes/getSelected"];
 
-    if (selected.length === 0) {
-      const all_heroes = store.getters['heroes/getHeroes'];
-      return all_heroes[Math.floor(Math.random() * all_heroes.length)];
-    }
+  if (selected.length === 0) {
+    const all_heroes = store.getters["heroes/getHeroes"];
+    return all_heroes[Math.floor(Math.random() * all_heroes.length)];
+  }
 
-    return selected[Math.floor(Math.random() * selected.length)];
+  return selected[Math.floor(Math.random() * selected.length)];
 }
 
 export function getTanks() {
-  return store.getters['heroes/getTanks'];
+  return store.getters["heroes/getTanks"];
 }
 
 export function getDamage() {
-  return store.getters['heroes/getDamage'];
+  return store.getters["heroes/getDamage"];
 }
 
 export function getSupport() {
-  return store.getters['heroes/getSupport'];
+  return store.getters["heroes/getSupport"];
 }
 
 export function toggleHero(hero_key) {
