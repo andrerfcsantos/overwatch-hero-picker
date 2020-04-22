@@ -25,7 +25,9 @@ Vue.use(VueLocalStorage, {
   bind: true,
 });
 
-Vue.localStorage.set("someNumber", 123);
+// Local storage old keys cleanup
+let old_keys = ["someNumber"];
+old_keys.forEach((key) => localStorage.removeItem(key));
 
 new Vue({
   render: (h) => h(App),
