@@ -1,6 +1,5 @@
 import Vue from "vue";
 import App from "./App.vue";
-import VueLocalStorage from "vue-localstorage";
 import { BootstrapVue } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -17,18 +16,15 @@ Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
-// Use localstorage and create computed members
-Vue.use(VueLocalStorage, {
-  bind: true
-});
-
-Vue.localStorage.set("someNumber", 123);
+// Local storage old keys cleanup
+let old_keys = ["someNumber"];
+old_keys.forEach((key) => localStorage.removeItem(key));
 
 new Vue({
-  render: h => h(App),
+  render: (h) => h(App),
   router,
-  store
+  store,
 }).$mount("#app");

@@ -8,7 +8,7 @@
         <img
           class="ow-logo img-fluid"
           src="../../public/assets/imgs/navbar/ow-logo.svg"
-        >
+        />
         <span class="title-text">Overwatch Hero Picker</span>
       </router-link>
     </div>
@@ -18,7 +18,7 @@
         <img
           src="../../public/assets/imgs/navbar/icons8-info.svg"
           alt="about"
-        >
+        />
       </router-link>
       <a
         href="https://github.com/andrerfcsantos/overwatch-hero-picker"
@@ -27,7 +27,7 @@
         <img
           src="../../public/assets/imgs/navbar/icons8-github.svg"
           alt="github"
-        >
+        />
       </a>
     </div>
   </nav>
@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: "Navbar"
+  name: "Navbar",
 };
 </script>
 

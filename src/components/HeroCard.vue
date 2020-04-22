@@ -8,42 +8,40 @@
       class="hero-image"
       :alt="hero.name + ' icon'"
       :src="`${publicPath}assets/imgs/heroes/icons/` + hero.key + '.webp'"
-    >
-    <div
-      class="hero-name"
-      :class="{ selected: heroSelectedState }"
-    >
+    />
+    <div class="hero-name" :class="{ selected: heroSelectedState }">
       {{ hero.name }}
     </div>
   </div>
 </template>
 
 <script>
-import { toggleHero } from "../services/heroes_service";
+import { toggleHero, saveSelectedHeroesToLS } from "../services/heroes_service";
 
 export default {
   name: "HeroCard",
   props: {
     hero: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
     };
   },
   computed: {
     heroSelectedState() {
       return this.$store.state.heroes.heroes[this.hero.key].selected;
-    }
+    },
   },
   methods: {
-    toggleHeroAction: function(event) {
+    toggleHeroAction: function () {
       toggleHero(this.hero.key);
-    }
-  }
+      saveSelectedHeroesToLS();
+    },
+  },
 };
 </script>
 

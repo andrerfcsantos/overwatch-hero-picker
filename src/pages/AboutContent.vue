@@ -58,16 +58,8 @@
       method="post"
       target="_top"
     >
-      <input
-        type="hidden"
-        name="cmd"
-        value="_s-xclick"
-      >
-      <input
-        type="hidden"
-        name="hosted_button_id"
-        value="DQ3Y6X8C8V4BA"
-      >
+      <input type="hidden" name="cmd" value="_s-xclick" />
+      <input type="hidden" name="hosted_button_id" value="DQ3Y6X8C8V4BA" />
       <input
         type="image"
         src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
@@ -75,14 +67,14 @@
         name="submit"
         title="PayPal - The safer, easier way to pay online!"
         alt="Donate with PayPal button"
-      >
+      />
       <img
         alt=""
         border="0"
         src="https://www.paypal.com/en_PT/i/scr/pixel.gif"
         width="1"
         height="1"
-      >
+      />
     </form>
 
     <h2 class="title disclaimer-header">
@@ -114,7 +106,7 @@
 
 <script>
 export default {
-  name: "AboutContent"
+  name: "AboutContent",
 };
 </script>
 
