@@ -1,6 +1,5 @@
 import Vue from "vue";
 import App from "./App.vue";
-import { BootstrapVue } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import "es6-promise/auto";
@@ -10,8 +9,6 @@ import { routes } from "./router/routes";
 
 Vue.config.productionTip = false;
 
-// Install BootstrapVue
-Vue.use(BootstrapVue);
 // Vue router
 Vue.use(VueRouter);
 
@@ -20,7 +17,7 @@ const router = new VueRouter({
 });
 
 // Local storage old keys cleanup
-let old_keys = ["someNumber"];
+let old_keys = ["someNumber", "alertDismissed"];
 old_keys.forEach((key) => localStorage.removeItem(key));
 
 new Vue({
