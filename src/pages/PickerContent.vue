@@ -6,25 +6,21 @@
           You should play
         </h1>
 
-        <b-form-checkbox
-          id="checkbox-show-portrait"
-          v-model="showPortrait"
-          name="checkbox-show-portrait"
-          :value="true"
-          :unchecked-value="false"
-        >
-          <span id="show-portrait-text" class="show-portrait-text"
-            >Show hero portrait</span
+        <div>
+          <input
+            id="checkbox-show-portrait"
+            v-model="showPortrait"
+            type="checkbox"
+            name="checkbox-show-portrait"
+            :value="true"
+          />
+          <label
+            id="show-portrait-label"
+            for="checkbox-show-portrait"
+            class="show-portrait-label"
+            >Show hero portrait</label
           >
-          <sup>
-            <BIconInfoFill
-              id="show-portrait-help"
-              v-b-tooltip.hover.bottom="
-                'Show/hide the hero portrait. Hiding the portrait can be useful for slow connections.'
-              "
-            />
-          </sup>
-        </b-form-checkbox>
+        </div>
 
         <img
           v-if="showPortrait"
@@ -155,13 +151,11 @@ import {
   getSelectedLSHeroes,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
-import { BIconInfoFill } from "bootstrap-vue";
 
 export default {
   name: "PickerPageContent",
   components: {
     HeroCard,
-    BIconInfoFill,
   },
   data() {
     return {
@@ -359,5 +353,9 @@ export default {
 .hero-name-transition-enter-to {
   transform: scaleY(1) translateZ(0);
   opacity: 1;
+}
+
+.show-portrait-label {
+  margin: 0 0 0 1%;
 }
 </style>
