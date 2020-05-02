@@ -41,13 +41,8 @@ export default {
       toggleHero(this.hero.key);
       saveSelectedHeroesToLS();
       if (!Array.isArray(window._paq) && window._paq.push) {
-        window._paq.push([
-          "trackEvent",
-          "Filter",
-          "ToggleHero",
-          this.hero.name,
-          this.heroSelectedState ? 1 : 0,
-        ]);
+        let event = this.heroSelectedState ? "SelectHero" : "UnselectHero";
+        window._paq.push(["trackEvent", "Filter", event, this.hero.name]);
       }
     },
   },

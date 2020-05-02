@@ -214,14 +214,14 @@ export default {
       selectByRole(role);
       saveSelectedHeroesToLS();
       if (!Array.isArray(window._paq) && window._paq.push) {
-        window._paq.push(["trackEvent", "Filter", "Unselect", "Support"]);
+        window._paq.push(["trackEvent", "Filter", "SelectRole", role]);
       }
     },
     unselectByRole(role) {
       unselectByRole(role);
       saveSelectedHeroesToLS();
       if (!Array.isArray(window._paq) && window._paq.push) {
-        window._paq.push(["trackEvent", "Filter", "Unselect", "Tank"]);
+        window._paq.push(["trackEvent", "Filter", "UnselectRole", role]);
       }
     },
   },
