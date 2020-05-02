@@ -230,7 +230,6 @@ export default {
 <style scoped>
 .main-container {
   overflow-x: hidden;
-  min-height: 95vh;
   background-color: #2c3e50;
   color: white;
   display: flex;
