@@ -38,7 +38,11 @@
           </h2>
         </transition>
 
-        <div type="button" class="random-hero-button btn" @click="randomHero">
+        <div
+          type="button"
+          class="random-hero-button btn"
+          @click="randomHeroHandler"
+        >
           Get Random Hero
         </div>
       </div>
@@ -188,6 +192,17 @@ export default {
     }
   },
   methods: {
+    randomHeroHandler() {
+      this.randomHero();
+      if (!Array.isArray(window._paq) && window._paq.push) {
+        window._paq.push([
+          "trackEvent",
+          "Hero",
+          "GetRandom",
+          this.selectedHero.name,
+        ]);
+      }
+    },
     randomHero: function () {
       this.selectedHero = randomHero();
       this.heroCount += 1;
@@ -198,10 +213,16 @@ export default {
     selectByRole(role) {
       selectByRole(role);
       saveSelectedHeroesToLS();
+      if (!Array.isArray(window._paq) && window._paq.push) {
+        window._paq.push(["trackEvent", "Filter", "Unselect", "Support"]);
+      }
     },
     unselectByRole(role) {
       unselectByRole(role);
       saveSelectedHeroesToLS();
+      if (!Array.isArray(window._paq) && window._paq.push) {
+        window._paq.push(["trackEvent", "Filter", "Unselect", "Tank"]);
+      }
     },
   },
 };

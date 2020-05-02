@@ -121,6 +121,11 @@
 <script>
 export default {
   name: "AboutContent",
+  created() {
+    if (!Array.isArray(window._paq) && window._paq.push) {
+      window._paq.push(["trackEvent", "Page", "Visit", "About"]);
+    }
+  },
 };
 </script>
 

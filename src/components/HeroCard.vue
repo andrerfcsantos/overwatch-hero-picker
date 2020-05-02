@@ -40,6 +40,15 @@ export default {
     toggleHeroAction: function () {
       toggleHero(this.hero.key);
       saveSelectedHeroesToLS();
+      if (!Array.isArray(window._paq) && window._paq.push) {
+        window._paq.push([
+          "trackEvent",
+          "Filter",
+          "ToggleHero",
+          this.hero.name,
+          this.heroSelectedState ? 1 : 0,
+        ]);
+      }
     },
   },
 };
