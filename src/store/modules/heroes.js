@@ -230,6 +230,9 @@ const getters = {
 
 // actions
 const actions = {
+  setHeroSelectedStatus({ commit }, { hero_key, selected }) {
+    commit("setHeroSelectStatus", { hero_key, selected });
+  },
   toggleHero({ commit }, hero_key) {
     commit("toggleHero", hero_key);
   },
@@ -243,6 +246,9 @@ const actions = {
 
 // mutations
 const mutations = {
+  setHeroSelectStatus(state, { hero_key, selected }) {
+    state.heroes[hero_key].selected = selected;
+  },
   toggleHero(state, hero_key) {
     state.heroes[hero_key].selected = !state.heroes[hero_key].selected;
   },

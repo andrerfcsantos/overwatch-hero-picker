@@ -18,7 +18,10 @@ export function getSelectedLSHeroes() {
   }
   if (Array.isArray(selected_heroes)) {
     selected_heroes.forEach((hero) => {
-      toggleHero(hero.key);
+      store.dispatch("heroes/setHeroSelectedStatus", {
+        hero_key: hero.key,
+        selected: hero.selected,
+      });
     });
   }
 }
