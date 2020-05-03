@@ -17,6 +17,7 @@
 
 <script>
 import { toggleHero, saveSelectedHeroesToLS } from "../services/heroes_service";
+import { sendEvent } from "../services/events";
 
 export default {
   name: "HeroCard",
@@ -40,10 +41,8 @@ export default {
     toggleHeroAction: function () {
       toggleHero(this.hero.key);
       saveSelectedHeroesToLS();
-      if (!Array.isArray(window._paq) && window._paq.push) {
-        let event = this.heroSelectedState ? "SelectHero" : "UnselectHero";
-        window._paq.push(["trackEvent", "Filter", event, this.hero.name]);
-      }
+      let event = this.heroSelectedState ? "SelectHero" : "UnselectHero";
+      sendEvent("Filter", event, this.hero.name);
     },
   },
 };

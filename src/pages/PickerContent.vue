@@ -157,6 +157,7 @@ import {
   getSelectedLSHeroes,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
+import { sendEvent } from "../services/events";
 
 export default {
   name: "PickerPageContent",
@@ -194,14 +195,7 @@ export default {
   methods: {
     randomHeroHandler() {
       this.randomHero();
-      if (!Array.isArray(window._paq) && window._paq.push) {
-        window._paq.push([
-          "trackEvent",
-          "Hero",
-          "GetRandom",
-          this.selectedHero.name,
-        ]);
-      }
+      sendEvent("Hero", "GetRandom", this.selectedHero.name);
     },
     randomHero: function () {
       this.selectedHero = randomHero();
@@ -213,16 +207,12 @@ export default {
     selectByRole(role) {
       selectByRole(role);
       saveSelectedHeroesToLS();
-      if (!Array.isArray(window._paq) && window._paq.push) {
-        window._paq.push(["trackEvent", "Filter", "SelectRole", role]);
-      }
+      sendEvent("Filter", "SelectRole", role);
     },
     unselectByRole(role) {
       unselectByRole(role);
       saveSelectedHeroesToLS();
-      if (!Array.isArray(window._paq) && window._paq.push) {
-        window._paq.push(["trackEvent", "Filter", "UnselectRole", role]);
-      }
+      sendEvent("Filter", "UnselectRole", role);
     },
   },
 };

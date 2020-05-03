@@ -119,12 +119,12 @@
 </template>
 
 <script>
+import { sendEvent } from "../services/events";
+
 export default {
   name: "AboutContent",
   created() {
-    if (!Array.isArray(window._paq) && window._paq.push) {
-      window._paq.push(["trackEvent", "Page", "Visit", "About"]);
-    }
+    sendEvent("Page", "Visit", "About");
   },
 };
 </script>
