@@ -63,7 +63,7 @@
             class="filter-description selected-heroes-text"
           >
             You have no heroes selected, so all heroes are being considered by
-            default
+            default.
           </p>
           <p
             v-else-if="numberOfSelectedHeroes === 1"
@@ -72,7 +72,7 @@
             You have {{ numberOfSelectedHeroes }} hero selected.
           </p>
           <p v-else class="filter-description selected-heroes-text">
-            You have {{ numberOfSelectedHeroes }} heroes selected
+            You have {{ numberOfSelectedHeroes }} heroes selected.
           </p>
         </div>
 
