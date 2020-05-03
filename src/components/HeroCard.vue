@@ -75,7 +75,7 @@ export default {
 .hero-image {
   height: 3em;
   vertical-align: bottom;
-  background: black;
+  background-color: #343a40;
 }
 
 /*  ------- */
