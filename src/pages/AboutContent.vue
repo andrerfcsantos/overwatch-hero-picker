@@ -17,10 +17,10 @@
     </p>
 
     <p class="paragraph-text">
-      That's where this site comes in. Just select the heroes you want to play
-      and get a random one from that selection. You can also use this site to
-      select heroes you are not confortable playing and get a random one to
-      try/improve.
+      That's where this site comes in. Using this hero picker you can select the
+      heroes you want to play and get a random one from the selection. You can
+      also use this site as a way to get new heroes to try/improve, a bit like
+      the "mystery heroes" game mode.
     </p>
 
     <h2 class="title">
@@ -92,14 +92,28 @@
     </h2>
 
     <p class="paragraph-text">
-      This is a fan-site for Overwatch and it's not in any way affilliated with
-      Blizzard Entertainment. All rights belong to their respective owners.
+      This is a fan-site for Overwatch and it is not affiliated with Blizzard
+      Entertainment. All rights belong to their respective owners. Below are the
+      relevant copyright notices:
     </p>
 
+    <h3 class="copyright-notice-header">
+      Blizzard Entertainment®
+    </h3>
     <p class="paragraph-text copyright-notice">
       ®2016 Blizzard Entertainment, Inc. All rights reserved. Overwatch is a
       trademark or registered trademark of Blizzard Entertainment, Inc. in the
       U.S. and/or other countries.
+    </p>
+
+    <h3 class="copyright-notice-header">
+      Overwatch™
+    </h3>
+
+    <p class="paragraph-text copyright-notice">
+      Overwatch™®2016 Blizzard Entertainment, Inc. All rights reserved.
+      Overwatch is a trademark or registered trademark of Blizzard
+      Entertainment, Inc. in the U.S. and/or other countries.
     </p>
   </div>
 </template>
@@ -111,7 +125,8 @@ export default {
 </script>
 
 <style scoped>
-p {
+p,
+.copyright-notice-header {
   text-align: start;
 }
 
@@ -139,6 +154,13 @@ p {
 
 .copyright-notice {
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.9em;
+}
+
+.copyright-notice-header {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  font-weight: bold;
 }
 
 form {
