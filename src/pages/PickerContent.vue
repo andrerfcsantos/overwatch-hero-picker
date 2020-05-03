@@ -68,19 +68,19 @@
           </h2>
           <button
             class="all-button select-all-button"
-            @click="selectAllTankHeroes"
+            @click="selectByRole('TANK')"
           >
             Select All
           </button>
           <button
             class="all-button unselect-all-button"
-            @click="unselectAllTankHeroes"
+            @click="unselectByRole('TANK')"
           >
             Unselect All
           </button>
         </div>
 
-        <HeroCard v-for="h in getTankHeroes()" :key="h.key" :hero="h" />
+        <HeroCard v-for="h in getHeroesByRole('TANK')" :key="h.key" :hero="h" />
 
         <div class="filter-header">
           <img
@@ -93,19 +93,23 @@
           </h2>
           <button
             class="all-button select-all-button"
-            @click="selectAllDamageHeroes"
+            @click="selectByRole('DAMAGE')"
           >
             Select All
           </button>
           <button
             class="all-button unselect-all-button"
-            @click="unselectAllDamageHeroes"
+            @click="unselectByRole('DAMAGE')"
           >
             Unselect All
           </button>
         </div>
 
-        <HeroCard v-for="h in getDamageHeroes()" :key="h.key" :hero="h" />
+        <HeroCard
+          v-for="h in getHeroesByRole('DAMAGE')"
+          :key="h.key"
+          :hero="h"
+        />
 
         <div class="filter-header">
           <img
@@ -118,18 +122,22 @@
           </h2>
           <button
             class="all-button select-all-button"
-            @click="selectAllSupportHeroes"
+            @click="selectByRole('SUPPORT')"
           >
             Select All
           </button>
           <button
             class="all-button unselect-all-button"
-            @click="unselectAllSupportHeroes"
+            @click="unselectByRole('SUPPORT')"
           >
             Unselect All
           </button>
         </div>
-        <HeroCard v-for="h in getSupportHeroes()" :key="h.key" :hero="h" />
+        <HeroCard
+          v-for="h in getHeroesByRole('SUPPORT')"
+          :key="h.key"
+          :hero="h"
+        />
       </div>
     </div>
   </div>
@@ -138,15 +146,9 @@
 <script>
 import {
   randomHero,
-  getDamage,
-  getSupport,
-  getTanks,
-  selectAllDamage,
-  selectAllSupports,
-  selectAllTanks,
-  unselectAllDamage,
-  unselectAllSupports,
-  unselectAllTanks,
+  getHeroesByRole,
+  selectByRole,
+  unselectByRole,
   saveSelectedHeroesToLS,
   getSelectedLSHeroes,
 } from "../services/heroes_service";
@@ -190,37 +192,15 @@ export default {
       this.selectedHero = randomHero();
       this.heroCount += 1;
     },
-    getDamageHeroes: function () {
-      return getDamage();
+    getHeroesByRole(role) {
+      return getHeroesByRole(role);
     },
-    getTankHeroes: function () {
-      return getTanks();
-    },
-    getSupportHeroes: function () {
-      return getSupport();
-    },
-    selectAllDamageHeroes: function () {
-      selectAllDamage();
+    selectByRole(role) {
+      selectByRole(role);
       saveSelectedHeroesToLS();
     },
-    selectAllSupportHeroes: function () {
-      selectAllSupports();
-      saveSelectedHeroesToLS();
-    },
-    selectAllTankHeroes: function () {
-      selectAllTanks();
-      saveSelectedHeroesToLS();
-    },
-    unselectAllDamageHeroes: function () {
-      unselectAllDamage();
-      saveSelectedHeroesToLS();
-    },
-    unselectAllSupportHeroes: function () {
-      unselectAllSupports();
-      saveSelectedHeroesToLS();
-    },
-    unselectAllTankHeroes: function () {
-      unselectAllTanks();
+    unselectByRole(role) {
+      unselectByRole(role);
       saveSelectedHeroesToLS();
     },
   },

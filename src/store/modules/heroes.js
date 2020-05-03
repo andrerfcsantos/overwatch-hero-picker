@@ -233,23 +233,11 @@ const actions = {
   toggleHero({ commit }, hero_key) {
     commit("toggleHero", hero_key);
   },
-  selectTanks({ commit }) {
-    commit("setStateByRole", { role: "TANK", selectedState: true });
+  selectByRole({ commit }, role) {
+    commit("setStateByRole", { role: role, selectedState: true });
   },
-  selectSupports({ commit }) {
-    commit("setStateByRole", { role: "SUPPORT", selectedState: true });
-  },
-  selectDamage({ commit }) {
-    commit("setStateByRole", { role: "DAMAGE", selectedState: true });
-  },
-  unselectTanks({ commit }) {
-    commit("setStateByRole", { role: "TANK", selectedState: false });
-  },
-  unselectSupports({ commit }) {
-    commit("setStateByRole", { role: "SUPPORT", selectedState: false });
-  },
-  unselectDamage({ commit }) {
-    commit("setStateByRole", { role: "DAMAGE", selectedState: false });
+  unselectByRole({ commit }, role) {
+    commit("setStateByRole", { role: role, selectedState: false });
   },
 };
 

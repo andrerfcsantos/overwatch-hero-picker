@@ -1,10 +1,17 @@
 {
-  "name" : "overwatch-hero-picker-website",
-  "description" : "Random Overwatch Hero Picker.",
-  "homepage" : "https://www.owheropicker.com",
-  "keywords" : ["games", "overwatch", "random hero"],
-  "author" : "André Santos <owheropicker@gmail.com>",
-  "repository" : {"type": "git", "url": "git://github.com/andrerfcsantos/overwatch-hero-picker.git"},
+  "name": "overwatch-hero-picker-website",
+  "description": "Random Overwatch Hero Picker.",
+  "homepage": "https://www.owheropicker.com",
+  "keywords": [
+    "games",
+    "overwatch",
+    "random hero"
+  ],
+  "author": "André Santos <owheropicker@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andrerfcsantos/overwatch-hero-picker.git"
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {

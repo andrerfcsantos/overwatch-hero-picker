@@ -28,42 +28,18 @@ export function saveSelectedHeroesToLS() {
   localStorage.setItem("selectedHeroes", JSON.stringify(selected));
 }
 
-export function getTanks() {
-  return store.getters["heroes/getTanks"];
-}
-
-export function getDamage() {
-  return store.getters["heroes/getDamage"];
-}
-
-export function getSupport() {
-  return store.getters["heroes/getSupport"];
+export function getHeroesByRole(role) {
+  return store.getters["heroes/getByRole"](role);
 }
 
 export function toggleHero(hero_key) {
   store.dispatch("heroes/toggleHero", hero_key);
 }
 
-export function selectAllTanks() {
-  store.dispatch("heroes/selectTanks");
+export function selectByRole(role) {
+  store.dispatch(`heroes/selectByRole`, role);
 }
 
-export function selectAllSupports() {
-  store.dispatch("heroes/selectSupports");
-}
-
-export function selectAllDamage() {
-  store.dispatch("heroes/selectDamage");
-}
-
-export function unselectAllTanks() {
-  store.dispatch("heroes/unselectTanks");
-}
-
-export function unselectAllSupports() {
-  store.dispatch("heroes/unselectSupports");
-}
-
-export function unselectAllDamage() {
-  store.dispatch("heroes/unselectDamage");
+export function unselectByRole(role) {
+  store.dispatch(`heroes/unselectByRole`, role);
 }
