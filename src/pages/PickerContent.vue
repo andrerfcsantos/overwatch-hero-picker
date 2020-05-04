@@ -38,7 +38,11 @@
           </h2>
         </transition>
 
-        <div type="button" class="random-hero-button btn" @click="randomHero">
+        <div
+          type="button"
+          class="random-hero-button btn"
+          @click="randomHeroHandler"
+        >
           Get Random Hero
         </div>
       </div>
@@ -53,9 +57,24 @@
           button to get a random hero from the selected ones.
         </p>
 
-        <p class="filter-description">
-          If no hero is selected, all heroes are taken into account.
-        </p>
+        <div class="filter-description selected-heroes-info">
+          <p
+            v-if="numberOfSelectedHeroes === 0"
+            class="filter-description selected-heroes-text"
+          >
+            You have no heroes selected, so all heroes are being considered by
+            default.
+          </p>
+          <p
+            v-else-if="numberOfSelectedHeroes === 1"
+            class="filter-description selected-heroes-text"
+          >
+            You have {{ numberOfSelectedHeroes }} hero selected.
+          </p>
+          <p v-else class="filter-description selected-heroes-text">
+            You have {{ numberOfSelectedHeroes }} heroes selected.
+          </p>
+        </div>
 
         <div class="filter-header">
           <img
@@ -151,8 +170,10 @@ import {
   unselectByRole,
   saveSelectedHeroesToLS,
   getSelectedLSHeroes,
+  getSelected,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
+import { sendEvent } from "../services/events";
 
 export default {
   name: "PickerPageContent",
@@ -171,6 +192,14 @@ export default {
       showPortrait: true,
     };
   },
+  computed: {
+    selectedHeroes: function () {
+      return getSelected().map((h) => h.name);
+    },
+    numberOfSelectedHeroes: function () {
+      return this.selectedHeroes.length;
+    },
+  },
   watch: {
     showPortrait: function (newValue) {
       localStorage.setItem("showPortrait", newValue);
@@ -188,6 +217,10 @@ export default {
     }
   },
   methods: {
+    randomHeroHandler() {
+      this.randomHero();
+      sendEvent("Hero", "GetRandom", this.selectedHero.name);
+    },
     randomHero: function () {
       this.selectedHero = randomHero();
       this.heroCount += 1;
@@ -198,10 +231,12 @@ export default {
     selectByRole(role) {
       selectByRole(role);
       saveSelectedHeroesToLS();
+      sendEvent("Filter", "SelectRole", role);
     },
     unselectByRole(role) {
       unselectByRole(role);
       saveSelectedHeroesToLS();
+      sendEvent("Filter", "UnselectRole", role);
     },
   },
 };
@@ -252,6 +287,16 @@ export default {
   text-align: start;
 }
 
+.selected-heroes-info {
+  font-size: 1.5rem;
+  color: orange;
+  margin: 1rem 0 0 0;
+}
+.selected-heroes-text {
+  margin: 0;
+  font-color: orange;
+}
+
 /** Large breakpoint or smaller */
 @media (max-width: 991.98px) {
   .right-content {
@@ -266,6 +311,7 @@ export default {
 .filter-description {
   display: block;
   font-size: 1.3rem;
+  user-select: text;
   margin: 0;
 }
 

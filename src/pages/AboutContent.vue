@@ -119,8 +119,13 @@
 </template>
 
 <script>
+import { sendEvent } from "../services/events";
+
 export default {
   name: "AboutContent",
+  created() {
+    sendEvent("Page", "Visit", "About");
+  },
 };
 </script>
 

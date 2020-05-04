@@ -17,6 +17,7 @@
 
 <script>
 import { toggleHero, saveSelectedHeroesToLS } from "../services/heroes_service";
+import { sendEvent } from "../services/events";
 
 export default {
   name: "HeroCard",
@@ -40,6 +41,8 @@ export default {
     toggleHeroAction: function () {
       toggleHero(this.hero.key);
       saveSelectedHeroesToLS();
+      let event = this.heroSelectedState ? "SelectHero" : "UnselectHero";
+      sendEvent("Filter", event, this.hero.name);
     },
   },
 };
@@ -72,7 +75,7 @@ export default {
 .hero-image {
   height: 3em;
   vertical-align: bottom;
-  background: black;
+  background-color: #343a40;
 }
 
 /*  ------- */

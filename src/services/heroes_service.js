@@ -31,6 +31,10 @@ export function saveSelectedHeroesToLS() {
   localStorage.setItem("selectedHeroes", JSON.stringify(selected));
 }
 
+export function getSelected() {
+  return store.getters["heroes/getSelected"];
+}
+
 export function getHeroesByRole(role) {
   return store.getters["heroes/getByRole"](role);
 }
