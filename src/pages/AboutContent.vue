@@ -42,6 +42,15 @@
     </p>
 
     <h2 class="title">
+      Discord
+    </h2>
+
+    <p class="paragraph-text">
+      Join the discord server:
+      <a href="https://discord.gg/rwQMrCa">https://discord.gg/rwQMrCa</a>
+    </p>
+
+    <h2 class="title">
       Donate
     </h2>
 
@@ -84,7 +93,8 @@
     <p class="paragraph-text">
       If you have feedback, suggestions, comments about the site or you just
       want to say something to me, reach out at owheropicker [at] gmail [dot]
-      com
+      com. You can also contact me via the
+      <a href="https://discord.gg/rwQMrCa">discord server</a>.
     </p>
 
     <h2 class="title disclaimer-header">
@@ -133,6 +143,30 @@ export default {
 p,
 .copyright-notice-header {
   text-align: start;
+}
+
+a {
+  font-family: inherit;
+}
+
+/* unvisited link */
+a:link {
+  color: orange;
+}
+
+/* visited link */
+a:visited {
+  color: orangered;
+}
+
+/* mouse over link */
+a:hover {
+  color: orangered;
+}
+
+/* selected link */
+a:active {
+  color: orange;
 }
 
 .about-main-container {
