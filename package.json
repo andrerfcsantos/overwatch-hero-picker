@@ -1,19 +1,9 @@
 {
   "name": "overwatch-hero-picker-website",
-  "description": "Random Overwatch Hero Picker.",
-  "homepage": "https://www.owheropicker.com",
-  "keywords": [
-    "games",
-    "overwatch",
-    "random hero"
-  ],
-  "author": "André Santos <owheropicker@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/andrerfcsantos/overwatch-hero-picker.git"
-  },
   "version": "0.1.0",
   "private": true,
+  "description": "Random Overwatch Hero Picker.",
+  "author": "André Santos <owheropicker@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -30,9 +20,9 @@
     "vuex": "^3.1.3"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.3.1",
-    "@vue/cli-plugin-eslint": "~4.3.1",
-    "@vue/cli-service": "~4.3.1",
+    "@vue/cli-plugin-babel": "^4.4.4",
+    "@vue/cli-plugin-eslint": "^4.4.4",
+    "@vue/cli-service": "^4.4.4",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
@@ -51,6 +41,16 @@
     "> 1%",
     "last 2 versions"
   ],
+  "homepage": "https://www.owheropicker.com",
+  "keywords": [
+    "games",
+    "overwatch",
+    "random hero"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andrerfcsantos/overwatch-hero-picker.git"
+  },
   "resolutions": {
     "minimist": "1.2.3",
     "mkdir": "0.5.3"
