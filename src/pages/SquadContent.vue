@@ -3,47 +3,81 @@
     <div class="row col-12 m-0 p-0">
       <div class="left-content col-lg-3">
         <h1 class="left-title">
-          You should play
+          Team Generator
         </h1>
 
-        <div>
-          <input
-            id="checkbox-show-portrait"
-            v-model="showPortrait"
-            type="checkbox"
-            name="checkbox-show-portrait"
-            :value="true"
-          />
-          <label
-            id="show-portrait-label"
-            for="checkbox-show-portrait"
-            class="show-portrait-label"
-            >Show hero portrait</label
-          >
+        <div class="squad">
+          <div class="force222">
+            <input
+              id="checkbox-force222"
+              v-model="force222"
+              type="checkbox"
+              name="checkbox-force222"
+              :value="true"
+            />
+            <label
+              id="force222-label"
+              for="checkbox-force222"
+              class="force222-label"
+              >Force 2-2-2</label
+            >
+          </div>
+
+          <ul class="role-list-squad">
+            <li v-for="h of squad.tanks" :key="h.key">
+              <img
+                class="role-icon-squad"
+                alt="Damage role icon"
+                src="assets/imgs/roles/tank.png"
+              />
+              <img
+                class="hero-image-squad"
+                :alt="h.name + ' icon'"
+                :src="'assets/imgs/heroes/icons/' + h.key + '.webp'"
+              />
+              <span class="hero-name-squad">{{ h.name }}</span>
+            </li>
+          </ul>
+
+          <ul class="role-list-squad">
+            <li v-for="h of squad.damage" :key="h.key">
+              <img
+                class="role-icon-squad"
+                alt="Damage role icon"
+                src="assets/imgs/roles/damage.png"
+              />
+              <img
+                class="hero-image-squad"
+                :alt="h.name + ' icon'"
+                :src="'assets/imgs/heroes/icons/' + h.key + '.webp'"
+              />
+              <span class="hero-name-squad">{{ h.name }}</span>
+            </li>
+          </ul>
+
+          <ul class="role-list-squad">
+            <li v-for="h of squad.supports" :key="h.key">
+              <img
+                class="role-icon-squad"
+                alt="Damage role icon"
+                src="assets/imgs/roles/support.png"
+              />
+              <img
+                class="hero-image-squad"
+                :alt="h.name + ' icon'"
+                :src="'assets/imgs/heroes/icons/' + h.key + '.webp'"
+              />
+              <span class="hero-name-squad">{{ h.name }}</span>
+            </li>
+          </ul>
         </div>
-
-        <img
-          v-if="showPortrait"
-          key="hero-image"
-          class="chosen-hero-image img-fluid"
-          :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
-        />
-
-        <transition name="hero-name-transition" mode="out-in">
-          <h2
-            :key="`hero-name-${selectedHero.name}-${heroCount}`"
-            class="chosen-hero-name"
-          >
-            {{ selectedHero.name }}
-          </h2>
-        </transition>
 
         <div
           type="button"
           class="random-hero-button btn"
-          @click="randomHeroHandler"
+          @click="randomSquadHandler"
         >
-          Get Random Hero
+          Get Random Team
         </div>
       </div>
 
@@ -53,13 +87,14 @@
         </h1>
 
         <p class="filter-description">
-          Select the heroes you wish to play and click in the "Get Random Hero"
-          button to get a random hero from the selected ones.
+          Select the heroes you wish to include in your squad and click in the
+          "Get Random Squad" button to get a random team which will include the
+          selected heroes.
         </p>
 
         <p class="filter-description">
-          Playing in a squad?
-          <router-link to="/squad">Get random heroes for your team</router-link>
+          Playing solo?
+          <router-link to="/">Get a random hero just for you</router-link>
         </p>
 
         <div class="filter-description selected-heroes-info">
@@ -170,34 +205,47 @@
 <script>
 import {
   randomHero,
+  randomSquad,
   getHeroesByRole,
   selectByRole,
   unselectByRole,
   saveSelectedHeroesToLS,
   getSelectedLSHeroes,
   getSelected,
+  randomSquadClassic,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
 import { sendEvent } from "../services/events";
 
 export default {
-  name: "PickerPageContent",
+  name: "SquadPageContent",
   components: {
     HeroCard,
   },
   data() {
     return {
+      squad: {
+        tanks: [],
+        supports: [],
+        damage: [],
+      },
       selectedHero: {
         name: "",
         role: "",
         selected: false,
         key: "",
       },
-      heroCount: 0,
-      showPortrait: true,
+      force222: true,
     };
   },
   computed: {
+    simpleSquad: function () {
+      return {
+        DAMAGE: this.squad.tanks.map((h) => h.name),
+        SUPPORT: this.squad.supports.map((h) => h.name),
+        TANK: this.squad.tanks.map((h) => h.name),
+      };
+    },
     selectedHeroes: function () {
       return getSelected().map((h) => h.name);
     },
@@ -206,26 +254,31 @@ export default {
     },
   },
   watch: {
-    showPortrait: function (newValue) {
-      localStorage.setItem("showPortrait", newValue);
-      sendEvent("Option", "ToggleShowPortrait", newValue);
+    force222: function (newValue) {
+      sendEvent("Option", "ToggleForce222", newValue);
     },
   },
   created() {
     getSelectedLSHeroes();
-    this.selectedHero = randomHero();
-    let showPortraitLS = localStorage.getItem("showPortrait");
-
-    if (showPortraitLS !== null) {
-      this.showPortrait = showPortraitLS === "true";
-    } else {
-      localStorage.setItem("showPortrait", this.showPortrait);
-    }
+    this.randomSquad();
   },
   methods: {
-    randomHeroHandler() {
-      this.randomHero();
-      sendEvent("Hero", "GetRandom", this.selectedHero.name);
+    randomSquadHandler: function () {
+      this.randomSquad();
+      sendEvent("Squad", "GetRandom", JSON.stringify(this.simpleSquad));
+    },
+    randomSquad: function () {
+      var squad;
+
+      if (this.force222) {
+        squad = randomSquad();
+      } else {
+        squad = randomSquadClassic();
+      }
+
+      this.squad.damage = squad["DAMAGE"];
+      this.squad.supports = squad["SUPPORT"];
+      this.squad.tanks = squad["TANK"];
     },
     randomHero: function () {
       this.selectedHero = randomHero();
@@ -299,7 +352,6 @@ export default {
   margin: 1rem 0 0 0;
   font-weight: bold;
 }
-
 .selected-heroes-text {
   margin: 0;
   font-color: orange;
@@ -323,6 +375,27 @@ export default {
   user-select: text;
   margin: 0;
   font-weight: bold;
+}
+
+.role-list-squad {
+  list-style: none;
+}
+
+.role-icon-squad {
+  max-height: 2em;
+}
+
+.hero-image-squad {
+  max-height: 2em;
+  margin-right: 0.5rem;
+}
+.hero-name-squad {
+  font-size: 2em;
+  vertical-align: middle;
+}
+
+.squad {
+  text-align: start;
 }
 
 /** Filter header */
@@ -390,7 +463,12 @@ export default {
   opacity: 1;
 }
 
-.show-portrait-label {
+.force222-label {
   margin: 0 0 0 1%;
+}
+
+.force222 {
+  text-align: center;
+  font-size: 1.25rem;
 }
 </style>
