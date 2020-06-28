@@ -88,7 +88,7 @@
 
         <p class="filter-description">
           Select the heroes you wish to include in your squad and click in the
-          "Get Random Squad" button to get a random team which will include the
+          "Get Random Team" button to get a random team which will include the
           selected heroes.
         </p>
 
@@ -241,7 +241,7 @@ export default {
   computed: {
     simpleSquad: function () {
       return {
-        DAMAGE: this.squad.tanks.map((h) => h.name),
+        DAMAGE: this.squad.damage.map((h) => h.name),
         SUPPORT: this.squad.supports.map((h) => h.name),
         TANK: this.squad.tanks.map((h) => h.name),
       };
@@ -259,6 +259,7 @@ export default {
     },
   },
   created() {
+    window.document.title = "Team Picker - Overwatch Hero Picker";
     getSelectedLSHeroes();
     this.randomSquad();
   },

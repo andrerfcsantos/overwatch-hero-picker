@@ -58,7 +58,7 @@
         </p>
 
         <p class="filter-description">
-          Playing in a squad?
+          Playing as a group?
           <router-link to="/squad">Get random heroes for your team</router-link>
         </p>
 
@@ -212,6 +212,7 @@ export default {
     },
   },
   created() {
+    window.document.title = "Overwatch Hero Picker";
     getSelectedLSHeroes();
     this.selectedHero = randomHero();
     let showPortraitLS = localStorage.getItem("showPortrait");
