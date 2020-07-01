@@ -17,7 +17,7 @@ export default {
 
 <style>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -35,10 +35,6 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-* {
-  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
 }
 
 @font-face {
@@ -62,5 +58,34 @@ body {
   -webkit-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+
+a {
+  font-family: inherit;
+}
+
+/* unvisited link */
+a:link {
+  color: orange;
+  text-decoration: underline;
+}
+
+/* mouse over link */
+a:hover {
+  color: orangered;
+}
+
+/* visited link */
+a:visited {
+  color: orange;
+}
+/* visited link */
+a:visited:hover {
+  color: orangered;
+}
+
+/* selected link */
+a:active {
+  color: orange;
 }
 </style>

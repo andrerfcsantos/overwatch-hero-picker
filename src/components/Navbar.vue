@@ -43,7 +43,9 @@ export default {
 a,
 a:active,
 a:focus,
-a:hover {
+a:hover,
+a:visited,
+a:visited:hover {
   text-decoration: none !important;
   color: white;
 }

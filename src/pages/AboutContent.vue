@@ -134,6 +134,7 @@ import { sendEvent } from "../services/events";
 export default {
   name: "AboutContent",
   created() {
+    window.document.title = "About - Overwatch Hero Picker";
     sendEvent("Page", "Visit", "About");
   },
 };
@@ -156,12 +157,12 @@ a:link {
 
 /* visited link */
 a:visited {
-  color: orangered;
+  color: orange;
 }
 
 /* mouse over link */
 a:hover {
-  color: orangered;
+  color: orange;
 }
 
 /* selected link */

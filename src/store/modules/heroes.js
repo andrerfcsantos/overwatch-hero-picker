@@ -208,14 +208,28 @@ const getters = {
   getByRole: (state, getters) => (role) => {
     return getters.getHeroes.filter((hero) => hero.role == role);
   },
+  getBySelectedByRole: (state, getters) => (role) => {
+    return getters.getHeroes.filter(
+      (hero) => hero.role == role && hero.selected
+    );
+  },
   getTanks: (state, getters) => {
     return getters.getByRole("TANK");
+  },
+  getSelectedTanks: (state, getters) => {
+    return getters.getByRole("TANK").filter((h) => h.selected);
   },
   getSupport: (state, getters) => {
     return getters.getByRole("SUPPORT");
   },
+  getSelectedSupport: (state, getters) => {
+    return getters.getByRole("SUPPORT").filter((h) => h.selected);
+  },
   getDamage: (state, getters) => {
     return getters.getByRole("DAMAGE");
+  },
+  getSelectedDamage: (state, getters) => {
+    return getters.getByRole("DAMAGE").filter((h) => h.selected);
   },
   getSelected: (state, getters) => {
     return getters.getBySelectedStatus(true);
