@@ -33,7 +33,7 @@
               <img
                 class="hero-image-squad"
                 :alt="h.name + ' icon'"
-                :src="'assets/imgs/heroes/icons/' + h.key + '.webp'"
+                :src="'assets/imgs/heroes/icons/' + h.key + '.png'"
               />
               <span class="hero-name-squad">{{ h.name }}</span>
             </li>
@@ -49,7 +49,7 @@
               <img
                 class="hero-image-squad"
                 :alt="h.name + ' icon'"
-                :src="'assets/imgs/heroes/icons/' + h.key + '.webp'"
+                :src="'assets/imgs/heroes/icons/' + h.key + '.png'"
               />
               <span class="hero-name-squad">{{ h.name }}</span>
             </li>
@@ -65,7 +65,7 @@
               <img
                 class="hero-image-squad"
                 :alt="h.name + ' icon'"
-                :src="'assets/imgs/heroes/icons/' + h.key + '.webp'"
+                :src="'assets/imgs/heroes/icons/' + h.key + '.png'"
               />
               <span class="hero-name-squad">{{ h.name }}</span>
             </li>

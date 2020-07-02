@@ -26,7 +26,7 @@
           v-if="showPortrait"
           key="hero-image"
           class="chosen-hero-image img-fluid"
-          :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.webp'"
+          :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.png'"
         />
 
         <transition name="hero-name-transition" mode="out-in">
