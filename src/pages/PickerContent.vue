@@ -40,7 +40,7 @@
 
         <div
           type="button"
-          class="random-hero-button btn"
+          class="random-hero-button"
           @click="randomHeroHandler"
         >
           Get Random Hero
@@ -368,8 +368,15 @@ export default {
   cursor: pointer;
 }
 
-.random-hero-button {
-  margin-bottom: 5%;
+.random-hero-button,
+.random-hero-button:hover,
+.random-hero-button:active,
+.random-hero-button:focus,
+.random-hero-button:enabled {
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  font-size: 1.75rem;
+  -webkit-appearance: none;
 }
 
 .hero-name-transition-enter-active {
