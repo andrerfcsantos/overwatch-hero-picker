@@ -212,7 +212,8 @@ export default {
     },
   },
   created() {
-    window.document.title = "Overwatch Hero Picker";
+    window.document.title =
+      "Overwatch Random Hero Picker | Get random heroes for you and your team";
     getSelectedLSHeroes();
     this.selectedHero = randomHero();
     let showPortraitLS = localStorage.getItem("showPortrait");
