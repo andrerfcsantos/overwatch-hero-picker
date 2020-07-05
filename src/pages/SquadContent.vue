@@ -259,7 +259,7 @@ export default {
     },
   },
   created() {
-    window.document.title = "Team Picker | Overwatch Random Hero Picker";
+    window.document.title = "Team Generator | Overwatch Random Hero Picker";
     getSelectedLSHeroes();
     this.randomSquad();
   },
