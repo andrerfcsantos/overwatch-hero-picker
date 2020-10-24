@@ -52,7 +52,8 @@ export default {
 .hero-card {
   display: inline-flex;
   margin: 0.25em;
-  width: 13em;
+  width: 12em;
+  height: 2.5em;
   background-color: #0192c7;
   align-items: center;
   cursor: pointer;
@@ -73,7 +74,7 @@ export default {
 /*  ------- */
 
 .hero-image {
-  height: 3em;
+  height: 2.5em;
   vertical-align: bottom;
   background-color: #343a40;
 }
@@ -83,7 +84,7 @@ export default {
 .hero-name {
   min-height: 100%;
   padding: 0 0.2em;
-  font-size: 2em;
+  font-size: 1.75em;
   white-space: nowrap;
   outline: none;
 }
