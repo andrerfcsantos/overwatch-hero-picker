@@ -6,11 +6,13 @@ import "es6-promise/auto";
 import store from "./store";
 import VueRouter from "vue-router";
 import { routes } from "./router/routes";
+import { NavbarPlugin } from "bootstrap-vue";
 
 Vue.config.productionTip = false;
 
 // Vue router
 Vue.use(VueRouter);
+Vue.use(NavbarPlugin);
 
 const router = new VueRouter({
   routes,

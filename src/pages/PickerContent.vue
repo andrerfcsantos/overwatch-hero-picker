@@ -256,6 +256,8 @@ export default {
   background-color: #2c3e50;
   color: white;
   display: flex;
+  width: 99%;
+  min-height: 85vh;
 }
 
 .left-content {
