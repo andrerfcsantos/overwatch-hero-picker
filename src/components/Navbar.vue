@@ -1,36 +1,36 @@
 <template>
-  <nav
-    class="navbar navbar-expand-md navbar-dark bg-dark align-items-center justify-content-between m-0"
-  >
-    <!-- left column -->
-    <div class="nav-item">
-      <router-link to="/">
+  <b-navbar toggleable="lg" type="dark" variant="dark">
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+    <b-collapse id="nav-collapse" is-nav>
+      <b-navbar-brand to="/">
         <img
           class="ow-logo img-fluid"
           src="../../public/assets/imgs/navbar/ow-logo.svg"
         />
         <span class="title-text">Overwatch Hero Picker</span>
-      </router-link>
-    </div>
-
-    <div class="nav-item">
-      <router-link to="/about">
-        <img
-          src="../../public/assets/imgs/navbar/icons8-info.svg"
-          alt="about"
-        />
-      </router-link>
-      <a
-        href="https://github.com/andrerfcsantos/overwatch-hero-picker"
-        target="_blank"
-      >
-        <img
-          src="../../public/assets/imgs/navbar/icons8-github.svg"
-          alt="github"
-        />
-      </a>
-    </div>
-  </nav>
+      </b-navbar-brand>
+      <!-- Right aligned nav items -->
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item to="/about">About</b-nav-item>
+        <b-nav-item
+          href="https://github.com/andrerfcsantos/overwatch-hero-picker"
+          target="_blank"
+        >
+          Github
+        </b-nav-item>
+        <b-nav-item
+          href="https://www.buymeacoffee.com/heropickers"
+          target="_blank"
+        >
+          <img
+            class="bmc-logo img-fluid"
+            src="../../public/assets/imgs/navbar/bmc.svg"
+          />
+        </b-nav-item>
+      </b-navbar-nav>
+    </b-collapse>
+  </b-navbar>
 </template>
 
 <script>
@@ -50,8 +50,7 @@ a:visited:hover {
   color: white;
 }
 
-nav {
-  color: white;
+b-navbar {
   min-height: 5vh;
 }
 
@@ -60,11 +59,24 @@ nav {
   text-decoration: none;
 }
 
+li {
+  font-size: 1.25em;
+}
+
 img {
   max-height: 2em;
 }
 
+img.bmc-logo {
+  height: 1.5em;
+  max-height: initial;
+}
+
 .ow-logo {
   padding-right: 0.5em;
+}
+
+.separator {
+  color: grey;
 }
 </style>

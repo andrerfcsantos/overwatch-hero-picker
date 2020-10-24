@@ -55,36 +55,20 @@
     </h2>
 
     <p class="paragraph-text">
-      If you like this project, consider making a donation! This helps me cover
-      the maintenance costs of the server and keep the site up. When donating,
-      you can choose to which part of the site your money should go to. You can
-      also give me a tip and and suggest where I should spend the money. I'll do
-      my best to honor your request :)
+      If you like this project, consider making a donation by clicking on the
+      image below (or
+      <a href="https://www.buymeacoffee.com/heropickers" target="_blank">here</a
+      >)! You can choose to make a one-time donation or become a member and
+      donate monthly/anually. The money will be used to cover the costs of
+      keeping the site up, free for everyone and with no ads.
     </p>
 
-    <form
-      action="https://www.paypal.com/cgi-bin/webscr"
-      method="post"
-      target="_top"
-    >
-      <input type="hidden" name="cmd" value="_s-xclick" />
-      <input type="hidden" name="hosted_button_id" value="DQ3Y6X8C8V4BA" />
-      <input
-        type="image"
-        src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
-        border="0"
-        name="submit"
-        title="PayPal - The safer, easier way to pay online!"
-        alt="Donate with PayPal button"
-      />
+    <a href="https://www.buymeacoffee.com/heropickers" target="_blank">
       <img
-        alt=""
-        border="0"
-        src="https://www.paypal.com/en_PT/i/scr/pixel.gif"
-        width="1"
-        height="1"
+        class="bmc-logo img-fluid"
+        src="../../public/assets/imgs/navbar/bmc.svg"
       />
-    </form>
+    </a>
 
     <h2 class="title disclaimer-header">
       Contact me
@@ -92,7 +76,7 @@
 
     <p class="paragraph-text">
       If you have feedback, suggestions, comments about the site or you just
-      want to say something to me, reach out at owheropicker [at] gmail [dot]
+      want to say something to me, reach out at heropickers [at] gmail [dot]
       com. You can also contact me via the
       <a href="https://discord.gg/rwQMrCa">discord server</a>.
     </p>
@@ -174,17 +158,25 @@ a:active {
   color: white;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  padding-left: 20%;
+  padding-right: 20%;
+  padding-top: 2em;
+  margin-bottom: 3em;
 }
 
 @media (max-width: 1000px) {
   .about-main-container {
     max-width: 100%;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
   }
 }
 
 .title {
   color: rgb(248, 158, 74);
   text-decoration: underline;
+  text-align: start;
 }
 
 .paragraph-text {
@@ -203,7 +195,7 @@ a:active {
   font-weight: bold;
 }
 
-form {
-  text-align: center;
+img {
+  width: 20em;
 }
 </style>
