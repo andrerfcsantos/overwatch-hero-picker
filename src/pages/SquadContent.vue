@@ -280,6 +280,8 @@ export default {
       setTimeout(() => {
         this.copyToClipboardText = oldText;
       }, 1500);
+
+      sendEvent("Squad", "CopyToClipboard", this.clipboardHeroes);
     },
     clipboardErrorHandler() {
       const oldText = this.copyToClipboardText;
@@ -288,6 +290,8 @@ export default {
       setTimeout(() => {
         this.copyToClipboardText = oldText;
       }, 1500);
+
+      sendEvent("Squad", "CopyToClipboardError", this.clipboardHeroes);
     },
     randomSquadHandler: function () {
       this.randomSquad();
