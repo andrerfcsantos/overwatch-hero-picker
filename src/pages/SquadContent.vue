@@ -2,9 +2,7 @@
   <div class="main-container col-12 h-100 m-0 p-0 unselectable">
     <div class="row col-12 m-0 p-0">
       <div class="left-content col-lg-3">
-        <h1 class="left-title">
-          Team Generator
-        </h1>
+        <h1 class="left-title">Team Generator</h1>
 
         <div class="squad">
           <div class="force222">
@@ -21,6 +19,14 @@
               class="force222-label"
               >Force 2-2-2</label
             >
+            <button
+              v-clipboard="() => clipboardHeroes"
+              v-clipboard:success="clipboardSuccessHandler"
+              v-clipboard:error="clipboardErrorHandler"
+              class="copy-to-clipboard-button"
+            >
+              {{ copyToClipboardText }}
+            </button>
           </div>
 
           <ul class="role-list-squad">
@@ -82,9 +88,7 @@
       </div>
 
       <div class="right-content col-lg-9">
-        <h1 class="right-title">
-          Filter Heroes
-        </h1>
+        <h1 class="right-title">Filter Heroes</h1>
 
         <p class="filter-description">
           Select the heroes you wish to include in your squad and click in the
@@ -122,9 +126,7 @@
             alt="Tank role icon"
             src="assets/imgs/roles/tank.png"
           />
-          <h2 class="role-header">
-            Tank
-          </h2>
+          <h2 class="role-header">Tank</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('TANK')"
@@ -147,9 +149,7 @@
             alt="Damage role icon"
             src="assets/imgs/roles/damage.png"
           />
-          <h2 class="role-header">
-            Damage
-          </h2>
+          <h2 class="role-header">Damage</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('DAMAGE')"
@@ -176,9 +176,7 @@
             alt="Support role icon"
             src="assets/imgs/roles/support.png"
           />
-          <h2 class="role-header">
-            Support
-          </h2>
+          <h2 class="role-header">Support</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('SUPPORT')"
@@ -236,9 +234,20 @@ export default {
         key: "",
       },
       force222: true,
+      copyToClipboardText: "Copy to clipboard",
     };
   },
   computed: {
+    clipboardHeroes: function () {
+      const squad = this.simpleSquad;
+      const allHeroes = [
+        ...squad["TANK"],
+        ...squad["DAMAGE"],
+        ...squad["SUPPORT"],
+      ];
+
+      return `${allHeroes.join(" | ")}`;
+    },
     simpleSquad: function () {
       return {
         DAMAGE: this.squad.damage.map((h) => h.name),
@@ -264,6 +273,22 @@ export default {
     this.randomSquad();
   },
   methods: {
+    clipboardSuccessHandler() {
+      const oldText = this.copyToClipboardText;
+      this.copyToClipboardText = "Copied!";
+
+      setTimeout(() => {
+        this.copyToClipboardText = oldText;
+      }, 1500);
+    },
+    clipboardErrorHandler() {
+      const oldText = this.copyToClipboardText;
+      this.copyToClipboardText = "Error copying :(";
+
+      setTimeout(() => {
+        this.copyToClipboardText = oldText;
+      }, 1500);
+    },
     randomSquadHandler: function () {
       this.randomSquad();
       sendEvent("Squad", "GetRandom", JSON.stringify(this.simpleSquad));
@@ -354,6 +379,7 @@ export default {
   margin: 1rem 0 0 0;
   font-weight: bold;
 }
+
 .selected-heroes-text {
   margin: 0;
   font-color: orange;
@@ -368,6 +394,29 @@ export default {
   .right-title {
     margin-top: 5%;
   }
+}
+
+.copy-to-clipboard-button {
+  display: inline;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  background-color: #0192c7;
+  outline: none;
+  padding: 0 0.3em;
+  margin: 0 0 0 0.5em;
+  height: min-content;
+  min-width: 120px;
+  transform: skewX(-10deg);
+  transition: opacity 1s;
+}
+
+.copy-to-clipboard-button:active {
+  transform: skewX(-10deg) translate(1px, 1px);
+}
+
+.copy-to-clipboard-button:hover {
+  cursor: pointer;
 }
 
 .filter-description {
@@ -391,6 +440,7 @@ export default {
   max-height: 2em;
   margin-right: 0.5rem;
 }
+
 .hero-name-squad {
   font-size: 2em;
   vertical-align: middle;
@@ -404,9 +454,11 @@ export default {
 .role-icon {
   max-height: 2em;
 }
+
 .role-header {
   margin: 0.5em 0.5em 0.5em 0;
 }
+
 .filter-header {
   display: flex;
   flex-direction: row;

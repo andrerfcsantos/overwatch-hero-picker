@@ -7,12 +7,14 @@ import store from "./store";
 import VueRouter from "vue-router";
 import { routes } from "./router/routes";
 import { NavbarPlugin } from "bootstrap-vue";
+import Clipboard from "v-clipboard";
 
 Vue.config.productionTip = false;
 
 // Vue router
 Vue.use(VueRouter);
 Vue.use(NavbarPlugin);
+Vue.use(Clipboard);
 
 const router = new VueRouter({
   routes,

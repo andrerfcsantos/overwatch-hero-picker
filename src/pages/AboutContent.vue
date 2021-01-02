@@ -1,8 +1,6 @@
 <template>
   <div class="about-main-container col-10">
-    <h2 class="title">
-      About this site
-    </h2>
+    <h2 class="title">About this site</h2>
 
     <p class="paragraph-text">
       When playing Overwatch, we all had those moments where we are unsure about
@@ -23,9 +21,7 @@
       the "mystery heroes" game mode.
     </p>
 
-    <h2 class="title">
-      Why another Hero Picker?
-    </h2>
+    <h2 class="title">Why another Hero Picker?</h2>
 
     <p class="paragraph-text">
       There are several other random hero pickers/generators for Overwatch, but
@@ -41,18 +37,14 @@
       them in the future.
     </p>
 
-    <h2 class="title">
-      Discord
-    </h2>
+    <h2 class="title">Discord</h2>
 
     <p class="paragraph-text">
       Join the discord server:
       <a href="https://discord.gg/rwQMrCa">https://discord.gg/rwQMrCa</a>
     </p>
 
-    <h2 class="title">
-      Donate
-    </h2>
+    <h2 class="title">Donate</h2>
 
     <p class="paragraph-text">
       If you like this project, consider making a donation by clicking on the
@@ -70,9 +62,7 @@
       />
     </a>
 
-    <h2 class="title disclaimer-header">
-      Contact me
-    </h2>
+    <h2 class="title disclaimer-header">Contact me</h2>
 
     <p class="paragraph-text">
       If you have feedback, suggestions, comments about the site or you just
@@ -81,9 +71,7 @@
       <a href="https://discord.gg/rwQMrCa">discord server</a>.
     </p>
 
-    <h2 class="title disclaimer-header">
-      Disclaimer
-    </h2>
+    <h2 class="title disclaimer-header">Disclaimer</h2>
 
     <p class="paragraph-text">
       This is a fan-site for Overwatch and it is not affiliated with Blizzard
@@ -91,18 +79,14 @@
       relevant copyright notices:
     </p>
 
-    <h3 class="copyright-notice-header">
-      Blizzard Entertainment®
-    </h3>
+    <h3 class="copyright-notice-header">Blizzard Entertainment®</h3>
     <p class="paragraph-text copyright-notice">
       ®2016 Blizzard Entertainment, Inc. All rights reserved. Overwatch is a
       trademark or registered trademark of Blizzard Entertainment, Inc. in the
       U.S. and/or other countries.
     </p>
 
-    <h3 class="copyright-notice-header">
-      Overwatch™
-    </h3>
+    <h3 class="copyright-notice-header">Overwatch™</h3>
 
     <p class="paragraph-text copyright-notice">
       Overwatch™®2016 Blizzard Entertainment, Inc. All rights reserved.
