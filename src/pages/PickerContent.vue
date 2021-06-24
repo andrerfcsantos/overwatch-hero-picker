@@ -8,23 +8,23 @@
           <input
             id="checkbox-show-portrait"
             v-model="showPortrait"
+            :value="true"
             type="checkbox"
             name="checkbox-show-portrait"
-            :value="true"
           />
           <label
             id="show-portrait-label"
             for="checkbox-show-portrait"
             class="show-portrait-label"
-            >Show hero portrait</label
-          >
+            >Show hero portrait
+          </label>
         </div>
 
         <img
           v-if="showPortrait"
           key="hero-image"
-          class="chosen-hero-image img-fluid"
           :src="'assets/imgs/heroes/portraits/' + selectedHero.key + '.png'"
+          class="chosen-hero-image img-fluid"
         />
 
         <transition name="hero-name-transition" mode="out-in">
@@ -98,7 +98,13 @@
           </button>
         </div>
 
-        <HeroCard v-for="h in getHeroesByRole('TANK')" :key="h.key" :hero="h" />
+        <div class="card-group">
+          <HeroCard
+            v-for="h in getHeroesByRole('TANK')"
+            :key="h.key"
+            :hero="h"
+          />
+        </div>
 
         <div class="filter-header">
           <img
@@ -121,11 +127,13 @@
           </button>
         </div>
 
-        <HeroCard
-          v-for="h in getHeroesByRole('DAMAGE')"
-          :key="h.key"
-          :hero="h"
-        />
+        <div class="card-group">
+          <HeroCard
+            v-for="h in getHeroesByRole('DAMAGE')"
+            :key="h.key"
+            :hero="h"
+          />
+        </div>
 
         <div class="filter-header">
           <img
@@ -147,11 +155,13 @@
             Unselect All
           </button>
         </div>
-        <HeroCard
-          v-for="h in getHeroesByRole('SUPPORT')"
-          :key="h.key"
-          :hero="h"
-        />
+        <div class="card-group">
+          <HeroCard
+            v-for="h in getHeroesByRole('SUPPORT')"
+            :key="h.key"
+            :hero="h"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -323,9 +333,11 @@ export default {
 .role-icon {
   max-height: 2em;
 }
+
 .role-header {
   margin: 0.5em 0.5em 0.5em 0;
 }
+
 .filter-header {
   display: flex;
   flex-direction: row;
@@ -393,5 +405,11 @@ export default {
 
 .show-portrait-label {
   margin: 0 0 0 1%;
+}
+
+.card-group {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 </style>
