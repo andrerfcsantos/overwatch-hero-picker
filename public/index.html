@@ -30,45 +30,106 @@
         content="Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads." />
   <meta property="og:url" content="https://www.owheropicker.com/" />
   <meta property="og:site_name" content="Overwatch Random Hero Picker" />
-  <meta property="og:image" content="<%= BASE_URL %>assets/imgs/heroes/icons/tracer.png" />
+  <meta property="og:image" content="assets/imgs/heroes/icons/tracer.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:description"
         content="Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads." />
   <meta name="twitter:title" content="Overwatch Random Hero Picker" />
-  <meta name="twitter:image" content="<%= BASE_URL %>assets/imgs/heroes/icons/tracer.png" />
-  <link rel="icon" type="image/x-icon" href="<%= BASE_URL %>favicon.ico">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/ana.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/ashe.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/baptiste.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/bastion.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/brigitte.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/doomfist.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/dva.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/echo.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/genji.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/hanzo.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/junkrat.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/lucio.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/mccree.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/mei.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/mercy.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/moira.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/orisa.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/pharah.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/reaper.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/reinhardt.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/roadhog.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/sigma.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/soldier76.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/sombra.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/symmetra.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/torbjorn.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/tracer.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/widowmaker.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/winston.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/wreckingball.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/zarya.png">
-  <link rel="preload" as="image" href="<%= BASE_URL %>assets/imgs/heroes/portraits/zenyatta.png">
+  <meta name="twitter:image" content="assets/imgs/heroes/icons/tracer.png" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="preload" as="image" href="assets/imgs/navbar/bmc.svg">
+    <link rel="preload" as="image" href="assets/imgs/navbar/ow-logo.svg">
+
+    <link rel="preload" as="image" href="assets/imgs/roles/damage.png">
+    <link rel="preload" as="image" href="assets/imgs/roles/support.png">
+    <link rel="preload" as="image" href="assets/imgs/roles/tank.png">
+
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/ana.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/ashe.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/baptiste.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/bastion.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/brigitte.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/doomfist.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/dva.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/echo.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/genji.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/hanzo.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/junkrat.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/lucio.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/mccree.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/mei.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/mercy.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/moira.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/orisa.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/pharah.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/reaper.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/reinhardt.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/roadhog.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/sigma.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/soldier76.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/sombra.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/symmetra.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/torbjorn.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/tracer.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/widowmaker.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/winston.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/wreckingball.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/zarya.png">
+    <link rel="preload" as="image" href="assets/imgs/heroes/icons/zenyatta.png">
+    <link rel="preload" href="assets/fonts/big_noodle_titling-webfont.woff2" as="font" type="font/woff2" crossorigin>
+
+    <style>
+        @font-face {
+            font-family: "Big Noodle Titling";
+            src: local("Big Noodle Titling"),
+            url("assets/fonts/big_noodle_titling-webfont.woff2")
+            format("woff2"),
+            url("assets/fonts/big_noodle_titling-webfont.woff") format("woff"),
+            url("assets/fonts/big_noodle_titling-webfont.ttf")
+            format("truetype"),
+            url("assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular")
+            format("svg");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/ana.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/ashe.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/baptiste.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/bastion.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/brigitte.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/doomfist.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/dva.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/echo.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/genji.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/hanzo.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/junkrat.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/lucio.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/mccree.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/mei.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/mercy.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/moira.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/orisa.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/pharah.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/reaper.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/reinhardt.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/roadhog.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/sigma.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/soldier76.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/sombra.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/symmetra.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/torbjorn.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/tracer.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/widowmaker.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/winston.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/wreckingball.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/zarya.png">
+    <link rel="prefetch" as="image" href="assets/imgs/heroes/portraits/zenyatta.png">
+
+
 </head>
 <body>
 <noscript>
