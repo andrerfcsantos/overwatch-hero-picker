@@ -6,7 +6,7 @@
       <b-navbar-brand to="/">
         <img
           class="ow-logo img-fluid"
-          src="../../public/assets/imgs/navbar/ow-logo.svg"
+          src="assets/imgs/navbar/ow-logo.svg"
         />
         <span class="title-text">Overwatch Hero Picker</span>
       </b-navbar-brand>
@@ -25,7 +25,7 @@
         >
           <img
             class="bmc-logo img-fluid"
-            src="../../public/assets/imgs/navbar/bmc.svg"
+            src="assets/imgs/navbar/bmc.svg"
           />
         </b-nav-item>
       </b-navbar-nav>

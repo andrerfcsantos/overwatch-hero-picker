@@ -37,21 +37,6 @@ body {
   overflow-x: hidden;
 }
 
-@font-face {
-  font-family: "Big Noodle Titling";
-  src: local("Big Noodle Titling"),
-    url("../public/assets/fonts/big_noodle_titling-webfont.woff2")
-      format("woff2"),
-    url("../public/assets/fonts/big_noodle_titling-webfont.woff") format("woff"),
-    url("../public/assets/fonts/big_noodle_titling-webfont.ttf")
-      format("truetype"),
-    url("../public/assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular")
-      format("svg");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 .unselectable {
   -moz-user-select: none;
   -khtml-user-select: none;
