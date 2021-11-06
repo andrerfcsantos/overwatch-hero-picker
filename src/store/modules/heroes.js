@@ -72,11 +72,11 @@ const state = {
       selected: false,
       key: "junkrat",
     },
-    mccree: {
-      name: "McCree",
+    cassidy: {
+      name: "Cassidy",
       role: "DAMAGE",
       selected: false,
-      key: "mccree",
+      key: "cassidy",
     },
     mei: {
       name: "Mei",
