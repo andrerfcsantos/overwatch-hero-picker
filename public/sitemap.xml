@@ -16,4 +16,19 @@
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
    </url>
+   <url>
+      <loc>https://ow2.owheropicker.com/</loc>
+      <changefreq>monthly</changefreq>
+      <priority>1</priority>
+   </url>
+   <url>
+      <loc>https://ow2.owheropicker.com/#/squad</loc>
+      <changefreq>monthly</changefreq>
+      <priority>1</priority>
+   </url>
+   <url>
+      <loc>https://ow2.owheropicker.com/#/about</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.5</priority>
+   </url>
 </urlset>
