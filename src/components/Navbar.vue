@@ -6,12 +6,15 @@
       <b-navbar-brand to="/">
         <img
           class="ow-logo img-fluid"
-          src="assets/imgs/navbar/ow-logo.svg"
+          src="assets/imgs/navbar/ow2-logo.png"
         />
         <span class="title-text">Overwatch Hero Picker</span>
       </b-navbar-brand>
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
+        <b-nav-item href="https://owheropicker.com">
+            OW 1 Picker
+        </b-nav-item>
         <b-nav-item to="/about">About</b-nav-item>
         <b-nav-item
           href="https://github.com/andrerfcsantos/overwatch-hero-picker"

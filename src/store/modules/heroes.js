@@ -50,7 +50,7 @@ const state = {
     },
     doomfist: {
       name: "Doomfist",
-      role: "DAMAGE",
+      role: "TANK",
       selected: false,
       key: "doomfist",
     },
@@ -191,6 +191,12 @@ const state = {
       role: "DAMAGE",
       selected: false,
       key: "echo",
+    },
+    sojourn: {
+      name: "Sojourn",
+      role: "DAMAGE",
+      selected: false,
+      key: "sojourn",
     },
   },
 };
