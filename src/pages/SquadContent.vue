@@ -5,19 +5,19 @@
         <h1 class="left-title">Team Generator</h1>
 
         <div class="squad">
-          <div class="force222">
+          <div class="force122">
             <input
-              id="checkbox-force222"
-              v-model="force222"
+              id="checkbox-force122"
+              v-model="force122"
               type="checkbox"
-              name="checkbox-force222"
+              name="checkbox-force122"
               :value="true"
             />
             <label
-              id="force222-label"
-              for="checkbox-force222"
-              class="force222-label"
-              >Force 2-2-2</label
+              id="force122-label"
+              for="checkbox-force122"
+              class="force122-label"
+              >Force 1-2-2</label
             >
             <button
               v-clipboard="() => clipboardHeroes"
@@ -233,7 +233,7 @@ export default {
         selected: false,
         key: "",
       },
-      force222: true,
+      force122: true,
       copyToClipboardText: "Copy to clipboard",
     };
   },
@@ -263,8 +263,8 @@ export default {
     },
   },
   watch: {
-    force222: function (newValue) {
-      sendEvent("Option", "ToggleForce222", newValue);
+    force122: function (newValue) {
+      sendEvent("Option", "Toggleforce122", newValue);
     },
   },
   created() {
@@ -300,7 +300,7 @@ export default {
     randomSquad: function () {
       var squad;
 
-      if (this.force222) {
+      if (this.force122) {
         squad = randomSquad();
       } else {
         squad = randomSquadClassic();
@@ -528,11 +528,11 @@ export default {
   opacity: 1;
 }
 
-.force222-label {
+.force122-label {
   margin: 0 0 0 1%;
 }
 
-.force222 {
+.force122 {
   text-align: center;
   font-size: 1.25rem;
 }

@@ -65,12 +65,12 @@ export function randomSquadClassic(roles = []) {
   if (roles.length > 0) {
     rolesToGenerate = roles;
   } else {
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       rolesToGenerate.push(randomFromList(roleSet));
     }
   }
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     let role = popRandomFromArray(rolesToGenerate);
     let hero = undefined;
 
@@ -88,7 +88,6 @@ export function randomSquadClassic(roles = []) {
 
 export function randomSquad() {
   return randomSquadClassic([
-    "TANK",
     "TANK",
     "DAMAGE",
     "DAMAGE",
