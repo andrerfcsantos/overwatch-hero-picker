@@ -4,10 +4,7 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-brand to="/">
-        <img
-          class="ow-logo img-fluid"
-          src="assets/imgs/navbar/ow-logo.svg"
-        />
+        <img class="ow-logo img-fluid" src="assets/imgs/navbar/ow-logo.svg" />
         <span class="title-text">Overwatch Hero Picker</span>
       </b-navbar-brand>
       <!-- Right aligned nav items -->
@@ -26,10 +23,7 @@
           href="https://www.buymeacoffee.com/heropickers"
           target="_blank"
         >
-          <img
-            class="bmc-logo img-fluid"
-            src="assets/imgs/navbar/bmc.svg"
-          />
+          <img class="bmc-logo img-fluid" src="assets/imgs/navbar/bmc.svg" />
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>

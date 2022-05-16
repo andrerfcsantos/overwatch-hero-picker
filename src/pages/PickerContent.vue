@@ -258,6 +258,7 @@ export default {
   display: flex;
   width: 99%;
   min-height: 85vh;
+  margin-bottom: 5em;
 }
 
 .left-content {
