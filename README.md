@@ -2,6 +2,9 @@
 
 ![Hero Picker Logo](images/heropicker/logo/logo_black.png)
 
+[![Vercel Logo](https://user-images.githubusercontent.com/6928620/168695122-e15b69c1-4c39-47c5-86ff-07c550b9c42b.svg)](https://vercel.com/?utm_source=hero-pickers&utm_campaign=oss)
+
+
 Repository for the Random Hero Picker for Overwatch.
 This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.
 
