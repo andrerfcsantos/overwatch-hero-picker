@@ -198,6 +198,12 @@ const state = {
       selected: false,
       key: "sojourn",
     },
+    junkerqueen: {
+      name: "Junker Queen",
+      role: "TANK",
+      selected: false,
+      key: "junkerqueen",
+    },
   },
 };
 
