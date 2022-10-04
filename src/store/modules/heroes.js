@@ -204,6 +204,12 @@ const state = {
       selected: false,
       key: "junkerqueen",
     },
+    kiriko: {
+      name: "Kiriko",
+      role: "SUPPORT",
+      selected: false,
+      key: "kiriko",
+    },
   },
 };
 
