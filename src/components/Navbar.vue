@@ -9,9 +9,6 @@
       </b-navbar-brand>
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-item href="https://owheropicker.com">
-            OW 1 Picker
-        </b-nav-item>
         <b-nav-item to="/about">About</b-nav-item>
         <b-nav-item
           href="https://github.com/andrerfcsantos/overwatch-hero-picker"
