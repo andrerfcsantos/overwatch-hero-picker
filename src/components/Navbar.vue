@@ -3,7 +3,7 @@
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-brand to="/">
+      <b-navbar-brand href="https://owheropicker.com">
         <img class="ow-logo img-fluid" src="assets/imgs/navbar/ow2-logo.png" />
         <span class="title-text">Overwatch 2 Hero Picker</span>
       </b-navbar-brand>

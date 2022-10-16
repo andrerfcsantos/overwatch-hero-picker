@@ -87,13 +87,7 @@ export function randomSquadClassic(roles = []) {
 }
 
 export function randomSquad() {
-  return randomSquadClassic([
-    "TANK",
-    "DAMAGE",
-    "DAMAGE",
-    "SUPPORT",
-    "SUPPORT",
-  ]);
+  return randomSquadClassic(["TANK", "DAMAGE", "DAMAGE", "SUPPORT", "SUPPORT"]);
 }
 
 export function randomSquadOld() {
