@@ -8,7 +8,7 @@
 Repository for the Random Hero Picker for Overwatch.
 This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.
 
-* **Website:** https://owheropicker.com
+* **Website:** https://ow1.owheropicker.com
 
 ![Hero Picker Main Page Screenshot](images/heropicker/screenshots/main_page.png)
 

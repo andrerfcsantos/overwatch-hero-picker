@@ -9,7 +9,7 @@
       </b-navbar-brand>
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-item href="https://ow2.owheropicker.com">
+        <b-nav-item href="https://owheropicker.com">
           OW 2 Picker
         </b-nav-item>
         <b-nav-item to="/about">About</b-nav-item>
