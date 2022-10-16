@@ -30,18 +30,19 @@
       something simple but useful.
     </p>
 
-    <p class="paragraph-text">
-      The majority of other hero pickers I tried also have ads. This is an
-      annoyance, especially on mobile devices. To ensure the smoothest
-      experience possible, this site has no ads and I have no intention to add
-      them in the future.
-    </p>
-
     <h2 class="title">Discord</h2>
 
     <p class="paragraph-text">
       Join the discord server:
       <a href="https://discord.gg/rwQMrCa">https://discord.gg/rwQMrCa</a>
+    </p>
+
+    <h2 class="title">Overwatch 1 Legacy Site</h2>
+
+    <p class="paragraph-text">
+      The current site is for Overwatch 2 which introduced new heroes and
+      changed the role of some existing ones. If you want to access the site for
+      Overwatch 1, it is still accessible at <a href="https://ow1.owheropicker.com">ow1.owheropicker.com</a>
     </p>
 
     <h2 class="title">Donate</h2>
