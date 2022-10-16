@@ -103,7 +103,7 @@ import { sendEvent } from "../services/events";
 export default {
   name: "AboutContent",
   created() {
-    window.document.title = "About - Overwatch Hero Picker";
+    window.document.title = "About - Overwatch 2 Hero Picker";
     sendEvent("Page", "Visit", "About");
   },
 };
