@@ -210,6 +210,12 @@ const state = {
       selected: false,
       key: "kiriko",
     },
+    ramattra: {
+      name: "Ramattra",
+      role: "TANK",
+      selected: false,
+      key: "ramattra",
+    }
   },
 };
 
