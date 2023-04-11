@@ -215,7 +215,13 @@ const state = {
       role: "TANK",
       selected: false,
       key: "ramattra",
-    }
+    },
+    lifeweaver: {
+      name: "lifeweaver",
+      role: "SUPPORT",
+      selected: false,
+      key: "lifeweaver",
+    },
   },
 };
 
