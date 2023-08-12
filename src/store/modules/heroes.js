@@ -222,6 +222,12 @@ const state = {
       selected: false,
       key: "lifeweaver",
     },
+    illari: {
+      name: "Illari",
+      role: "SUPPORT",
+      selected: false,
+      key: "illari",
+    },
   },
 };
 
