@@ -1,391 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script
-      async
-      defer
-      data-domain="owheropicker.com"
-      src="/js/script.hash.outbound-links.js"
-    ></script>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-28576677-3"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "UA-28576677-3");
-    </script>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Overwatch 2 Random Hero Picker | For teams and solo players</title>
-    <base href="/" />
-    <meta
-      name="description"
-      content="Overwatch 2 Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads."
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Overwatch 2 Random Hero Picker" />
-    <meta
-      property="og:description"
-      content="Overwatch 2 Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads."
-    />
-    <meta property="og:url" content="https://www.owheropicker.com/" />
-    <meta property="og:site_name" content="Overwatch 2 Random Hero Picker" />
-    <meta property="og:image" content="assets/imgs/heroes/icons/tracer.png" />
-    <meta name="twitter:card" content="summary" />
-    <meta
-      name="twitter:description"
-      content="Overwatch 2 Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads."
-    />
-    <meta name="twitter:title" content="Overwatch 2 Random Hero Picker" />
-    <meta name="twitter:image" content="assets/imgs/heroes/icons/tracer.png" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+<head>
+  <script
+    async
+    defer
+    data-domain="owheropicker.com"
+    src="/js/script.hash.outbound-links.js"
+  ></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-28576677-3"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-    <link rel="preload" as="image" href="assets/imgs/navbar/bmc.svg" />
-    <link rel="preload" as="image" href="assets/imgs/navbar/ow2-logo.png" />
+    function gtag() {
+      dataLayer.push(arguments);
+    }
 
-    <link rel="preload" as="image" href="assets/imgs/roles/damage.png" />
-    <link rel="preload" as="image" href="assets/imgs/roles/support.png" />
-    <link rel="preload" as="image" href="assets/imgs/roles/tank.png" />
+    gtag("js", new Date());
+    gtag("config", "UA-28576677-3");
+  </script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Overwatch 2 Random Hero Picker | For teams and solo players</title>
+  <base href="/" />
+  <meta
+    name="description"
+    content="Overwatch 2 Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads."
+  />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Overwatch 2 Random Hero Picker" />
+  <meta
+    property="og:description"
+    content="Overwatch 2 Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads."
+  />
+  <meta property="og:url" content="https://www.owheropicker.com/" />
+  <meta property="og:site_name" content="Overwatch 2 Random Hero Picker" />
+  <meta property="og:image" content="assets/imgs/heroes/icons/tracer.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta
+    name="twitter:description"
+    content="Overwatch 2 Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads."
+  />
+  <meta name="twitter:title" content="Overwatch 2 Random Hero Picker" />
+  <meta name="twitter:image" content="assets/imgs/heroes/icons/tracer.png" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/ana.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/ashe.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/baptiste.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/bastion.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/brigitte.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/doomfist.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/dva.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/echo.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/genji.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/hanzo.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/junkrat.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/lucio.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="public/assets/imgs/heroes/icons/cassidy.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/mei.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/mercy.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/moira.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/orisa.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/pharah.png" />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/reaper.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/reinhardt.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/roadhog.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/sigma.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/soldier76.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/sombra.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/symmetra.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/torbjorn.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/tracer.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/widowmaker.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/winston.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/wreckingball.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/zarya.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/zenyatta.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/sojourn.png"
-    />
-    <link rel="preload" as="image" href="assets/imgs/heroes/icons/kiriko.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/ramattra.png"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/imgs/heroes/icons/lifeweaver.png"
-    />
-    <link
+  <link rel="preload" as="image" href="assets/imgs/navbar/bmc.svg" />
+  <link rel="preload" as="image" href="assets/imgs/navbar/ow2-logo.png" />
+
+  <link rel="preload" as="image" href="assets/imgs/roles/damage.png" />
+  <link rel="preload" as="image" href="assets/imgs/roles/support.png" />
+  <link rel="preload" as="image" href="assets/imgs/roles/tank.png" />
+
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/ana.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/ashe.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/baptiste.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/bastion.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/brigitte.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/doomfist.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/dva.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/echo.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/genji.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/hanzo.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/junkrat.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/lucio.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="public/assets/imgs/heroes/icons/cassidy.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/mei.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/mercy.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/moira.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/orisa.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/pharah.png" />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/reaper.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/reinhardt.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/roadhog.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/sigma.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/soldier76.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/sombra.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/symmetra.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/torbjorn.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/tracer.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/widowmaker.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/winston.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/wreckingball.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/zarya.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/zenyatta.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/sojourn.png"
+  />
+  <link rel="preload" as="image" href="assets/imgs/heroes/icons/kiriko.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/ramattra.png"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/lifeweaver.png"
+  />
+  <link
     rel="preload"
     as="image"
     href="assets/imgs/heroes/icons/illari.png"
   />
-    <link
-      rel="preload"
-      href="assets/fonts/big_noodle_titling-webfont.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+  <link
+    rel="preload"
+    as="image"
+    href="assets/imgs/heroes/icons/mauga.png"
+  />
+  <link
+    rel="preload"
+    href="assets/fonts/big_noodle_titling-webfont.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin
+  />
 
-    <style>
+  <style>
       @font-face {
-        font-family: "Big Noodle Titling";
-        src: local("Big Noodle Titling"),
+          font-family: "Big Noodle Titling";
+          src: local("Big Noodle Titling"),
           url("assets/fonts/big_noodle_titling-webfont.woff2") format("woff2"),
           url("assets/fonts/big_noodle_titling-webfont.woff") format("woff"),
           url("assets/fonts/big_noodle_titling-webfont.ttf") format("truetype"),
-          url("assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular")
-            format("svg");
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
+          url("assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular") format("svg");
+          font-weight: normal;
+          font-style: normal;
+          font-display: swap;
       }
-    </style>
+  </style>
 
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/ana.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/ashe.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/baptiste.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/bastion.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/brigitte.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/doomfist.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/dva.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/echo.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/genji.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/hanzo.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/junkrat.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/lucio.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/cassidy.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/mei.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/mercy.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/moira.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/orisa.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/pharah.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/reaper.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/reinhardt.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/roadhog.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/sigma.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/soldier76.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/sombra.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/symmetra.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/torbjorn.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/tracer.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/widowmaker.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/winston.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/wreckingball.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/zarya.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/zenyatta.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/sojourn.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/kiriko.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/ramattra.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/lifeweaver.png"
-    />
-    <link
-      rel="prefetch"
-      as="image"
-      href="assets/imgs/heroes/portraits/illari.png"
-    />
-  </head>
-  <body>
-    <noscript>
-      <strong
-        >We're sorry but Overwatch Hero Picker doesn't work properly without
-        JavaScript enabled. Please enable it to continue.</strong
-      >
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/ana.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/ashe.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/baptiste.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/bastion.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/brigitte.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/doomfist.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/dva.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/echo.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/genji.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/hanzo.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/junkrat.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/lucio.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/cassidy.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/mei.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/mercy.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/moira.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/orisa.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/pharah.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/reaper.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/reinhardt.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/roadhog.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/sigma.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/soldier76.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/sombra.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/symmetra.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/torbjorn.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/tracer.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/widowmaker.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/winston.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/wreckingball.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/zarya.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/zenyatta.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/sojourn.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/kiriko.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/ramattra.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/lifeweaver.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/illari.png"
+  />
+  <link
+    rel="prefetch"
+    as="image"
+    href="assets/imgs/heroes/portraits/mauga.png"
+  />
+</head>
+<body>
+<noscript>
+  <strong
+  >We're sorry but Overwatch Hero Picker doesn't work properly without
+    JavaScript enabled. Please enable it to continue.</strong
+  >
+</noscript>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
 </html>

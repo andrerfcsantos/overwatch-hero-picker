@@ -228,6 +228,12 @@ const state = {
       selected: false,
       key: "illari",
     },
+    mauga: {
+      name: "Mauga",
+      role: "TANK",
+      selected: false,
+      key: "mauga",
+    },
   },
 };
 
