@@ -234,6 +234,12 @@ const state = {
       selected: false,
       key: "mauga",
     },
+    venture: {
+      name: "Venture",
+      role: "DAMAGE",
+      selected: false,
+      key: "venture",
+    },
   },
 };
 
