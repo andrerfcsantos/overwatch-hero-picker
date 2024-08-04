@@ -240,6 +240,12 @@ const state = {
       selected: false,
       key: "venture",
     },
+    juno: {
+      name: "Juno",
+      role: "SUPPORT",
+      selected: false,
+      key: "juno",
+    },
   },
 };
 

@@ -105,7 +105,7 @@ export default {
   created() {
     window.document.title = "About - Overwatch 2 Hero Picker";
     sendEvent("Page", "Visit", "About");
-  },
+  }
 };
 </script>
 
