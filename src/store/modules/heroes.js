@@ -246,6 +246,12 @@ const state = {
       selected: false,
       key: "juno",
     },
+    hazard: {
+      name: "Hazard",
+      role: "TANK",
+      selected: false,
+      key: "hazard",
+    },
   },
 };
 
