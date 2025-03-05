@@ -42,7 +42,8 @@
     <p class="paragraph-text">
       The current site is for Overwatch 2 which introduced new heroes and
       changed the role of some existing ones. If you want to access the site for
-      Overwatch 1, it is still accessible at <a href="https://ow1.owheropicker.com">ow1.owheropicker.com</a>
+      Overwatch 1, it is still accessible at
+      <a href="https://ow1.owheropicker.com">ow1.owheropicker.com</a>
     </p>
 
     <h2 class="title">Donate</h2>
@@ -105,7 +106,7 @@ export default {
   created() {
     window.document.title = "About - Overwatch 2 Hero Picker";
     sendEvent("Page", "Visit", "About");
-  }
+  },
 };
 </script>
 
