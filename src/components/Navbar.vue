@@ -16,6 +16,9 @@
         >
           Github
         </b-nav-item>
+        <b-nav-item href="https://discord.gg/rwQMrCa" target="_blank">
+          <img class="bmc-logo img-fluid" src="assets/imgs/discord.png" />
+        </b-nav-item>
         <b-nav-item
           href="https://www.buymeacoffee.com/heropickers"
           target="_blank"
