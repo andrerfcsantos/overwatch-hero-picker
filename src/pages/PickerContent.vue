@@ -16,7 +16,22 @@
             id="show-portrait-label"
             for="checkbox-show-portrait"
             class="show-portrait-label"
+            style="margin-right: 10px"
             >Show hero portrait
+          </label>
+
+          <input
+            id="checkbox-show-perks"
+            v-model="showPerks"
+            :value="true"
+            type="checkbox"
+            name="checkbox-show-perks"
+          />
+          <label
+            id="show-perks-label"
+            for="checkbox-show-perks"
+            class="show-portrait-label"
+            >Randomize perks
           </label>
         </div>
 
@@ -32,7 +47,14 @@
             :key="`hero-name-${selectedHero.name}-${heroCount}`"
             class="chosen-hero-name"
           >
-            {{ selectedHero.name }}
+            {{ selectedHero.name }} <br />
+            <div v-if="showPerks" style="line-height: 0.5em">
+              <span style="font-size: 0.6em"
+                >{{ perks[0] }} | {{ perks[1] }}</span
+              >
+              <br />
+              <span class="new-perks" @click="randomPerks">New perks</span>
+            </div>
           </h2>
         </transition>
 
@@ -169,13 +191,14 @@
 
 <script>
 import {
-  randomHero,
   getHeroesByRole,
+  getRandomHeroPerks,
+  getSelected,
+  getSelectedLSHeroes,
+  randomHero,
+  saveSelectedHeroesToLS,
   selectByRole,
   unselectByRole,
-  saveSelectedHeroesToLS,
-  getSelectedLSHeroes,
-  getSelected,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
 import { sendEvent } from "../services/events";
@@ -193,8 +216,10 @@ export default {
         selected: false,
         key: "",
       },
+      perks: ["", ""],
       heroCount: 0,
       showPortrait: true,
+      showPerks: true,
     };
   },
   computed: {
@@ -210,28 +235,50 @@ export default {
       localStorage.setItem("showPortrait", newValue);
       sendEvent("Option", "ToggleShowPortrait", newValue);
     },
+    showPerks: function (newValue) {
+      localStorage.setItem("showPerks", newValue);
+      sendEvent("Option", "ToggleShowPerks", newValue);
+    },
   },
   created() {
     window.document.title =
       "Overwatch 2 Random Hero Picker | For teams and solo players";
-    getSelectedLSHeroes();
-    this.selectedHero = randomHero();
+
     let showPortraitLS = localStorage.getItem("showPortrait");
+    let showPerksLS = localStorage.getItem("showPerks");
 
     if (showPortraitLS !== null) {
       this.showPortrait = showPortraitLS === "true";
     } else {
       localStorage.setItem("showPortrait", this.showPortrait);
     }
+
+    if (showPerksLS !== null) {
+      this.showPerks = showPerksLS === "true";
+    } else {
+      localStorage.setItem("showPerks", this.showPerks);
+    }
+
+    getSelectedLSHeroes();
+    this.selectedHero = randomHero();
+    this.perks = getRandomHeroPerks(this.selectedHero.key);
   },
   methods: {
+    randomPerks() {
+      sendEvent("CurrentHero", "NewPerks", this.selectedHero.name);
+      sendEvent("CurrentPerks", "NewPerks", this.perks.join(","));
+
+      this.perks = getRandomHeroPerks(this.selectedHero.key);
+    },
     randomHeroHandler() {
+      sendEvent("CurrentHero", "GetRandom", this.selectedHero.name);
       this.randomHero();
       sendEvent("Hero", "GetRandom", this.selectedHero.name);
     },
     randomHero: function () {
       this.selectedHero = randomHero();
       this.heroCount += 1;
+      this.perks = getRandomHeroPerks(this.selectedHero.key);
     },
     getHeroesByRole(role) {
       return getHeroesByRole(role);
@@ -404,6 +451,25 @@ export default {
   opacity: 1;
 }
 
+.hero-perk-transition-enter-active {
+  transition: all 0.1s ease-out;
+}
+
+.hero-perk-transition-leave-active {
+  transition: all 0.1s ease-in;
+}
+
+.hero-perk-transition-enter,
+.hero-perk-transition-leave-to {
+  transform: scaleY(0) translateZ(0);
+  opacity: 0;
+}
+
+.hero-perk-transition-enter-to {
+  transform: scaleY(1) translateZ(0);
+  opacity: 1;
+}
+
 .show-portrait-label {
   margin: 0 0 0 1%;
 }
@@ -412,5 +478,15 @@ export default {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+}
+
+.new-perks {
+  font-size: 1rem;
+  color: orangered;
+  text-decoration: underline;
+}
+
+.new-perks:hover {
+  cursor: pointer;
 }
 </style>

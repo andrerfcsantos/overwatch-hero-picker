@@ -1,5 +1,180 @@
 import store from "../store";
 
+const heroPerks = {
+  dva: {
+    minor: ["Bunny Stomp", "Ejection Suit"],
+    major: ["Shield System", "Heavy Rockets"],
+  },
+  orisa: {
+    minor: ["Heat Dissipator", "Fleeting Bulwark"],
+    major: ["Charged Javelin", "Protective Barrier"],
+  },
+  reinhardt: {
+    minor: ["Crusader's Resolve", "Fiery Uptake"],
+    major: ["Shield Slam", "Crushing Victory"],
+  },
+  roadhog: {
+    minor: ["Scrap Hook", "Hog Toss"],
+    major: ["Invigorate", "Hogdrogen Exposure"],
+  },
+  winston: {
+    minor: ["Short Circuit", "Heavy Landing"],
+    major: ["Chain Lightning", "Revitalizing Barrier"],
+  },
+  wreckingball: {
+    minor: ["Steamroller", "Pack Rat"],
+    major: ["Hang Time", "Transfer Efficiency"],
+  },
+  zarya: {
+    minor: ["Jump-Ups", "Graviton Crush"],
+    major: ["Energy Lance", "Spotter"],
+  },
+  bastion: {
+    minor: ["Smart Bomb", "Armored Artillery"],
+    major: ["Self-Repair", "Lindholm Explosives"],
+  },
+  doomfist: {
+    minor: ["One-Two", "Survival of the Fittest"],
+    major: ["Seismic Empowerment", "Power Matrix"],
+  },
+  genji: {
+    minor: ["Acrobatics", "Dragon's Thirst"],
+    major: ["Meditation", "Blade Twisting"],
+  },
+  hanzo: {
+    minor: ["Sonic Disruption", "Scatter Arrows"],
+    major: ["Yamagami Technique", "Dragon Fury"],
+  },
+  junkrat: {
+    minor: ["Aluminium Frame", "Nitro Boost"],
+    major: ["Frag Cannon", "Tick Tock"],
+  },
+  cassidy: {
+    minor: ["Past Noon", "Quick Draw"],
+    major: ["Bang Bang", "Gun Slingin'"],
+  },
+  mei: {
+    minor: ["Chilling Reach", "Permafrost"],
+    major: ["Cryo-Storm", "Biting Cold"],
+  },
+  pharah: {
+    minor: ["Helix Shields", "Drift Thrusters"],
+    major: ["Fuel Stores", "Concussive Implosion"],
+  },
+  reaper: {
+    minor: ["Soul Reaving", "Death's Shadow"],
+    major: ["Dire Triggers", "Ravenous Wraith"],
+  },
+  soldier76: {
+    minor: ["Field Emergency", "Recycled Pulse Munitions"],
+    major: ["Stim Pack", "Agility Training"],
+  },
+  sombra: {
+    minor: ["CTRL ALT ESC", "Viral Efficacy"],
+    major: ["White Hat", "Stack Overflow"],
+  },
+  symmetra: {
+    minor: ["Advanced Teleportation", "Sentry Capacity"],
+    major: ["Perfect Alignment", "Shield Battery"],
+  },
+  torbjorn: {
+    minor: ["Fully Loaded", "Craftsman"],
+    major: ["Overloaded Turret", "Anchor Bolts"],
+  },
+  tracer: {
+    minor: ["Blast from the Past", "Blink Packs"],
+    major: ["Quantum Entanglement", "Flashback"],
+  },
+  widowmaker: {
+    minor: ["Focused Aim", "Scoped Efficiency"],
+    major: ["Escape Plan", "Deadly Deux"],
+  },
+  ana: {
+    minor: ["Groggy", "Biotic Bounce"],
+    major: ["Headhunter", "Shrike"],
+  },
+  brigitte: {
+    minor: ["Barrier Restoration", "Morale Boost"],
+    major: ["Quick Fix", "Whiplash"],
+  },
+  lucio: {
+    minor: ["Bass Blowout", "Groovin'"],
+    major: ["Noise Violation", "Accelerando"],
+  },
+  mercy: {
+    minor: ["Angelic Recovery", "Winged Reach"],
+    major: ["Chain Boost", "Flash Heal"],
+  },
+  moira: {
+    minor: ["Vanish", "Uprush"],
+    major: ["Ethical Nourishment", "Contamination"],
+  },
+  zenyatta: {
+    minor: ["Zenith Kick", "Ascendance"],
+    major: ["Focused Destruction", "Duality"],
+  },
+  baptiste: {
+    minor: ["Field Medicine", "Automated Healing"],
+    major: ["Assault Burst", "Rocket Boots"],
+  },
+  sigma: {
+    minor: ["Kinetic Cycle", "Massive Impact"],
+    major: ["Hyper Strike", "Levitation"],
+  },
+  ashe: {
+    minor: ["Sidewinder", "Rapid Fire"],
+    major: ["Airburst", "Viper's Sting"],
+  },
+  echo: {
+    minor: ["Friendly Imaging", "Enhanced Duplication"],
+    major: ["High Beams", "Full Salvo"],
+  },
+  sojourn: {
+    minor: ["Extended Mag", "Overcharged"],
+    major: ["Dual Thrusters", "Adhesive Siphon"],
+  },
+  freja: {
+    minor: ["Tracking Bolts", "Bounty Collection"],
+    major: ["Bounty Collection", "Job's Done"],
+  },
+  junkerqueen: {
+    minor: ["Rending Recall", "Battle Shout"],
+    major: ["Deep Wounds", "Savage Satiation"],
+  },
+  kiriko: {
+    minor: ["Urgent Care", "Fortune Teller"],
+    major: ["Shuffling", "Foxtrot"],
+  },
+  ramattra: {
+    minor: ["Void Surge", "Prolonged Barrier"],
+    major: ["Nanite Repair", "Vengeful Vortex"],
+  },
+  lifeweaver: {
+    minor: ["Cleansing Grasp", "Life Cycle"],
+    major: ["Lifeweaving", "Superbloom"],
+  },
+  illari: {
+    minor: ["Rapid Construction", "Summer Solstice"],
+    major: ["Solar Power", "Sunburn"],
+  },
+  mauga: {
+    minor: ["Kinetic Bandolier", "Two Hearts"],
+    major: ["Firewalker", "Combat Fuel"],
+  },
+  venture: {
+    minor: ["Seismic Sense", "Excavation Exhilaration"],
+    major: ["SMART-R Excavator", "Covered in Dirt"],
+  },
+  juno: {
+    minor: ["Familiar Vitals", "Hyper Boost"],
+    major: ["Master Blaster", "Re-Boots"],
+  },
+  hazard: {
+    minor: ["Off The Top", "Reconstitution"],
+    major: ["Anarchic Zeal", "Deep Leap"],
+  },
+};
+
 export function randomHero() {
   const selected = store.getters["heroes/getSelected"];
 
@@ -28,6 +203,11 @@ function popRandomFromArray(heroList) {
   let idx = Math.floor(Math.random() * nHeroes);
   let hero = heroList.splice(idx, 1);
   return hero[0];
+}
+
+export function getRandomHeroPerks(hero) {
+  const perks = heroPerks[hero];
+  return [randomFromList(perks.minor), randomFromList(perks.major)];
 }
 
 function randomFromList(l) {
