@@ -139,6 +139,12 @@
           >
             Unselect All
           </button>
+          <button
+            class="all-button select-just-role-button"
+            @click="selectJustRole('TANK')"
+          >
+            Just this role
+          </button>
         </div>
 
         <HeroCard v-for="h in getHeroesByRole('TANK')" :key="h.key" :hero="h" />
@@ -161,6 +167,13 @@
             @click="unselectByRole('DAMAGE')"
           >
             Unselect All
+          </button>
+
+          <button
+            class="all-button select-just-role-button"
+            @click="selectJustRole('DAMAGE')"
+          >
+            Just this role
           </button>
         </div>
 
@@ -189,6 +202,12 @@
           >
             Unselect All
           </button>
+          <button
+            class="all-button select-just-role-button"
+            @click="selectJustRole('SUPPORT')"
+          >
+            Just this role
+          </button>
         </div>
         <HeroCard
           v-for="h in getHeroesByRole('SUPPORT')"
@@ -211,6 +230,7 @@ import {
   getSelectedLSHeroes,
   getSelected,
   randomSquadClassic,
+  selectJustRole,
 } from "../services/heroes_service";
 import HeroCard from "@/components/HeroCard";
 import { sendEvent } from "../services/events";
@@ -322,6 +342,11 @@ export default {
       saveSelectedHeroesToLS();
       sendEvent("Filter", "SelectRole", role);
     },
+    selectJustRole(role) {
+      selectJustRole(role);
+      saveSelectedHeroesToLS();
+      sendEvent("Filter", "SelectJustRole", role);
+    },
     unselectByRole(role) {
       unselectByRole(role);
       saveSelectedHeroesToLS();
@@ -368,8 +393,8 @@ export default {
 .random-hero-button:active {
   font-size: 1.5rem;
   color: white;
-  background-color: orangered;
-  border-color: orangered;
+  background-color: rgb(240, 100, 20);
+  border-color: rgb(240, 100, 20);
 }
 
 .right-content {
@@ -491,7 +516,11 @@ export default {
 }
 
 .unselect-all-button {
-  background-color: rgb(231, 117, 9);
+  background-color: rgb(240, 100, 20);
+}
+
+.select-just-role-button {
+  background-color: rgb(131, 125, 125);
 }
 
 .all-button:hover {

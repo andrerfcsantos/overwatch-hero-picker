@@ -349,6 +349,9 @@ export function toggleHero(hero_key) {
 export function selectByRole(role) {
   store.dispatch(`heroes/selectByRole`, role);
 }
+export function selectJustRole(role) {
+  store.dispatch(`heroes/selectJustRole`, role);
+}
 
 export function unselectByRole(role) {
   store.dispatch(`heroes/unselectByRole`, role);

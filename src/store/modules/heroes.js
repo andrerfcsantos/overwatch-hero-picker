@@ -319,6 +319,9 @@ const actions = {
   selectByRole({ commit }, role) {
     commit("setStateByRole", { role: role, selectedState: true });
   },
+  selectJustRole({ commit }, role) {
+    commit("selectJustRole", { role: role });
+  },
   unselectByRole({ commit }, role) {
     commit("setStateByRole", { role: role, selectedState: false });
   },
@@ -336,6 +339,15 @@ const mutations = {
     for (let hero_key in state.heroes) {
       if (state.heroes[hero_key].role === role) {
         state.heroes[hero_key].selected = selectedState;
+      }
+    }
+  },
+  selectJustRole(state, { role }) {
+    for (let hero_key in state.heroes) {
+      if (state.heroes[hero_key].role === role) {
+        state.heroes[hero_key].selected = true;
+      } else {
+        state.heroes[hero_key].selected = false;
       }
     }
   },
