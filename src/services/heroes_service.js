@@ -133,10 +133,6 @@ const heroPerks = {
     minor: ["Extended Mag", "Overcharged"],
     major: ["Dual Thrusters", "Adhesive Siphon"],
   },
-  freja: {
-    minor: ["Tracking Bolts", "Bounty Collection"],
-    major: ["Bounty Collection", "Job's Done"],
-  },
   junkerqueen: {
     minor: ["Rending Recall", "Battle Shout"],
     major: ["Deep Wounds", "Savage Satiation"],
@@ -172,6 +168,10 @@ const heroPerks = {
   hazard: {
     minor: ["Off The Top", "Reconstitution"],
     major: ["Anarchic Zeal", "Deep Leap"],
+  },
+  freja: {
+    minor: ["Frost Bolts", "Tracking Instinct"],
+    major: ["Ready to Hunt", "Relentless Barrage"],
   },
 };
 

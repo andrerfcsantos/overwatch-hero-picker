@@ -252,6 +252,12 @@ const state = {
       selected: false,
       key: "hazard",
     },
+    freja: {
+      name: "Freja",
+      role: "DAMAGE",
+      selected: false,
+      key: "freja",
+    },
   },
 };
 
