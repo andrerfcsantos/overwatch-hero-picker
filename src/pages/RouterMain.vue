@@ -5,17 +5,6 @@
     <footer>
       <div class="container text-center">
         <p>
-          <a
-            href="https://vercel.com/?utm_source=hero-pickers&utm_campaign=oss"
-          >
-            <img
-              class="vercel-logo"
-              src="assets/imgs/vercel.svg"
-              alt="Vercel logo"
-            />
-          </a>
-        </p>
-        <p>
           <small>
             This is a fan-site for Overwatch and it is not in any way associated
             with Blizzard Entertainment
@@ -51,11 +40,6 @@ p {
 
 footer {
   color: grey;
-}
-
-.vercel-logo {
-  width: 9em;
-  height: auto;
 }
 
 @media (max-width: 1220px) {
