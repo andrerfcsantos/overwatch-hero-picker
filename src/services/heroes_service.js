@@ -2,7 +2,7 @@ import store from "../store";
 
 const heroPerks = {
   dva: {
-    minor: ["Bunny Stomp", "Ejection Suit"],
+    minor: ["Bunny Stomp", "Bunny Power", "Extended Boosters"],
     major: ["Shield System", "Heavy Rockets"],
   },
   orisa: {
@@ -10,11 +10,11 @@ const heroPerks = {
     major: ["Charged Javelin", "Protective Barrier"],
   },
   reinhardt: {
-    minor: ["Crusader's Resolve", "Fiery Uptake"],
+    minor: ["Crusader's Resolve", "Crusader's Fire"],
     major: ["Shield Slam", "Crushing Victory"],
   },
   roadhog: {
-    minor: ["Scrap Hook", "Hog Toss"],
+    minor: ["Scrap Hook", "Pent Up"],
     major: ["Invigorate", "Hogdrogen Exposure"],
   },
   winston: {
@@ -50,12 +50,12 @@ const heroPerks = {
     major: ["Frag Cannon", "Tick Tock"],
   },
   cassidy: {
-    minor: ["Past Noon", "Quick Draw"],
+    minor: ["Even the Odds", "Quick Draw"],
     major: ["Bang Bang", "Gun Slingin'"],
   },
   mei: {
-    minor: ["Chilling Reach", "Permafrost"],
-    major: ["Cryo-Storm", "Biting Cold"],
+    minor: ["Biting Cold", "Permafrost"],
+    major: ["Cryo-Storm", "Deep Freeze"],
   },
   pharah: {
     minor: ["Helix Shields", "Drift Thrusters"],
@@ -70,8 +70,8 @@ const heroPerks = {
     major: ["Stim Pack", "Agility Training"],
   },
   sombra: {
-    minor: ["CTRL ALT ESC", "Viral Efficacy"],
-    major: ["White Hat", "Stack Overflow"],
+    minor: ["CTRL ALT ESC", "Encrypted Upload"],
+    major: ["White Hat", "Viral Replication"],
   },
   symmetra: {
     minor: ["Advanced Teleportation", "Sentry Capacity"],
@@ -98,11 +98,11 @@ const heroPerks = {
     major: ["Quick Fix", "Whiplash"],
   },
   lucio: {
-    minor: ["Bass Blowout", "Groovin'"],
+    minor: ["Bass Blowout", "Beat Drop"],
     major: ["Noise Violation", "Accelerando"],
   },
   mercy: {
-    minor: ["Angelic Recovery", "Winged Reach"],
+    minor: ["Angelic Resurrection", "Winged Reach"],
     major: ["Chain Boost", "Flash Heal"],
   },
   moira: {
@@ -162,8 +162,8 @@ const heroPerks = {
     major: ["SMART-R Excavator", "Covered in Dirt"],
   },
   juno: {
-    minor: ["Familiar Vitals", "Hyper Boost"],
-    major: ["Master Blaster", "Re-Boots"],
+    minor: ["Familiar Vitals", "Re-Boots"],
+    major: ["Master Blaster", "Locked On"],
   },
   hazard: {
     minor: ["Off The Top", "Reconstitution"],
