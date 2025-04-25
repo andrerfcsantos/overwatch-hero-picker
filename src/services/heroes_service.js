@@ -2,7 +2,7 @@ import store from "../store";
 
 const heroPerks = {
   dva: {
-    minor: ["Bunny Stomp", "Bunny Power", "Extended Boosters"],
+    minor: ["Bunny Power", "Extended Boosters"],
     major: ["Shield System", "Heavy Rockets"],
   },
   orisa: {
