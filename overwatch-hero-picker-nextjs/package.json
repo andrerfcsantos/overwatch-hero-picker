@@ -1,0 +1,39 @@
+{
+  "name": "overwatch-hero-picker-nextjs",
+  "version": "1.0.0",
+  "description": "Random Overwatch Hero Picker built with Next.js",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\""
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^15.0.0",
+    "prettier": "^3.0.0"
+  },
+  "keywords": [
+    "games",
+    "overwatch",
+    "random hero",
+    "nextjs",
+    "typescript"
+  ],
+  "author": "André Santos <owheropicker@gmail.com>",
+  "license": "ISC"
+}

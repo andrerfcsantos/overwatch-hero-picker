@@ -1,0 +1,345 @@
+<!DOCTYPE html><!--LnkHi5ev0WBaqj8jjlApJ--><html lang="en"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/_next/static/css/1d2c9494f5210300.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-063fe98f9373f280.js"/><script src="/_next/static/chunks/4bd1b696-e3cb916a141afd6f.js" async=""></script><script src="/_next/static/chunks/ed9f2dc4-59b7b8b98d86ff4b.js" async=""></script><script src="/_next/static/chunks/964-e632f1235d3172f4.js" async=""></script><script src="/_next/static/chunks/main-app-9e443598615e81b7.js" async=""></script><script src="/_next/static/chunks/63-4de448253699ab42.js" async=""></script><script src="/_next/static/chunks/259-36dc0298fd8948ad.js" async=""></script><script src="/_next/static/chunks/app/layout-b45b75281bbd24f8.js" async=""></script><script src="/_next/static/chunks/426-bcbf470cb04125c0.js" async=""></script><script src="/_next/static/chunks/app/squad/page-48377e40c0405ca2.js" async=""></script><link rel="icon" href="/favicon.ico"/><title>Overwatch 2 Random Hero Picker | For teams and solo players</title><meta name="description" content="Random Overwatch Hero Picker. This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player."/><meta name="author" content="André Santos"/><meta name="keywords" content="games,overwatch,random hero,overwatch 2"/><meta property="og:title" content="Overwatch 2 Random Hero Picker"/><meta property="og:description" content="Get random hero suggestions for Overwatch 2 based on your preferences"/><meta property="og:url" content="https://owheropicker.com/"/><meta property="og:site_name" content="OW Hero Picker"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Overwatch 2 Random Hero Picker"/><meta name="twitter:description" content="Get random hero suggestions for Overwatch 2 based on your preferences"/><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script></head><body class="bg-primary text-white font-overwatch antialiased"><div hidden=""><!--$--><!--/$--></div><nav class="bg-gray-800 min-h-[5vh] px-4"><div class="flex items-center justify-between h-16"><a class="flex items-center space-x-2 text-white hover:text-white no-underline" href="/"><img alt="Overwatch 2 Logo" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="max-h-8" style="color:transparent" src="/assets/imgs/navbar/ow2-logo.png"/><span class="text-2xl font-overwatch">Overwatch 2 Hero Picker</span></a><button type="button" class="lg:hidden text-white hover:text-gray-300 focus:outline-none focus:text-gray-300" aria-label="Toggle navigation menu"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button><div class="hidden lg:flex space-x-4"><a class="text-xl text-white hover:text-gray-300 no-underline px-3 py-2 " href="/about/">About</a><a href="https://github.com/andrerfcsantos/overwatch-hero-picker" target="_blank" rel="noopener noreferrer" class="text-xl text-white hover:text-gray-300 no-underline px-3 py-2">Github</a><a href="https://discord.gg/rwQMrCa" target="_blank" rel="noopener noreferrer" class="px-3 py-2"><img alt="Discord" loading="lazy" width="24" height="24" decoding="async" data-nimg="1" class="h-6" style="color:transparent" src="/assets/imgs/discord.png"/></a><a href="https://www.buymeacoffee.com/heropickers" target="_blank" rel="noopener noreferrer" class="px-3 py-2"><img alt="Buy me a coffee" loading="lazy" width="24" height="24" decoding="async" data-nimg="1" class="h-6" style="color:transparent" src="/assets/imgs/navbar/bmc.svg"/></a></div></div><div class="lg:hidden hidden"><div class="px-2 pt-2 pb-3 space-y-1"><a class="block text-xl text-white hover:text-gray-300 no-underline px-3 py-2 " href="/about/">About</a><a href="https://github.com/andrerfcsantos/overwatch-hero-picker" target="_blank" rel="noopener noreferrer" class="block text-xl text-white hover:text-gray-300 no-underline px-3 py-2">Github</a><a href="https://discord.gg/rwQMrCa" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2"><img alt="Discord" loading="lazy" width="24" height="24" decoding="async" data-nimg="1" class="h-6" style="color:transparent" src="/assets/imgs/discord.png"/><span class="text-white">Discord</span></a><a href="https://www.buymeacoffee.com/heropickers" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2"><img alt="Buy me a coffee" loading="lazy" width="24" height="24" decoding="async" data-nimg="1" class="h-6" style="color:transparent" src="/assets/imgs/navbar/bmc.svg"/><span class="text-white">Buy me a coffee</span></a></div></div></nav><div class="container-fluid mx-auto"><div class="flex flex-col lg:flex-row w-full min-h-screen p-0 m-0 bg-primary text-white unselectable"><div class="flex flex-col lg:w-1/4 px-6 py-4"><h1 class="text-3xl mb-4 underline">Team Generator</h1><div class="text-left mb-6"><div class="text-center text-xl mb-4"><label class="inline-flex items-center"><input type="checkbox" class="mr-2" checked=""/><span>Force 1-2-2</span></label><button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 ml-2 text-base transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px min-w-[120px]">Copy to clipboard</button></div><ul class="list-none mb-4"></ul><ul class="list-none mb-4"></ul><ul class="list-none mb-4"></ul></div><button class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-xl">Get Random Team</button></div><div class="lg:w-3/4 px-6 py-4 text-left lg:text-left text-center"><h1 class="text-3xl mb-4 underline">Filter Heroes</h1><p class="text-base font-bold mb-2">Select the heroes you wish to include in your squad and click in the &quot;Get Random Team&quot; button to get a random team which will include the selected heroes.</p><p class="text-base font-bold mb-4">Playing solo?<!-- --> <a class="text-orange-500 underline hover:text-orange-600" href="/">Get a random hero just for you</a></p><div class="text-lg text-orange-500 font-bold mb-4"><p>You have no heroes selected, so all heroes are being considered by default.</p></div><div class="flex items-center mb-4"><img alt="Tank role icon" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="max-h-8 mr-2" style="color:transparent" src="/assets/imgs/roles/tank.png"/><h2 class="text-2xl mr-4">Tank</h2><button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Select All</button><button class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Unselect All</button><button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Just this role</button></div><div class="flex flex-wrap justify-start mb-6"><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="D.Va icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/dva.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">D.Va</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Doomfist icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/doomfist.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Doomfist</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Hazard icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/hazard.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Hazard</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Junker Queen icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/junkerqueen.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Junker Queen</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Mauga icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/mauga.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Mauga</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Orisa icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/orisa.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Orisa</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Ramattra icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/ramattra.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Ramattra</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Reinhardt icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/reinhardt.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Reinhardt</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Roadhog icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/roadhog.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Roadhog</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Sigma icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/sigma.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Sigma</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Winston icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/winston.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Winston</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Wrecking Ball icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/wreckingball.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Wrecking Ball</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Zarya icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/zarya.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Zarya</div></div></div><div class="flex items-center mb-4"><img alt="Damage role icon" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="max-h-8 mr-2" style="color:transparent" src="/assets/imgs/roles/damage.png"/><h2 class="text-2xl mr-4">Damage</h2><button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Select All</button><button class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Unselect All</button><button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Just this role</button></div><div class="flex flex-wrap justify-start mb-6"><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Ashe icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/ashe.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Ashe</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Bastion icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/bastion.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Bastion</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Cassidy icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/cassidy.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Cassidy</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Echo icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/echo.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Echo</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Freja icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/freja.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Freja</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Genji icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/genji.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Genji</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Hanzo icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/hanzo.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Hanzo</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Junkrat icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/junkrat.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Junkrat</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Mei icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/mei.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Mei</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Pharah icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/pharah.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Pharah</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Reaper icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/reaper.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Reaper</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Sojourn icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/sojourn.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Sojourn</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Soldier: 76 icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/soldier76.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Soldier: 76</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Sombra icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/sombra.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Sombra</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Symmetra icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/symmetra.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Symmetra</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Torbjörn icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/torbjorn.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Torbjörn</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Tracer icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/tracer.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Tracer</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Venture icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/venture.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Venture</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Widowmaker icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/widowmaker.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Widowmaker</div></div></div><div class="flex items-center mb-4"><img alt="Support role icon" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="max-h-8 mr-2" style="color:transparent" src="/assets/imgs/roles/support.png"/><h2 class="text-2xl mr-4">Support</h2><button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Select All</button><button class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Unselect All</button><button class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 mx-1 text-lg transform -skew-x-3 hover:cursor-pointer active:translate-x-px active:translate-y-px">Just this role</button></div><div class="flex flex-wrap justify-start mb-6"><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Ana icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/ana.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Ana</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Baptiste icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/baptiste.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Baptiste</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Brigitte icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/brigitte.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Brigitte</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Illari icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/illari.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Illari</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Juno icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/juno.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Juno</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Kiriko icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/kiriko.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Kiriko</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Lifeweaver icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/lifeweaver.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Lifeweaver</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Lúcio icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/lucio.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Lúcio</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Mercy icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/mercy.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Mercy</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Moira icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/moira.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Moira</div></div><div class="
+        inline-flex items-center m-1 w-48 h-10 cursor-pointer
+        transition-all duration-200 ease-in-out
+        bg-blue-600 hover:bg-blue-700
+        hover:shadow-lg hover:shadow-blue-300/50
+        active:translate-x-px active:translate-y-px
+        font-overwatch text-white
+        lg:w-52 md:w-48 sm:w-full
+      "><img alt="Zenyatta icon" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" class="h-10 bg-gray-700" style="color:transparent" src="/assets/imgs/heroes/icons/zenyatta.png"/><div class="px-2 text-xl md:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Zenyatta</div></div></div></div></div><!--$--><!--/$--></div><script src="/_next/static/chunks/webpack-063fe98f9373f280.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[8009,[\"63\",\"static/chunks/63-4de448253699ab42.js\",\"259\",\"static/chunks/259-36dc0298fd8948ad.js\",\"177\",\"static/chunks/app/layout-b45b75281bbd24f8.js\"],\"default\"]\n3:I[7555,[],\"\"]\n4:I[1295,[],\"\"]\n5:I[894,[],\"ClientPageRoot\"]\n6:I[8621,[\"63\",\"static/chunks/63-4de448253699ab42.js\",\"259\",\"static/chunks/259-36dc0298fd8948ad.js\",\"426\",\"static/chunks/426-bcbf470cb04125c0.js\",\"775\",\"static/chunks/app/squad/page-48377e40c0405ca2.js\"],\"default\"]\n9:I[9665,[],\"OutletBoundary\"]\nb:I[4911,[],\"AsyncMetadataOutlet\"]\nd:I[9665,[],\"ViewportBoundary\"]\nf:I[9665,[],\"MetadataBoundary\"]\n10:\"$Sreact.suspense\"\n12:I[8393,[],\"\"]\n:HL[\"/_next/static/css/1d2c9494f5210300.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"LnkHi5ev0WBaqj8jjlApJ\",\"p\":\"\",\"c\":[\"\",\"squad\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"squad\",{\"children\":[\"__PAGE__\",{}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/1d2c9494f5210300.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"children\":[[\"$\",\"head\",null,{\"children\":[\"$\",\"link\",null,{\"rel\":\"icon\",\"href\":\"/favicon.ico\"}]}],[\"$\",\"body\",null,{\"className\":\"bg-primary text-white font-overwatch antialiased\",\"children\":[[\"$\",\"$L2\",null,{}],[\"$\",\"div\",null,{\"className\":\"container-fluid mx-auto\",\"children\":[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}]]}]]}]]}],{\"children\":[\"squad\",[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"$L5\",null,{\"Component\":\"$6\",\"searchParams\":{},\"params\":{},\"promises\":[\"$@7\",\"$@8\"]}],null,[\"$\",\"$L9\",null,{\"children\":[\"$La\",[\"$\",\"$Lb\",null,{\"promise\":\"$@c\"}]]}]]}],{},null,false]},null,false]},null,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],null],[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$10\",null,{\"fallback\":null,\"children\":\"$L11\"}]}]}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$12\",[]],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"7:{}\n8:\"$0:f:0:1:2:children:2:children:1:props:children:0:props:params\"\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\na:null\n"])</script><script>self.__next_f.push([1,"c:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"Overwatch 2 Random Hero Picker | For teams and solo players\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"Random Overwatch Hero Picker. This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.\"}],[\"$\",\"meta\",\"2\",{\"name\":\"author\",\"content\":\"André Santos\"}],[\"$\",\"meta\",\"3\",{\"name\":\"keywords\",\"content\":\"games,overwatch,random hero,overwatch 2\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:title\",\"content\":\"Overwatch 2 Random Hero Picker\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:description\",\"content\":\"Get random hero suggestions for Overwatch 2 based on your preferences\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:url\",\"content\":\"https://owheropicker.com/\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:site_name\",\"content\":\"OW Hero Picker\"}],[\"$\",\"meta\",\"8\",{\"property\":\"og:type\",\"content\":\"website\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:card\",\"content\":\"summary\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:title\",\"content\":\"Overwatch 2 Random Hero Picker\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:description\",\"content\":\"Get random hero suggestions for Overwatch 2 based on your preferences\"}]],\"error\":null,\"digest\":\"$undefined\"}\n"])</script><script>self.__next_f.push([1,"11:\"$c:metadata\"\n"])</script></body></html>

@@ -1,0 +1,439 @@
+/* -----------------------------------------------------
+   created with https://www.codeandweb.com/texturepacker 
+   -----------------------------------------------------
+   $TexturePacker:SmartUpdate:674a4819a3b9939ec7a963cb92ff737f:1d9f6c662817b99944624fb2775685f6:c92ad11e351001ed2b1bba11678c3007$
+   -----------------------------------------------------
+
+   usage: <span class="{-spritename-} sprite"></span>
+
+   replace {-spritename-} with the sprite you like to use
+
+*/
+
+.sprite {
+  display: inline-block;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-image: url(hero-sprites.png);
+}
+
+.icons-ana {
+  width: 95px;
+  height: 85px;
+  background-position: -85px -0px;
+}
+.icons-ashe {
+  width: 95px;
+  height: 85px;
+  background-position: -180px -0px;
+}
+.icons-baptiste {
+  width: 95px;
+  height: 85px;
+  background-position: -275px -0px;
+}
+.icons-bastion {
+  width: 95px;
+  height: 85px;
+  background-position: -370px -0px;
+}
+.icons-brigitte {
+  width: 95px;
+  height: 85px;
+  background-position: -465px -0px;
+}
+.icons-cassidy {
+  width: 95px;
+  height: 85px;
+  background-position: -560px -0px;
+}
+.icons-doomfist {
+  width: 95px;
+  height: 85px;
+  background-position: -655px -0px;
+}
+.icons-dva {
+  width: 95px;
+  height: 85px;
+  background-position: -750px -0px;
+}
+.icons-echo {
+  width: 95px;
+  height: 85px;
+  background-position: -845px -0px;
+}
+.icons-genji {
+  width: 95px;
+  height: 85px;
+  background-position: -940px -0px;
+}
+.icons-hanzo {
+  width: 95px;
+  height: 85px;
+  background-position: -1035px -0px;
+}
+.icons-hazard {
+  width: 85px;
+  height: 95px;
+  background-position: -95px -170px;
+}
+.icons-illari {
+  width: 85px;
+  height: 65px;
+  background-position: -0px -0px;
+}
+.icons-junkerqueen {
+  width: 95px;
+  height: 85px;
+  background-position: -1130px -0px;
+}
+.icons-junkrat {
+  width: 95px;
+  height: 85px;
+  background-position: -1225px -0px;
+}
+.icons-juno {
+  width: 95px;
+  height: 85px;
+  background-position: -1320px -0px;
+}
+.icons-kiriko {
+  width: 95px;
+  height: 85px;
+  background-position: -1415px -0px;
+}
+.icons-lifeweaver {
+  width: 95px;
+  height: 85px;
+  background-position: -1510px -0px;
+}
+.icons-lucio {
+  width: 95px;
+  height: 85px;
+  background-position: -1605px -0px;
+}
+.icons-mauga {
+  width: 95px;
+  height: 85px;
+  background-position: -1700px -0px;
+}
+.icons-mei {
+  width: 95px;
+  height: 85px;
+  background-position: -1795px -0px;
+}
+.icons-mercy {
+  width: 95px;
+  height: 85px;
+  background-position: -0px -85px;
+}
+.icons-moira {
+  width: 95px;
+  height: 85px;
+  background-position: -95px -85px;
+}
+.icons-orisa {
+  width: 95px;
+  height: 85px;
+  background-position: -190px -85px;
+}
+.icons-pharah {
+  width: 95px;
+  height: 85px;
+  background-position: -285px -85px;
+}
+.icons-ramattra {
+  width: 95px;
+  height: 85px;
+  background-position: -380px -85px;
+}
+.icons-reaper {
+  width: 95px;
+  height: 85px;
+  background-position: -475px -85px;
+}
+.icons-reinhardt {
+  width: 95px;
+  height: 85px;
+  background-position: -570px -85px;
+}
+.icons-roadhog {
+  width: 95px;
+  height: 85px;
+  background-position: -665px -85px;
+}
+.icons-sigma {
+  width: 95px;
+  height: 85px;
+  background-position: -760px -85px;
+}
+.icons-sojourn {
+  width: 95px;
+  height: 85px;
+  background-position: -855px -85px;
+}
+.icons-soldier76 {
+  width: 95px;
+  height: 85px;
+  background-position: -950px -85px;
+}
+.icons-sombra {
+  width: 95px;
+  height: 85px;
+  background-position: -1045px -85px;
+}
+.icons-symmetra {
+  width: 95px;
+  height: 85px;
+  background-position: -1140px -85px;
+}
+.icons-torbjorn {
+  width: 95px;
+  height: 85px;
+  background-position: -1235px -85px;
+}
+.icons-tracer {
+  width: 95px;
+  height: 85px;
+  background-position: -1330px -85px;
+}
+.icons-venture {
+  width: 95px;
+  height: 85px;
+  background-position: -1425px -85px;
+}
+.icons-widowmaker {
+  width: 95px;
+  height: 85px;
+  background-position: -1520px -85px;
+}
+.icons-winston {
+  width: 95px;
+  height: 85px;
+  background-position: -1615px -85px;
+}
+.icons-wreckingball {
+  width: 95px;
+  height: 85px;
+  background-position: -1710px -85px;
+}
+.icons-zarya {
+  width: 95px;
+  height: 85px;
+  background-position: -1805px -85px;
+}
+.icons-zenyatta {
+  width: 95px;
+  height: 85px;
+  background-position: -0px -170px;
+}
+.portraits-ana {
+  width: 180px;
+  height: 310px;
+  background-position: -180px -170px;
+}
+.portraits-ashe {
+  width: 180px;
+  height: 310px;
+  background-position: -360px -170px;
+}
+.portraits-baptiste {
+  width: 180px;
+  height: 310px;
+  background-position: -540px -170px;
+}
+.portraits-bastion {
+  width: 180px;
+  height: 310px;
+  background-position: -720px -170px;
+}
+.portraits-brigitte {
+  width: 180px;
+  height: 310px;
+  background-position: -900px -170px;
+}
+.portraits-cassidy {
+  width: 180px;
+  height: 310px;
+  background-position: -1080px -170px;
+}
+.portraits-doomfist {
+  width: 180px;
+  height: 310px;
+  background-position: -1260px -170px;
+}
+.portraits-dva {
+  width: 180px;
+  height: 310px;
+  background-position: -1440px -170px;
+}
+.portraits-echo {
+  width: 180px;
+  height: 310px;
+  background-position: -1620px -170px;
+}
+.portraits-genji {
+  width: 180px;
+  height: 310px;
+  background-position: -1800px -170px;
+}
+.portraits-hanzo {
+  width: 180px;
+  height: 310px;
+  background-position: -0px -480px;
+}
+.portraits-hazard {
+  width: 180px;
+  height: 310px;
+  background-position: -180px -480px;
+}
+.portraits-illari {
+  width: 180px;
+  height: 310px;
+  background-position: -360px -480px;
+}
+.portraits-junkerqueen {
+  width: 180px;
+  height: 310px;
+  background-position: -540px -480px;
+}
+.portraits-junkrat {
+  width: 180px;
+  height: 310px;
+  background-position: -720px -480px;
+}
+.portraits-juno {
+  width: 180px;
+  height: 310px;
+  background-position: -900px -480px;
+}
+.portraits-kiriko {
+  width: 180px;
+  height: 310px;
+  background-position: -1080px -480px;
+}
+.portraits-lifeweaver {
+  width: 180px;
+  height: 310px;
+  background-position: -1260px -480px;
+}
+.portraits-lucio {
+  width: 180px;
+  height: 310px;
+  background-position: -1440px -480px;
+}
+.portraits-mauga {
+  width: 180px;
+  height: 310px;
+  background-position: -1620px -480px;
+}
+.portraits-mei {
+  width: 180px;
+  height: 310px;
+  background-position: -1800px -480px;
+}
+.portraits-mercy {
+  width: 180px;
+  height: 310px;
+  background-position: -0px -790px;
+}
+.portraits-moira {
+  width: 180px;
+  height: 310px;
+  background-position: -180px -790px;
+}
+.portraits-orisa {
+  width: 180px;
+  height: 310px;
+  background-position: -360px -790px;
+}
+.portraits-pharah {
+  width: 180px;
+  height: 310px;
+  background-position: -540px -790px;
+}
+.portraits-ramattra {
+  width: 180px;
+  height: 310px;
+  background-position: -720px -790px;
+}
+.portraits-reaper {
+  width: 180px;
+  height: 310px;
+  background-position: -900px -790px;
+}
+.portraits-reinhardt {
+  width: 180px;
+  height: 310px;
+  background-position: -1080px -790px;
+}
+.portraits-roadhog {
+  width: 180px;
+  height: 310px;
+  background-position: -1260px -790px;
+}
+.portraits-sigma {
+  width: 180px;
+  height: 310px;
+  background-position: -1440px -790px;
+}
+.portraits-sojourn {
+  width: 180px;
+  height: 310px;
+  background-position: -1620px -790px;
+}
+.portraits-soldier76 {
+  width: 180px;
+  height: 310px;
+  background-position: -1800px -790px;
+}
+.portraits-sombra {
+  width: 180px;
+  height: 310px;
+  background-position: -0px -1100px;
+}
+.portraits-symmetra {
+  width: 180px;
+  height: 310px;
+  background-position: -180px -1100px;
+}
+.portraits-torbjorn {
+  width: 180px;
+  height: 310px;
+  background-position: -360px -1100px;
+}
+.portraits-tracer {
+  width: 180px;
+  height: 310px;
+  background-position: -540px -1100px;
+}
+.portraits-venture {
+  width: 180px;
+  height: 310px;
+  background-position: -720px -1100px;
+}
+.portraits-widowmaker {
+  width: 180px;
+  height: 310px;
+  background-position: -900px -1100px;
+}
+.portraits-winston {
+  width: 180px;
+  height: 310px;
+  background-position: -1080px -1100px;
+}
+.portraits-wreckingball {
+  width: 180px;
+  height: 310px;
+  background-position: -1260px -1100px;
+}
+.portraits-zarya {
+  width: 180px;
+  height: 310px;
+  background-position: -1440px -1100px;
+}
+.portraits-zenyatta {
+  width: 180px;
+  height: 310px;
+  background-position: -1620px -1100px;
+}
