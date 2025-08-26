@@ -3,175 +3,179 @@ import store from "../store";
 const heroPerks = {
   dva: {
     minor: ["Bunny Power", "Extended Boosters"],
-    major: ["Shield System", "Heavy Rockets"],
+    major: ["Shield System", "Precision Fusion"],
   },
   orisa: {
-    minor: ["Heat Dissipator", "Fleeting Bulwark"],
+    minor: ["Defense Protocol", "Mobile Fortification"],
     major: ["Charged Javelin", "Protective Barrier"],
   },
   reinhardt: {
-    minor: ["Crusader's Resolve", "Crusader's Fire"],
-    major: ["Shield Slam", "Crushing Victory"],
+    minor: ["Barrier Re-Charge", "Crusader's Fire"],
+    major: ["Shield Slam", "Ignited Fury"],
   },
   roadhog: {
-    minor: ["Scrap Hook", "Pent Up"],
-    major: ["Invigorate", "Hogdrogen Exposure"],
+    minor: ["Scrap Hook", "Shrapnel Launcher"],
+    major: ["Invigorate", "Pulled Pork"],
   },
   winston: {
-    minor: ["Short Circuit", "Heavy Landing"],
+    minor: ["Barrier Toss", "Heavy Landing"],
     major: ["Chain Lightning", "Revitalizing Barrier"],
   },
   wreckingball: {
     minor: ["Steamroller", "Pack Rat"],
-    major: ["Hang Time", "Transfer Efficiency"],
+    major: ["Hang Time", "Adaptive Barrier"],
   },
   zarya: {
-    minor: ["Jump-Ups", "Graviton Crush"],
+    minor: ["Jump-Ups", "Energy Converter"],
     major: ["Energy Lance", "Spotter"],
   },
   bastion: {
-    minor: ["Smart Bomb", "Armored Artillery"],
+    minor: ["Configuration Reload", "Armored Artillery"],
     major: ["Self-Repair", "Lindholm Explosives"],
   },
   doomfist: {
     minor: ["One-Two", "Survival of the Fittest"],
-    major: ["Seismic Empowerment", "Power Matrix"],
+    major: ["Aftershock", "Power Matrix"],
   },
   genji: {
-    minor: ["Acrobatics", "Dragon's Thirst"],
+    minor: ["Swift Cuts", "Dragon's Thirst"],
     major: ["Meditation", "Blade Twisting"],
   },
   hanzo: {
-    minor: ["Sonic Disruption", "Scatter Arrows"],
-    major: ["Yamagami Technique", "Dragon Fury"],
+    minor: ["Swift Lunge", "Sonic Disruption"],
+    major: ["Scatter Arrows", "Dragon Fury"],
   },
   junkrat: {
-    minor: ["Aluminium Frame", "Nitro Boost"],
-    major: ["Frag Cannon", "Tick Tock"],
+    minor: ["Mine Recycling", "Nitro Boost"],
+    major: ["Frag Cannon", "Bomb Voyage"],
   },
   cassidy: {
-    minor: ["Even the Odds", "Quick Draw"],
-    major: ["Bang Bang", "Gun Slingin'"],
+    minor: ["Even the Odds", "Bang Bang"],
+    major: ["Silver Bullet", "Gun Slingin'"],
   },
   mei: {
-    minor: ["Biting Cold", "Permafrost"],
+    minor: ["Skating Rink", "Glacial Propulsion"],
     major: ["Cryo-Storm", "Deep Freeze"],
   },
   pharah: {
     minor: ["Helix Shields", "Drift Thrusters"],
-    major: ["Fuel Stores", "Concussive Implosion"],
+    major: ["Fuel Stores", "Sky Spy"],
   },
   reaper: {
-    minor: ["Soul Reaving", "Death's Shadow"],
+    minor: ["Soul Reaving", "Shadow Blink"],
     major: ["Dire Triggers", "Ravenous Wraith"],
   },
   soldier76: {
-    minor: ["Field Emergency", "Recycled Pulse Munitions"],
+    minor: ["Tactical Salvo", "Recycled Pulse Munitions"],
     major: ["Stim Pack", "Agility Training"],
   },
   sombra: {
     minor: ["CTRL ALT ESC", "Encrypted Upload"],
-    major: ["White Hat", "Viral Replication"],
+    major: ["Adept Hacker", "Viral Replication"],
   },
   symmetra: {
-    minor: ["Advanced Teleportation", "Sentry Capacity"],
-    major: ["Perfect Alignment", "Shield Battery"],
+    minor: ["Perfect Alignment", "Sentry Capacity"],
+    major: ["Hovering Barrier", "Shield Battery"],
   },
   torbjorn: {
-    minor: ["Fully Loaded", "Craftsman"],
+    minor: ["Fully Loaded", "Hammer Time"],
     major: ["Overloaded Turret", "Anchor Bolts"],
   },
   tracer: {
-    minor: ["Blast from the Past", "Blink Packs"],
+    minor: ["Kinetic Reload", "Blink Packs"],
     major: ["Quantum Entanglement", "Flashback"],
   },
   widowmaker: {
-    minor: ["Focused Aim", "Scoped Efficiency"],
-    major: ["Escape Plan", "Deadly Deux"],
+    minor: ["Sniper’s Instinct", "Scoped Efficiency"],
+    major: ["Escape Plan", "Seeker Mine"],
   },
   ana: {
-    minor: ["Groggy", "Biotic Bounce"],
-    major: ["Headhunter", "Shrike"],
+    minor: ["Speed Serum", "Groggy"],
+    major: ["Headhunter", "Biotic Bounce"],
   },
   brigitte: {
-    minor: ["Barrier Restoration", "Morale Boost"],
-    major: ["Quick Fix", "Whiplash"],
+    minor: ["Combat Medic", "Morale Boost"],
+    major: ["Inspiring Strike", "Whiplash"],
   },
   lucio: {
-    minor: ["Bass Blowout", "Beat Drop"],
+    minor: ["Soundwave Rider", "Beat Drop"],
     major: ["Noise Violation", "Accelerando"],
   },
   mercy: {
-    minor: ["Angelic Resurrection", "Winged Reach"],
+    minor: ["Angelic Resurrection", "Divine Momentum"],
     major: ["Chain Boost", "Flash Heal"],
   },
   moira: {
-    minor: ["Vanish", "Uprush"],
-    major: ["Ethical Nourishment", "Contamination"],
+    minor: ["Destruction’s Divide", "Ethical Nourishment"],
+    major: ["Phantom Step", "Reversal"],
   },
   zenyatta: {
-    minor: ["Zenith Kick", "Ascendance"],
-    major: ["Focused Destruction", "Duality"],
+    minor: ["Transcendent Condemnation", "Ascendance"],
+    major: ["Focused Destruction", "Dual Harmony"],
   },
   baptiste: {
-    minor: ["Field Medicine", "Automated Healing"],
+    minor: ["Biotic Reloader", "Automated Healing"],
     major: ["Assault Burst", "Rocket Boots"],
   },
   sigma: {
-    minor: ["Kinetic Cycle", "Massive Impact"],
+    minor: ["Kinetic Cycle", "Hyper Regeneration"],
     major: ["Hyper Strike", "Levitation"],
   },
   ashe: {
-    minor: ["Sidewinder", "Rapid Fire"],
+    minor: ["Sidewinder", "Remote Detonator"],
     major: ["Airburst", "Viper's Sting"],
   },
   echo: {
-    minor: ["Friendly Imaging", "Enhanced Duplication"],
+    minor: ["Focused Rush", "Partial Scan"],
     major: ["High Beams", "Full Salvo"],
   },
   sojourn: {
-    minor: ["Extended Mag", "Overcharged"],
-    major: ["Dual Thrusters", "Adhesive Siphon"],
+    minor: ["Deceleration Field", "Overcharged"],
+    major: ["Dual Thrusters", "Friction Generators"],
   },
   junkerqueen: {
-    minor: ["Rending Recall", "Battle Shout"],
-    major: ["Deep Wounds", "Savage Satiation"],
+    minor: ["Rampant Change", "Battle Shout"],
+    major: ["Savage Satiation", "Willy-Willy"],
   },
   kiriko: {
     minor: ["Urgent Care", "Fortune Teller"],
-    major: ["Shuffling", "Foxtrot"],
+    major: ["Ready Step", "Foxtrot"],
   },
   ramattra: {
-    minor: ["Void Surge", "Prolonged Barrier"],
+    minor: ["Void Surge", "Relentless Form"],
     major: ["Nanite Repair", "Vengeful Vortex"],
   },
   lifeweaver: {
-    minor: ["Cleansing Grasp", "Life Cycle"],
-    major: ["Lifeweaving", "Superbloom"],
+    minor: ["Cleansing Grasp", "Lifeweaving"],
+    major: ["Petal Power", "Superbloom"],
   },
   illari: {
     minor: ["Rapid Construction", "Summer Solstice"],
-    major: ["Solar Power", "Sunburn"],
+    major: ["Solar Flare", "Sunburn"],
   },
   mauga: {
-    minor: ["Kinetic Bandolier", "Two Hearts"],
+    minor: ["Kinetic Bandolier", "Pyromaniac"],
     major: ["Firewalker", "Combat Fuel"],
   },
   venture: {
-    minor: ["Seismic Sense", "Excavation Exhilaration"],
-    major: ["SMART-R Excavator", "Covered in Dirt"],
+    minor: ["Deep Burrow", "Excavation Exhilaration"],
+    major: ["SMART Extender", "Covered in Dirt"],
   },
   juno: {
-    minor: ["Familiar Vitals", "Re-Boots"],
-    major: ["Master Blaster", "Locked On"],
+    minor: ["Familiar Vitals", "Locked On"],
+    major: ["Lift Off", "Faster Blaster"],
   },
   hazard: {
-    minor: ["Off The Top", "Reconstitution"],
-    major: ["Anarchic Zeal", "Deep Leap"],
+    minor: ["Deep Leap", "Anarchic Zeal"],
+    major: ["Reconstitution", "Explosive Impalements"],
   },
   freja: {
-    minor: ["Frost Bolts", "Tracking Instinct"],
-    major: ["Ready to Hunt", "Relentless Barrage"],
+    minor: ["Hunters Instinct", "Momentum Boost"],
+    major: ["Aerial Recovery", "Relentless Barrage"],
+  },
+  wuyang: {
+    minor: ["Overflow", "Balance"],
+    major: ["Ebb and Flow", "Falling Rain"],
   },
 };
 

@@ -258,6 +258,12 @@ const state = {
       selected: false,
       key: "freja",
     },
+    wuyang: {
+      name: "Wuyang",
+      role: "SUPPORT",
+      selected: false,
+      key: "wuyang",
+    },
   },
 };
 
