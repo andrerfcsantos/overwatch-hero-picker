@@ -1,0 +1,266 @@
+/* SPRITEGEN START */
+.hero-portrait {
+  background-image: url('hero-portrait.webp');
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.hero-portrait-ana {
+  width: 180px;
+  height: 310px;
+  background-position: 0px 0px;
+}
+
+.hero-portrait-ashe {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -310px;
+}
+
+.hero-portrait-baptiste {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -620px;
+}
+
+.hero-portrait-bastion {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -930px;
+}
+
+.hero-portrait-brigitte {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -1240px;
+}
+
+.hero-portrait-cassidy {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -1550px;
+}
+
+.hero-portrait-doomfist {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -1860px;
+}
+
+.hero-portrait-dva {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -2170px;
+}
+
+.hero-portrait-echo {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -2480px;
+}
+
+.hero-portrait-freja {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -2790px;
+}
+
+.hero-portrait-genji {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -3100px;
+}
+
+.hero-portrait-hanzo {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -3410px;
+}
+
+.hero-portrait-illari {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -3720px;
+}
+
+.hero-portrait-junkerqueen {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -4030px;
+}
+
+.hero-portrait-junkrat {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -4340px;
+}
+
+.hero-portrait-juno {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -4650px;
+}
+
+.hero-portrait-kiriko {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -4960px;
+}
+
+.hero-portrait-lifeweaver {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -5270px;
+}
+
+.hero-portrait-lucio {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -5580px;
+}
+
+.hero-portrait-mauga {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -5890px;
+}
+
+.hero-portrait-mei {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -6200px;
+}
+
+.hero-portrait-mercy {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -6510px;
+}
+
+.hero-portrait-moira {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -6820px;
+}
+
+.hero-portrait-orisa {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -7130px;
+}
+
+.hero-portrait-pharah {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -7440px;
+}
+
+.hero-portrait-ramattra {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -7750px;
+}
+
+.hero-portrait-reaper {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -8060px;
+}
+
+.hero-portrait-reinhardt {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -8370px;
+}
+
+.hero-portrait-roadhog {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -8680px;
+}
+
+.hero-portrait-sigma {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -8990px;
+}
+
+.hero-portrait-sojourn {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -9300px;
+}
+
+.hero-portrait-soldier76 {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -9610px;
+}
+
+.hero-portrait-sombra {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -9920px;
+}
+
+.hero-portrait-symmetra {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -10230px;
+}
+
+.hero-portrait-torbjorn {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -10540px;
+}
+
+.hero-portrait-tracer {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -10850px;
+}
+
+.hero-portrait-venture {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -11160px;
+}
+
+.hero-portrait-widowmaker {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -11470px;
+}
+
+.hero-portrait-winston {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -11780px;
+}
+
+.hero-portrait-wreckingball {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -12090px;
+}
+
+.hero-portrait-wuyang {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -12400px;
+}
+
+.hero-portrait-zarya {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -12710px;
+}
+
+.hero-portrait-zenyatta {
+  width: 180px;
+  height: 310px;
+  background-position: 0px -13020px;
+}
+
+/* SPRITEGEN END */

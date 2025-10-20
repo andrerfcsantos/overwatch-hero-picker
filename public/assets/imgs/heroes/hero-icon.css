@@ -1,0 +1,266 @@
+/* SPRITEGEN START */
+.hero-icon {
+  background-image: url('hero-icon.webp');
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.hero-icon-ana {
+  width: 95px;
+  height: 85px;
+  background-position: 0px 0px;
+}
+
+.hero-icon-ashe {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -85px;
+}
+
+.hero-icon-baptiste {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -170px;
+}
+
+.hero-icon-bastion {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -255px;
+}
+
+.hero-icon-brigitte {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -340px;
+}
+
+.hero-icon-cassidy {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -425px;
+}
+
+.hero-icon-doomfist {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -510px;
+}
+
+.hero-icon-dva {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -595px;
+}
+
+.hero-icon-echo {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -680px;
+}
+
+.hero-icon-freja {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -765px;
+}
+
+.hero-icon-genji {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -850px;
+}
+
+.hero-icon-hanzo {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -935px;
+}
+
+.hero-icon-illari {
+  width: 85px;
+  height: 65px;
+  background-position: 0px -1020px;
+}
+
+.hero-icon-junkerqueen {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1085px;
+}
+
+.hero-icon-junkrat {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1170px;
+}
+
+.hero-icon-juno {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1255px;
+}
+
+.hero-icon-kiriko {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1340px;
+}
+
+.hero-icon-lifeweaver {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1425px;
+}
+
+.hero-icon-lucio {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1510px;
+}
+
+.hero-icon-mauga {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1595px;
+}
+
+.hero-icon-mei {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1680px;
+}
+
+.hero-icon-mercy {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1765px;
+}
+
+.hero-icon-moira {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1850px;
+}
+
+.hero-icon-orisa {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -1935px;
+}
+
+.hero-icon-pharah {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2020px;
+}
+
+.hero-icon-ramattra {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2105px;
+}
+
+.hero-icon-reaper {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2190px;
+}
+
+.hero-icon-reinhardt {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2275px;
+}
+
+.hero-icon-roadhog {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2360px;
+}
+
+.hero-icon-sigma {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2445px;
+}
+
+.hero-icon-sojourn {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2530px;
+}
+
+.hero-icon-soldier76 {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2615px;
+}
+
+.hero-icon-sombra {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2700px;
+}
+
+.hero-icon-symmetra {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2785px;
+}
+
+.hero-icon-torbjorn {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2870px;
+}
+
+.hero-icon-tracer {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -2955px;
+}
+
+.hero-icon-venture {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3040px;
+}
+
+.hero-icon-widowmaker {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3125px;
+}
+
+.hero-icon-winston {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3210px;
+}
+
+.hero-icon-wreckingball {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3295px;
+}
+
+.hero-icon-wuyang {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3380px;
+}
+
+.hero-icon-zarya {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3465px;
+}
+
+.hero-icon-zenyatta {
+  width: 95px;
+  height: 85px;
+  background-position: 0px -3550px;
+}
+
+/* SPRITEGEN END */
