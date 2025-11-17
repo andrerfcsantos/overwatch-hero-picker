@@ -62,8 +62,8 @@ const heroPerks = {
     major: ["Fuel Stores", "Sky Spy"],
   },
   reaper: {
-    minor: ["Soul Reaving", "Shadow Blink"],
-    major: ["Dire Triggers", "Ravenous Wraith"],
+    minor: ["Soul Reaving", "Lingering Wraith"],
+    major: ["Shadow Blink", "Dire Triggers"],
   },
   soldier76: {
     minor: ["Tactical Salvo", "Recycled Pulse Munitions"],
