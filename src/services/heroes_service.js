@@ -177,6 +177,10 @@ const heroPerks = {
     minor: ["Overflow", "Balance"],
     major: ["Ebb and Flow", "Falling Rain"],
   },
+  vendetta: {
+    minor: ["Siphoning Strike", "Relentless"],
+    major: ["Swift Vengeance", "Raging Storm"],
+  },
 };
 
 export function randomHero() {

@@ -264,6 +264,12 @@ const state = {
       selected: false,
       key: "wuyang",
     },
+    vendetta: {
+      name: "Vendetta",
+      role: "DAMAGE",
+      selected: false,
+      key: "vendetta",
+    },
   },
 };
 
