@@ -262,7 +262,7 @@ export default {
   },
   created() {
     window.document.title =
-      "Overwatch 2 Random Hero Picker | For teams and solo players";
+      "Overwatch Random Hero Picker | For teams and solo players";
 
     let showPortraitLS = localStorage.getItem("showPortrait");
     let showPerksLS = localStorage.getItem("showPerks");

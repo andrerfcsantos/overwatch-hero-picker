@@ -4,8 +4,8 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-brand href="https://owheropicker.com">
-        <img class="ow-logo img-fluid" src="assets/imgs/navbar/ow2-logo.png" />
-        <span class="title-text">Overwatch 2 Hero Picker</span>
+        <img class="ow-logo img-fluid" src="assets/imgs/navbar/ow-logo.svg" />
+        <span class="title-text">Overwatch Hero Picker</span>
       </b-navbar-brand>
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
