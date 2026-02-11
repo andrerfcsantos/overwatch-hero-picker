@@ -4,35 +4,53 @@
       <div class="left-content col-lg-3">
         <h1 class="left-title">You should play</h1>
 
-        <div>
-          <input
-            id="checkbox-show-portrait"
-            v-model="showPortrait"
-            :value="true"
-            type="checkbox"
-            name="checkbox-show-portrait"
-          />
-          <label
-            id="show-portrait-label"
-            for="checkbox-show-portrait"
-            class="show-portrait-label"
-            style="margin-right: 10px"
-            >Show hero portrait
-          </label>
+        <div class="picker-toggles">
+          <div class="picker-toggle-row">
+            <input
+              id="checkbox-show-portrait"
+              v-model="showPortrait"
+              :value="true"
+              type="checkbox"
+              name="checkbox-show-portrait"
+            />
+            <label
+              id="show-portrait-label"
+              for="checkbox-show-portrait"
+              class="show-portrait-label"
+              style="margin-right: 10px"
+              >Show hero portrait
+            </label>
 
-          <input
-            id="checkbox-show-perks"
-            v-model="showPerks"
-            :value="true"
-            type="checkbox"
-            name="checkbox-show-perks"
-          />
-          <label
-            id="show-perks-label"
-            for="checkbox-show-perks"
-            class="show-portrait-label"
-            >Randomize perks
-          </label>
+            <input
+              id="checkbox-show-perks"
+              v-model="showPerks"
+              :value="true"
+              type="checkbox"
+              name="checkbox-show-perks"
+            />
+            <label
+              id="show-perks-label"
+              for="checkbox-show-perks"
+              class="show-portrait-label"
+              >Randomize perks
+            </label>
+          </div>
+
+          <div class="picker-toggle-row">
+            <input
+              id="checkbox-non-repeating-mode"
+              v-model="nonRepeatingMode"
+              :value="true"
+              type="checkbox"
+              name="checkbox-non-repeating-mode"
+            />
+            <label
+              id="non-repeating-mode-label"
+              for="checkbox-non-repeating-mode"
+              class="show-portrait-label"
+              >Non-repeating mode
+            </label>
+          </div>
         </div>
 
         <img
@@ -240,6 +258,7 @@ export default {
       heroCount: 0,
       showPortrait: true,
       showPerks: true,
+      nonRepeatingMode: false,
     };
   },
   computed: {
@@ -259,6 +278,10 @@ export default {
       localStorage.setItem("showPerks", newValue);
       sendEvent("Option", "ToggleShowPerks", newValue);
     },
+    nonRepeatingMode: function (newValue) {
+      localStorage.setItem("nonRepeatingMode", newValue);
+      sendEvent("Option", "ToggleNonRepeatingMode", newValue);
+    },
   },
   created() {
     window.document.title =
@@ -266,6 +289,7 @@ export default {
 
     let showPortraitLS = localStorage.getItem("showPortrait");
     let showPerksLS = localStorage.getItem("showPerks");
+    let nonRepeatingModeLS = localStorage.getItem("nonRepeatingMode");
 
     if (showPortraitLS !== null) {
       this.showPortrait = showPortraitLS === "true";
@@ -277,6 +301,12 @@ export default {
       this.showPerks = showPerksLS === "true";
     } else {
       localStorage.setItem("showPerks", this.showPerks);
+    }
+
+    if (nonRepeatingModeLS !== null) {
+      this.nonRepeatingMode = nonRepeatingModeLS === "true";
+    } else {
+      localStorage.setItem("nonRepeatingMode", this.nonRepeatingMode);
     }
 
     getSelectedLSHeroes();
@@ -296,7 +326,10 @@ export default {
       sendEvent("Hero", "GetRandom", this.selectedHero.name);
     },
     randomHero: function () {
-      this.selectedHero = randomHero();
+      this.selectedHero = randomHero({
+        preventRepeat: this.nonRepeatingMode,
+        previousHeroKey: this.selectedHero.key,
+      });
       this.heroCount += 1;
       this.perks = getRandomHeroPerks(this.selectedHero.key);
     },

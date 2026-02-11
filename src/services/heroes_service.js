@@ -208,15 +208,25 @@ const heroPerks = {
   },
 };
 
-export function randomHero() {
+export function randomHero(options = {}) {
+  const { preventRepeat = false, previousHeroKey = "" } = options;
   const selected = store.getters["heroes/getSelected"];
+  const allHeroes = store.getters["heroes/getHeroes"];
 
-  if (selected.length === 0) {
-    const all_heroes = store.getters["heroes/getHeroes"];
-    return all_heroes[Math.floor(Math.random() * all_heroes.length)];
+  const heroPool = selected.length > 0 ? selected : allHeroes;
+  let availableHeroes = heroPool;
+
+  if (preventRepeat && previousHeroKey && heroPool.length > 1) {
+    const filteredHeroes = heroPool.filter(
+      (hero) => hero.key !== previousHeroKey
+    );
+
+    if (filteredHeroes.length > 0) {
+      availableHeroes = filteredHeroes;
+    }
   }
 
-  return selected[Math.floor(Math.random() * selected.length)];
+  return availableHeroes[Math.floor(Math.random() * availableHeroes.length)];
 }
 
 function popNRandomFromArray(heroList, n) {
