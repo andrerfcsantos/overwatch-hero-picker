@@ -10,7 +10,7 @@ const heroPerks = {
     major: ["Charged Javelin", "Protective Barrier"],
   },
   reinhardt: {
-    minor: ["Barrier Re-Charge", "Crusader's Fire"],
+    minor: ["Barrier Re-Charge", "Crusader's Resolve"],
     major: ["Shield Slam", "Ignited Fury"],
   },
   roadhog: {
@@ -18,16 +18,16 @@ const heroPerks = {
     major: ["Invigorate", "Pulled Pork"],
   },
   winston: {
-    minor: ["Barrier Toss", "Heavy Landing"],
+    minor: ["Barrier Toss", "Electric Charge"],
     major: ["Chain Lightning", "Revitalizing Barrier"],
   },
   wreckingball: {
-    minor: ["Steamroller", "Pack Rat"],
+    minor: ["Multi-Ball", "Pack Rat"],
     major: ["Hang Time", "Adaptive Barrier"],
   },
   zarya: {
-    minor: ["Jump-Ups", "Energy Converter"],
-    major: ["Energy Lance", "Spotter"],
+    minor: ["Energy Converter", "Spotter"],
+    major: ["Energy Lance", "Extra Oomph"],
   },
   bastion: {
     minor: ["Configuration Reload", "Armored Artillery"],
@@ -42,8 +42,8 @@ const heroPerks = {
     major: ["Meditation", "Blade Twisting"],
   },
   hanzo: {
-    minor: ["Swift Lunge", "Sonic Disruption"],
-    major: ["Scatter Arrows", "Dragon Fury"],
+    minor: ["Swift Lunge", "Dragon Fury"],
+    major: ["Frost Arrow", "Sonic Disruption"],
   },
   junkrat: {
     minor: ["Mine Recycling", "Nitro Boost"],
@@ -51,7 +51,7 @@ const heroPerks = {
   },
   cassidy: {
     minor: ["Even the Odds", "Bang Bang"],
-    major: ["Silver Bullet", "Gun Slingin'"],
+    major: ["Gun Slingin'", "Rollin' Round-Up"],
   },
   mei: {
     minor: ["Skating Rink", "Glacial Propulsion"],
@@ -59,35 +59,35 @@ const heroPerks = {
   },
   pharah: {
     minor: ["Helix Shields", "Drift Thrusters"],
-    major: ["Fuel Stores", "Sky Spy"],
+    major: ["Sky Spy", "Rocket Salvo"],
   },
   reaper: {
     minor: ["Soul Reaving", "Lingering Wraith"],
     major: ["Shadow Blink", "Dire Triggers"],
   },
   soldier76: {
-    minor: ["Tactical Salvo", "Recycled Pulse Munitions"],
+    minor: ["Tactical Salvo", "Recycled Pulse Munitions", "Helix Propulsion"],
     major: ["Stim Pack", "Agility Training"],
   },
   sombra: {
     minor: ["CTRL ALT ESC", "Encrypted Upload"],
-    major: ["Adept Hacker", "Viral Replication"],
+    major: ["Healthy Hacker", "High-Speed Bandwidth"],
   },
   symmetra: {
     minor: ["Perfect Alignment", "Sentry Capacity"],
     major: ["Hovering Barrier", "Shield Battery"],
   },
   torbjorn: {
-    minor: ["Fully Loaded", "Hammer Time"],
+    minor: ["Fully Loaded", "Pre-Heated"],
     major: ["Overloaded Turret", "Anchor Bolts"],
   },
   tracer: {
-    minor: ["Kinetic Reload", "Blink Packs"],
+    minor: ["Chronal Dash", "Blink Packs"],
     major: ["Quantum Entanglement", "Flashback"],
   },
   widowmaker: {
-    minor: ["Sniper’s Instinct", "Scoped Efficiency"],
-    major: ["Escape Plan", "Seeker Mine"],
+    minor: ["Sniper's Instinct", "Scoped Efficiency"],
+    major: ["Escape Plan", "Seeker Mine", "Widow's Bite"],
   },
   ana: {
     minor: ["Speed Serum", "Groggy"],
@@ -106,23 +106,23 @@ const heroPerks = {
     major: ["Chain Boost", "Flash Heal"],
   },
   moira: {
-    minor: ["Destruction’s Divide", "Ethical Nourishment"],
+    minor: ["Destruction's Divide", "Ethical Nourishment"],
     major: ["Phantom Step", "Reversal"],
   },
   zenyatta: {
-    minor: ["Transcendent Condemnation", "Ascendance"],
+    minor: ["Transcendent Condemnation", "Discordant Repair", "Ascendance"],
     major: ["Focused Destruction", "Dual Harmony"],
   },
   baptiste: {
-    minor: ["Biotic Reloader", "Automated Healing"],
-    major: ["Assault Burst", "Rocket Boots"],
+    minor: ["Biotic Reloader", "Assault Burst", "Expanded Field"],
+    major: ["Automated Healing", "Rocket Boots"],
   },
   sigma: {
     minor: ["Kinetic Cycle", "Hyper Regeneration"],
     major: ["Hyper Strike", "Levitation"],
   },
   ashe: {
-    minor: ["Sidewinder", "Remote Detonator"],
+    minor: ["Sidewinder", "Double-Barreled"],
     major: ["Airburst", "Viper's Sting"],
   },
   echo: {
@@ -146,8 +146,13 @@ const heroPerks = {
     major: ["Nanite Repair", "Vengeful Vortex"],
   },
   lifeweaver: {
-    minor: ["Cleansing Grasp", "Lifeweaving"],
-    major: ["Petal Power", "Superbloom"],
+    minor: [
+      "Cleansing Grasp",
+      "Lifeweaving",
+      "Petal Protection",
+      "Dashing Escape",
+    ],
+    major: ["Petal Power", "Sow the Seed", "Superbloom"],
   },
   illari: {
     minor: ["Rapid Construction", "Summer Solstice"],
@@ -170,16 +175,36 @@ const heroPerks = {
     major: ["Reconstitution", "Explosive Impalements"],
   },
   freja: {
-    minor: ["Hunters Instinct", "Momentum Boost"],
-    major: ["Aerial Recovery", "Relentless Barrage"],
+    minor: ["Hunter's Instinct", "Relentless Barrage"],
+    major: ["Rising Winds", "Aerial Recovery"],
+  },
+  anran: {
+    minor: ["Smoulder", "Heat Shield"],
+    major: ["Short Fuse", "Hungering Blaze"],
+  },
+  domina: {
+    minor: ["Efficient Design", "Extended Power"],
+    major: ["Disruptive Detonation", "Power Move"],
+  },
+  emre: {
+    minor: ["Suppressive Security", "Enhanced Agility"],
+    major: ["Heat Sink", "Cyber Adhesion"],
+  },
+  jetpackcat: {
+    minor: ["Claws Out", "Transport Shielding"],
+    major: ["Headbutt", "Territorial"],
+  },
+  mizuki: {
+    minor: ["Wellspring", "Exposed Soul"],
+    major: ["Resonant Return", "Quickstep"],
   },
   wuyang: {
     minor: ["Overflow", "Balance"],
     major: ["Ebb and Flow", "Falling Rain"],
   },
   vendetta: {
-    minor: ["Siphoning Strike", "Relentless"],
-    major: ["Swift Vengeance", "Raging Storm"],
+    minor: ["Extra Edge", "Siphoning Strike"],
+    major: ["Relentless", "Swift Vengeance", "Raging Storm"],
   },
 };
 

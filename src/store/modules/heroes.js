@@ -258,6 +258,36 @@ const state = {
       selected: false,
       key: "freja",
     },
+    anran: {
+      name: "Anran",
+      role: "DAMAGE",
+      selected: false,
+      key: "anran",
+    },
+    domina: {
+      name: "Domina",
+      role: "TANK",
+      selected: false,
+      key: "domina",
+    },
+    emre: {
+      name: "Emre",
+      role: "DAMAGE",
+      selected: false,
+      key: "emre",
+    },
+    jetpackcat: {
+      name: "Jetpack Cat",
+      role: "SUPPORT",
+      selected: false,
+      key: "jetpackcat",
+    },
+    mizuki: {
+      name: "Mizuki",
+      role: "SUPPORT",
+      selected: false,
+      key: "mizuki",
+    },
     wuyang: {
       name: "Wuyang",
       role: "SUPPORT",
