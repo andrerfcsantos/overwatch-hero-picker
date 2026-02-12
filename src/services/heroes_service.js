@@ -71,23 +71,23 @@ const heroPerks = {
   },
   sombra: {
     minor: ["CTRL ALT ESC", "Encrypted Upload"],
-    major: ["Healthy Hacker", "Viral Replication"],
+    major: ["High-Speed Bandwidth", "Viral Replication"],
   },
   symmetra: {
     minor: ["Perfect Alignment", "Sentry Capacity"],
     major: ["Hovering Barrier", "Shield Battery"],
   },
   torbjorn: {
-    minor: ["Fully Loaded", "Hammer Time"],
+    minor: ["Pre-Heated", "Hammer Time"],
     major: ["Overloaded Turret", "Anchor Bolts"],
   },
   tracer: {
-    minor: ["Kinetic Reload", "Blink Packs"],
-    major: ["Quantum Entanglement", "Flashback"],
+    minor: ["Kinetic Reload", "Chronal Dash"],
+    major: ["Quantum Entanglement", "Blink Packs"],
   },
   widowmaker: {
     minor: ["Sniper's Instinct", "Scoped Efficiency"],
-    major: ["Escape Plan", "Seeker Mine"],
+    major: ["Widow’s Bite", "Seeker Mine"],
   },
   ana: {
     minor: ["Speed Serum", "Groggy"],
@@ -110,7 +110,7 @@ const heroPerks = {
     major: ["Phantom Step", "Reversal"],
   },
   zenyatta: {
-    minor: ["Transcendent Condemnation", "Ascendance"],
+    minor: ["Discordant Repair", "Ascendance"],
     major: ["Focused Destruction", "Dual Harmony"],
   },
   baptiste: {
@@ -146,8 +146,8 @@ const heroPerks = {
     major: ["Nanite Repair", "Vengeful Vortex"],
   },
   lifeweaver: {
-    minor: ["Cleansing Grasp", "Lifeweaving"],
-    major: ["Petal Power", "Superbloom"],
+    minor: ["Petal Protection", "Dashing Escape"],
+    major: ["Sow the Seed", "Superbloom"],
   },
   illari: {
     minor: ["Rapid Construction", "Summer Solstice"],
