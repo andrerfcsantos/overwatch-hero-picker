@@ -17,6 +17,7 @@ export default function PickerPage() {
   const [showPerks, setShowPerks] = useState(true);
   const [nonRepeatingMode, setNonRepeatingMode] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [perksCount, setPerksCount] = useState(0);
   const portraitRef = useRef<HTMLImageElement>(null);
 
   // Restore preferences and pick initial hero
@@ -46,6 +47,7 @@ export default function PickerPage() {
     setSelectedHero(hero);
     setPerks(getRandomHeroPerks(hero.key));
     setHeroCount((c) => c + 1);
+    setPerksCount((c) => c + 1);
 
     // Re-trigger portrait animation without remounting
     if (portraitRef.current) {
@@ -58,6 +60,7 @@ export default function PickerPage() {
   const handleNewPerks = useCallback(() => {
     if (selectedHero) {
       setPerks(getRandomHeroPerks(selectedHero.key));
+      setPerksCount((c) => c + 1);
     }
   }, [selectedHero]);
 
@@ -138,23 +141,27 @@ export default function PickerPage() {
               {selectedHero.name}
               {showPerks && (
                 <div style={{ lineHeight: "0.5em" }}>
-                  <span style={{ fontSize: "0.5em" }}>
+                  <span
+                    key={`perks-${perksCount}`}
+                    className="perks-animate"
+                    style={{ fontSize: "0.5em" }}
+                  >
                     {perks[0]} | {perks[1]}
                   </span>
                   <br />
-                  <span
-                    className="text-[0.5em] text-[rgb(240,100,20)] underline cursor-pointer"
+                  <button
+                    className="text-[0.45em] text-white bg-[rgb(180,75,15)] border-none rounded px-2 py-0.5 mt-1 cursor-pointer"
                     onClick={handleNewPerks}
                   >
-                    New perks
-                  </span>
+                    Randomize perks
+                  </button>
                 </div>
               )}
             </h2>
           )}
 
           <div className="random-hero-button" onClick={handleRandomHero}>
-            Get Random Hero
+            Randomize Hero
           </div>
         </div>
 

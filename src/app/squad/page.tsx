@@ -142,7 +142,7 @@ export default function SquadPage() {
           </div>
 
           <div className="random-hero-button" onClick={generateSquad}>
-            Get Random Team
+            Randomize Squad
           </div>
         </div>
 

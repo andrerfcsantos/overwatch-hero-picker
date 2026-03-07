@@ -177,6 +177,20 @@ a:hover {
   color: white;
 }
 
+/* Perks animation */
+.perks-animate {
+  animation: perksFadeIn 0.15s ease-out;
+}
+
+@keyframes perksFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Hero name animation */
 .hero-name-animate {
   animation: heroNameIn 0.1s ease-out;
