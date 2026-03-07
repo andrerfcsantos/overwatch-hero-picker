@@ -162,9 +162,6 @@ export default function PickerPage() {
         <div className="w-full lg:w-3/4">
           <HeroFilterPanel
             description='Select the heroes you wish to play and click in the "Get Random Hero" button to get a random hero from the selected ones.'
-            linkTo="/squad"
-            linkPrefix="Playing as a group?"
-            linkText="Get random heroes for your team"
           />
         </div>
       </div>

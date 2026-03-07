@@ -87,6 +87,10 @@ a:hover {
   text-decoration: none !important;
 }
 
+.nav-link-active {
+  border-bottom: 2px solid rgb(240, 100, 20);
+}
+
 /* Skewed button base */
 .skew-button {
   color: white;

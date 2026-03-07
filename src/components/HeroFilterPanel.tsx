@@ -1,21 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useHeroes } from "@/context/HeroContext";
 import RoleSection from "./RoleSection";
 
 interface HeroFilterPanelProps {
   description: string;
-  linkTo: string;
-  linkText: string;
-  linkPrefix?: string;
 }
 
 export default function HeroFilterPanel({
   description,
-  linkTo,
-  linkText,
-  linkPrefix,
 }: HeroFilterPanelProps) {
   const { getSelected } = useHeroes();
   const numberOfSelected = getSelected().length;
@@ -27,11 +20,6 @@ export default function HeroFilterPanel({
       </h1>
 
       <p className="filter-description">{description}</p>
-
-      <p className="filter-description">
-        {linkPrefix && <>{linkPrefix} </>}
-        <Link href={linkTo}>{linkText}</Link>
-      </p>
 
       <div className="text-[0.85rem] text-orange-400 mt-4 font-bold font-sans">
         {numberOfSelected === 0 ? (
