@@ -83,13 +83,6 @@ export default function SquadPage() {
               <label htmlFor="checkbox-force122" className="ml-1">
                 Force 1-2-2
               </label>
-              <button
-                className="inline ml-2 text-white border-none text-[1.2rem] bg-[#0192c7] outline-none px-[0.3em] min-w-[120px] cursor-pointer"
-                style={{ transform: "skewX(-10deg)" }}
-                onClick={handleCopy}
-              >
-                {copyText}
-              </button>
             </div>
 
             <div className="squad-hero-list">
@@ -141,7 +134,17 @@ export default function SquadPage() {
             </div>
           </div>
 
-          <div className="random-hero-button" onClick={generateSquad}>
+          <div className="my-4">
+            <button
+              className="text-white border-none text-[1rem] bg-[#0192c7] outline-none px-3 py-1 min-w-[120px] cursor-pointer rounded"
+              style={{ transform: "skewX(-10deg)" }}
+              onClick={handleCopy}
+            >
+              {copyText}
+            </button>
+          </div>
+
+          <div className="random-hero-button mt-4" onClick={generateSquad}>
             Randomize Squad
           </div>
         </div>

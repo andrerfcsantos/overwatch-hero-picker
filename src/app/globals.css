@@ -277,8 +277,8 @@ a:hover {
 }
 
 .squad-hero-row {
-  display: grid;
-  grid-template-columns: 2em 2em 1fr;
+  display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 0.25em;
   margin-bottom: 0.25em;
