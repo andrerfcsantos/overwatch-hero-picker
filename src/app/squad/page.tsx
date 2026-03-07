@@ -72,8 +72,8 @@ export default function SquadPage() {
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
           <h1 className="text-white underline">Team Generator</h1>
 
-          <div className="text-start">
-            <div className="text-center text-[1.25rem]">
+          <div className="text-center">
+            <div className="text-center text-[1.25rem] mb-4">
               <input
                 id="checkbox-force122"
                 type="checkbox"
@@ -92,62 +92,53 @@ export default function SquadPage() {
               </button>
             </div>
 
-            {/* Tank list */}
-            <ul className="list-none pl-0">
+            <div className="squad-hero-list">
               {squad.tanks.map((h) => (
-                <li key={h.key} className="flex items-center mb-1">
+                <div key={h.key} className="squad-hero-row">
                   <img
-                    className="max-h-[2em]"
+                    className="squad-role-icon"
                     alt="Tank role icon"
                     src="/assets/imgs/roles/tank.png"
                   />
                   <img
-                    className="max-h-[2em] mr-2"
+                    className="squad-hero-icon"
                     alt={`${h.name} icon`}
                     src={`/assets/imgs/heroes/icons/${h.key}.png`}
                   />
-                  <span className="text-[2em] align-middle">{h.name}</span>
-                </li>
+                  <span className="squad-hero-name">{h.name}</span>
+                </div>
               ))}
-            </ul>
-
-            {/* Damage list */}
-            <ul className="list-none pl-0">
               {squad.damage.map((h) => (
-                <li key={h.key} className="flex items-center mb-1">
+                <div key={h.key} className="squad-hero-row">
                   <img
-                    className="max-h-[2em]"
+                    className="squad-role-icon"
                     alt="Damage role icon"
                     src="/assets/imgs/roles/damage.png"
                   />
                   <img
-                    className="max-h-[2em] mr-2"
+                    className="squad-hero-icon"
                     alt={`${h.name} icon`}
                     src={`/assets/imgs/heroes/icons/${h.key}.png`}
                   />
-                  <span className="text-[2em] align-middle">{h.name}</span>
-                </li>
+                  <span className="squad-hero-name">{h.name}</span>
+                </div>
               ))}
-            </ul>
-
-            {/* Support list */}
-            <ul className="list-none pl-0">
               {squad.supports.map((h) => (
-                <li key={h.key} className="flex items-center mb-1">
+                <div key={h.key} className="squad-hero-row">
                   <img
-                    className="max-h-[2em]"
+                    className="squad-role-icon"
                     alt="Support role icon"
                     src="/assets/imgs/roles/support.png"
                   />
                   <img
-                    className="max-h-[2em] mr-2"
+                    className="squad-hero-icon"
                     alt={`${h.name} icon`}
                     src={`/assets/imgs/heroes/icons/${h.key}.png`}
                   />
-                  <span className="text-[2em] align-middle">{h.name}</span>
-                </li>
+                  <span className="squad-hero-name">{h.name}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           <div className="random-hero-button" onClick={generateSquad}>

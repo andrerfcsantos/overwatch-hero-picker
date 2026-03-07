@@ -79,7 +79,7 @@ export default function PickerPage() {
   if (!mounted) return null;
 
   return (
-    <div className="unselectable w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-20">
+    <div className="unselectable w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-4">
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left panel */}
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
@@ -133,17 +133,17 @@ export default function PickerPage() {
           {selectedHero && (
             <h2
               key={`hero-name-${heroCount}`}
-              className="hero-name-animate mx-4 my-4"
+              className="hero-name-animate mx-4 my-4 !text-[2.2rem]"
             >
               {selectedHero.name}
               {showPerks && (
                 <div style={{ lineHeight: "0.5em" }}>
-                  <span style={{ fontSize: "0.6em" }}>
+                  <span style={{ fontSize: "0.5em" }}>
                     {perks[0]} | {perks[1]}
                   </span>
                   <br />
                   <span
-                    className="text-base text-[rgb(240,100,20)] underline cursor-pointer"
+                    className="text-[0.5em] text-[rgb(240,100,20)] underline cursor-pointer"
                     onClick={handleNewPerks}
                   >
                     New perks

@@ -28,7 +28,7 @@ export default function Navbar() {
             src="/assets/imgs/navbar/ow-logo.svg"
             alt="Overwatch logo"
           />
-          <span className="text-[1.5rem]">Overwatch Hero Picker</span>
+          <span className="text-[1.5rem] text-white">Overwatch Hero Picker</span>
         </a>
 
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mt-2 lg:mt-0 text-[1.25em]">

@@ -3,7 +3,7 @@
 /* Restore heading sizes stripped by Tailwind preflight (Bootstrap 4 defaults) */
 @layer base {
   h1 {
-    font-size: 1.6rem !important;
+    font-size: 1.6rem;
     font-weight: 500;
     line-height: 1.2;
     margin-top: 0.5rem;
@@ -11,7 +11,7 @@
   }
 
   h2 {
-    font-size: 1.4rem !important;
+    font-size: 1.4rem;
     font-weight: 500;
     line-height: 1.2;
     margin-top: 0.5rem;
@@ -19,7 +19,7 @@
   }
 
   h3 {
-    font-size: 1.2rem !important;
+    font-size: 1.2rem;
     font-weight: 500;
     line-height: 1.2;
   }
@@ -249,6 +249,37 @@ a:hover {
   .hero-card-name {
     font-size: 1.25em;
   }
+}
+
+/* Squad hero list */
+.squad-hero-list {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.squad-hero-row {
+  display: grid;
+  grid-template-columns: 2em 2em 1fr;
+  align-items: center;
+  gap: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+.squad-role-icon {
+  width: 1.8em;
+  height: 1.8em;
+  justify-self: center;
+}
+
+.squad-hero-icon {
+  width: 1.8em;
+  height: 1.8em;
+}
+
+.squad-hero-name {
+  font-size: 1.8em;
+  white-space: nowrap;
 }
 
 /* About page text */
