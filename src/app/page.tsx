@@ -74,7 +74,7 @@ export default function PickerPage() {
     <div className="unselectable w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-20">
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left panel */}
-        <div className="w-full lg:w-1/4 flex flex-col px-[3%]">
+        <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
           <h1 className="text-white underline">You should play</h1>
 
           <div>

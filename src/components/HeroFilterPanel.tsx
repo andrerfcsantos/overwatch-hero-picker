@@ -33,18 +33,18 @@ export default function HeroFilterPanel({
         <Link href={linkTo}>{linkText}</Link>
       </p>
 
-      <div className="text-[1.5rem] text-orange-400 mt-4 font-bold">
+      <div className="text-[0.85rem] text-orange-400 mt-4 font-bold font-sans">
         {numberOfSelected === 0 ? (
-          <p className="filter-description m-0">
+          <p className="m-0">
             You have no heroes selected, so all heroes are being considered by
             default.
           </p>
         ) : numberOfSelected === 1 ? (
-          <p className="filter-description m-0">
+          <p className="m-0">
             You have {numberOfSelected} hero selected.
           </p>
         ) : (
-          <p className="filter-description m-0">
+          <p className="m-0">
             You have {numberOfSelected} heroes selected.
           </p>
         )}
