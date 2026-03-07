@@ -1,65 +1,164 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useCallback } from "react";
+import { Hero } from "@/types/hero";
+import { useHeroes } from "@/context/HeroContext";
+import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
+import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
+import HeroFilterPanel from "@/components/HeroFilterPanel";
+
+export default function PickerPage() {
+  const { heroes, getSelected } = useHeroes();
+
+  const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
+  const [perks, setPerks] = useState<[string, string]>(["", ""]);
+  const [heroCount, setHeroCount] = useState(0);
+  const [showPortrait, setShowPortrait] = useState(true);
+  const [showPerks, setShowPerks] = useState(true);
+  const [nonRepeatingMode, setNonRepeatingMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Restore preferences and pick initial hero
+  useEffect(() => {
+    setShowPortrait(getBoolFromLS("showPortrait", true));
+    setShowPerks(getBoolFromLS("showPerks", true));
+    setNonRepeatingMode(getBoolFromLS("nonRepeatingMode", false));
+    setMounted(true);
+  }, []);
+
+  // Pick initial hero once heroes are available
+  useEffect(() => {
+    if (mounted && heroes.length > 0 && !selectedHero) {
+      const hero = randomHero(heroes);
+      setSelectedHero(hero);
+      setPerks(getRandomHeroPerks(hero.key));
+    }
+  }, [mounted, heroes, selectedHero]);
+
+  const handleRandomHero = useCallback(() => {
+    const selected = getSelected();
+    const pool = selected.length > 0 ? selected : heroes;
+    const hero = randomHero(pool, {
+      preventRepeat: nonRepeatingMode,
+      previousHeroKey: selectedHero?.key ?? "",
+    });
+    setSelectedHero(hero);
+    setPerks(getRandomHeroPerks(hero.key));
+    setHeroCount((c) => c + 1);
+  }, [heroes, getSelected, nonRepeatingMode, selectedHero]);
+
+  const handleNewPerks = useCallback(() => {
+    if (selectedHero) {
+      setPerks(getRandomHeroPerks(selectedHero.key));
+    }
+  }, [selectedHero]);
+
+  const handleShowPortrait = (checked: boolean) => {
+    setShowPortrait(checked);
+    setBoolToLS("showPortrait", checked);
+  };
+
+  const handleShowPerks = (checked: boolean) => {
+    setShowPerks(checked);
+    setBoolToLS("showPerks", checked);
+  };
+
+  const handleNonRepeating = (checked: boolean) => {
+    setNonRepeatingMode(checked);
+    setBoolToLS("nonRepeatingMode", checked);
+  };
+
+  if (!mounted) return null;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="unselectable w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-20">
+      <div className="flex flex-col lg:flex-row w-full">
+        {/* Left panel */}
+        <div className="w-full lg:w-1/4 flex flex-col px-[3%]">
+          <h1 className="text-white underline">You should play</h1>
+
+          <div>
+            <div>
+              <input
+                id="checkbox-show-portrait"
+                type="checkbox"
+                checked={showPortrait}
+                onChange={(e) => handleShowPortrait(e.target.checked)}
+              />
+              <label htmlFor="checkbox-show-portrait" className="ml-1 mr-2.5">
+                Show hero portrait
+              </label>
+
+              <input
+                id="checkbox-show-perks"
+                type="checkbox"
+                checked={showPerks}
+                onChange={(e) => handleShowPerks(e.target.checked)}
+              />
+              <label htmlFor="checkbox-show-perks" className="ml-1">
+                Randomize perks
+              </label>
+            </div>
+
+            <div>
+              <input
+                id="checkbox-non-repeating"
+                type="checkbox"
+                checked={nonRepeatingMode}
+                onChange={(e) => handleNonRepeating(e.target.checked)}
+              />
+              <label htmlFor="checkbox-non-repeating" className="ml-1">
+                Non-repeating mode
+              </label>
+            </div>
+          </div>
+
+          {showPortrait && selectedHero && (
+            <img
+              src={`/assets/imgs/heroes/portraits/${selectedHero.key}.png`}
+              className="max-w-[75%] mx-auto"
+              alt={`${selectedHero.name} portrait`}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          )}
+
+          {selectedHero && (
+            <h2
+              key={`hero-name-${heroCount}`}
+              className="hero-name-animate mx-4 my-4"
+            >
+              {selectedHero.name}
+              {showPerks && (
+                <div style={{ lineHeight: "0.5em" }}>
+                  <span style={{ fontSize: "0.6em" }}>
+                    {perks[0]} | {perks[1]}
+                  </span>
+                  <br />
+                  <span
+                    className="text-base text-[rgb(240,100,20)] underline cursor-pointer"
+                    onClick={handleNewPerks}
+                  >
+                    New perks
+                  </span>
+                </div>
+              )}
+            </h2>
+          )}
+
+          <div className="random-hero-button" onClick={handleRandomHero}>
+            Get Random Hero
+          </div>
         </div>
-      </main>
+
+        {/* Right panel */}
+        <div className="w-full lg:w-3/4">
+          <HeroFilterPanel
+            description='Select the heroes you wish to play and click in the "Get Random Hero" button to get a random hero from the selected ones.'
+            linkTo="/squad"
+            linkPrefix="Playing as a group?"
+            linkText="Get random heroes for your team"
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,26 +1,209 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: "Big Noodle Titling";
+  src:
+    local("Big Noodle Titling"),
+    url("/assets/fonts/big_noodle_titling-webfont.woff2") format("woff2"),
+    url("/assets/fonts/big_noodle_titling-webfont.woff") format("woff"),
+    url("/assets/fonts/big_noodle_titling-webfont.ttf") format("truetype"),
+    url("/assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular")
+      format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: #2c3e50;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+  background-color: #2c3e50;
+  color: white;
+}
+
+/* Global link styles */
+a:link,
+a:visited {
+  color: orange;
+}
+
+a:hover {
+  color: orangered;
+}
+
+/* Unselectable utility */
+.unselectable {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Navbar link styles */
+.nav-link,
+.nav-link:link,
+.nav-link:visited,
+.nav-link:hover,
+.nav-link:active {
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* Skewed button base */
+.skew-button {
+  color: white;
+  border: none;
+  font-size: 1.25rem;
+  outline: none;
+  padding: 0 0.3em;
+  margin: 0 0.1em;
+  height: min-content;
+  transform: skewX(-10deg);
+  cursor: pointer;
+}
+
+.skew-button:active {
+  transform: skewX(-10deg) translate(1px, 1px);
+}
+
+/* Hero card styles */
+.hero-card {
+  display: inline-flex;
+  margin: 0.25em;
+  width: 12em;
+  height: 2.5em;
+  background-color: #0192c7;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hero-card.selected {
+  background-color: green;
+}
+
+.hero-card:hover {
+  box-shadow: 0px 0px 0.5em #21c0fa;
+}
+
+.hero-card:active {
+  transform: translate(1px, 1px);
+}
+
+.hero-card-image {
+  height: 2.5em;
+  vertical-align: bottom;
+  background-color: #343a40;
+}
+
+.hero-card-name {
+  min-height: 100%;
+  padding: 0 0.2em;
+  font-size: 1.75em;
+  white-space: nowrap;
+  outline: none;
+  display: flex;
+  align-items: center;
+}
+
+/* Filter description */
+.filter-description {
+  display: block;
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  user-select: text;
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Random hero button */
+.random-hero-button {
+  font-size: 1.75rem;
+  color: white;
+  background-color: rgb(240, 100, 20);
+  border-color: rgb(240, 100, 20);
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  -webkit-appearance: none;
+  text-align: center;
+}
+
+.random-hero-button:hover,
+.random-hero-button:active,
+.random-hero-button:focus {
+  background-color: rgb(240, 100, 20);
+  color: white;
+}
+
+/* Hero name animation */
+.hero-name-animate {
+  animation: heroNameIn 0.1s ease-out;
+}
+
+@keyframes heroNameIn {
+  from {
+    transform: scaleY(0) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+}
+
+/* Hero card responsive */
+@media (max-width: 1375px) {
+  .hero-card {
+    width: 13em;
+  }
+  .hero-card-name {
+    font-size: 1.75em;
+  }
+  .hero-card-image {
+    height: 2.75em;
+  }
+}
+
+@media (max-width: 1090px) {
+  .hero-card {
+    width: 12em;
+  }
+  .hero-card-name {
+    font-size: 1.75em;
+  }
+  .hero-card-image {
+    height: 2.75em;
+  }
+}
+
+@media (max-width: 710px) {
+  .hero-card-image {
+    height: 2.75em;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 320px) {
+  .hero-card {
+    width: 100%;
+  }
+  .hero-card-name {
+    font-size: 1.5em;
+  }
+}
+
+/* About page text */
+.about-text {
+  font-size: 1.1em;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: start;
 }
