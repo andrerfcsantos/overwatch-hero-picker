@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Hero } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import { randomSquad, randomSquadWithRoles } from "@/lib/heroService";
+import { heroPerks } from "@/data/heroPerks";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
 
 export default function SquadPage() {
@@ -14,9 +15,27 @@ export default function SquadPage() {
     supports: Hero[];
   }>({ tanks: [], damage: [], supports: [] });
   const [force122, setForce122] = useState(true);
+  const [randomizePerks, setRandomizePerks] = useState(true);
+  const [perkAssignments, setPerkAssignments] = useState<
+    Record<string, { minor: string; major: string }>
+  >({});
   const [copyText, setCopyText] = useState("Copy to clipboard");
   const [mounted, setMounted] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+
+  const assignPerks = useCallback((heroes: Hero[]) => {
+    const assignments: Record<string, { minor: string; major: string }> = {};
+    for (const hero of heroes) {
+      const perks = heroPerks[hero.key];
+      if (perks) {
+        assignments[hero.key] = {
+          minor: perks.minor[Math.floor(Math.random() * perks.minor.length)],
+          major: perks.major[Math.floor(Math.random() * perks.major.length)],
+        };
+      }
+    }
+    return assignments;
+  }, []);
 
   const generateSquad = useCallback(() => {
     const heroesByRole = {
@@ -29,12 +48,15 @@ export default function SquadPage() {
       ? randomSquad(heroesByRole)
       : randomSquadWithRoles(heroesByRole);
 
+    const allHeroes = [...result.TANK, ...result.DAMAGE, ...result.SUPPORT];
+    setPerkAssignments(assignPerks(allHeroes));
+
     setSquad({
       tanks: result.TANK,
       damage: result.DAMAGE,
       supports: result.SUPPORT,
     });
-  }, [getByRole, force122]);
+  }, [getByRole, force122, assignPerks]);
 
   useEffect(() => {
     setMounted(true);
@@ -47,12 +69,16 @@ export default function SquadPage() {
   }, [mounted, generateSquad]);
 
   const handleCopy = async () => {
-    const allNames = [
-      ...squad.tanks.map((h) => h.name),
-      ...squad.damage.map((h) => h.name),
-      ...squad.supports.map((h) => h.name),
-    ];
-    const text = allNames.join(" | ");
+    const allHeroes = [...squad.tanks, ...squad.damage, ...squad.supports];
+    const text = allHeroes
+      .map((h) => {
+        const perks = perkAssignments[h.key];
+        if (randomizePerks && perks) {
+          return `${h.name} (${perks.minor}, ${perks.major})`;
+        }
+        return h.name;
+      })
+      .join(" | ");
 
     try {
       await navigator.clipboard.writeText(text);
@@ -80,18 +106,32 @@ export default function SquadPage() {
             ⚙ Options {optionsOpen ? "▾" : "▸"}
           </div>
           {optionsOpen && (
-            <div className="text-center text-[1.25rem] mb-2">
-              <input
-                id="checkbox-force122"
-                type="checkbox"
-                checked={force122}
-                onChange={(e) => setForce122(e.target.checked)}
-              />
-              <label htmlFor="checkbox-force122" className="ml-1 mr-1">
-                Force 1-2-2
-              </label>
-              <span className="info-icon" data-tip="Force team composition to 1 Tank, 2 Damage, 2 Support">ⓘ</span>
-            </div>
+            <>
+              <div className="text-center text-[1.25rem] mb-2">
+                <input
+                  id="checkbox-force122"
+                  type="checkbox"
+                  checked={force122}
+                  onChange={(e) => setForce122(e.target.checked)}
+                />
+                <label htmlFor="checkbox-force122" className="ml-1 mr-1">
+                  Force 1-2-2
+                </label>
+                <span className="info-icon" data-tip="Force team composition to 1 Tank, 2 Damage, 2 Support">ⓘ</span>
+              </div>
+              <div className="text-center text-[1.25rem] mb-2">
+                <input
+                  id="checkbox-perks"
+                  type="checkbox"
+                  checked={randomizePerks}
+                  onChange={(e) => setRandomizePerks(e.target.checked)}
+                />
+                <label htmlFor="checkbox-perks" className="ml-1 mr-1">
+                  Randomize Perks
+                </label>
+                <span className="info-icon" data-tip="Assign a random minor and major perk to each hero">ⓘ</span>
+              </div>
+            </>
           )}
 
           <button
@@ -105,51 +145,40 @@ export default function SquadPage() {
           <div className="text-center">
 
             <div className="squad-hero-list">
-              {squad.tanks.map((h) => (
-                <div key={h.key} className="squad-hero-row">
-                  <img
-                    className="squad-role-icon"
-                    alt="Tank role icon"
-                    src="/assets/imgs/roles/tank.png"
-                  />
-                  <img
-                    className="squad-hero-icon"
-                    alt={`${h.name} icon`}
-                    src={`/assets/imgs/heroes/icons/${h.key}.png`}
-                  />
-                  <span className="squad-hero-name">{h.name}</span>
-                </div>
-              ))}
-              {squad.damage.map((h) => (
-                <div key={h.key} className="squad-hero-row">
-                  <img
-                    className="squad-role-icon"
-                    alt="Damage role icon"
-                    src="/assets/imgs/roles/damage.png"
-                  />
-                  <img
-                    className="squad-hero-icon"
-                    alt={`${h.name} icon`}
-                    src={`/assets/imgs/heroes/icons/${h.key}.png`}
-                  />
-                  <span className="squad-hero-name">{h.name}</span>
-                </div>
-              ))}
-              {squad.supports.map((h) => (
-                <div key={h.key} className="squad-hero-row">
-                  <img
-                    className="squad-role-icon"
-                    alt="Support role icon"
-                    src="/assets/imgs/roles/support.png"
-                  />
-                  <img
-                    className="squad-hero-icon"
-                    alt={`${h.name} icon`}
-                    src={`/assets/imgs/heroes/icons/${h.key}.png`}
-                  />
-                  <span className="squad-hero-name">{h.name}</span>
-                </div>
-              ))}
+              {[
+                { heroes: squad.tanks, role: "tank", label: "Tank" },
+                { heroes: squad.damage, role: "damage", label: "Damage" },
+                { heroes: squad.supports, role: "support", label: "Support" },
+              ].map(({ heroes, role, label }) =>
+                heroes.map((h) => (
+                  <div key={h.key}>
+                    <div className="squad-hero-row">
+                      <img
+                        className="squad-role-icon"
+                        alt={`${label} role icon`}
+                        src={`/assets/imgs/roles/${role}.png`}
+                      />
+                      <img
+                        className="squad-hero-icon"
+                        alt={`${h.name} icon`}
+                        src={`/assets/imgs/heroes/icons/${h.key}.png`}
+                      />
+                      <span className="squad-hero-name">{h.name}</span>
+                    </div>
+                    {randomizePerks && perkAssignments[h.key] && (
+                      <div className="flex justify-center text-[0.85rem] mb-2 opacity-80 gap-1">
+                        <span className="text-blue-300">
+                          {perkAssignments[h.key].minor}
+                        </span>
+                        <span className="text-gray-500">|</span>
+                        <span className="text-yellow-300">
+                          {perkAssignments[h.key].major}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

@@ -159,7 +159,7 @@ export default function PickerPage() {
                     className="perks-animate"
                     style={{ fontSize: "0.55em" }}
                   >
-                    {perks[0]} | {perks[1]}
+                    <span className="text-blue-300">{perks[0]}</span> <span className="text-gray-500">|</span> <span className="text-yellow-300">{perks[1]}</span>
                   </span>
                   <br />
                   <button
