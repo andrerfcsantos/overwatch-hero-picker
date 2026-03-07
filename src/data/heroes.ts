@@ -156,3 +156,5 @@ const heroDefinitions: Record<string, Hero> = {
 export function getInitialHeroes(): Record<string, Hero> {
   return JSON.parse(JSON.stringify(heroDefinitions));
 }
+
+export const heroKeys = Object.keys(heroDefinitions);
