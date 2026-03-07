@@ -140,17 +140,17 @@ export default function PickerPage() {
             >
               {selectedHero.name}
               {showPerks && (
-                <div style={{ lineHeight: "0.5em" }}>
+                <div style={{ lineHeight: "0.5em", marginTop: "0.3em" }}>
                   <span
                     key={`perks-${perksCount}`}
                     className="perks-animate"
-                    style={{ fontSize: "0.5em" }}
+                    style={{ fontSize: "0.55em" }}
                   >
                     {perks[0]} | {perks[1]}
                   </span>
                   <br />
                   <button
-                    className="text-[0.45em] text-white bg-[rgb(180,75,15)] border-none rounded px-2 py-0.5 mt-1 cursor-pointer"
+                    className="text-[0.55em] text-white bg-[rgb(30,100,30)] border-none rounded px-4 py-1 mt-1 cursor-pointer"
                     onClick={handleNewPerks}
                   >
                     Randomize perks
