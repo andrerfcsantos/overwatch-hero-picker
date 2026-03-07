@@ -107,9 +107,9 @@ a:hover {
 /* Hero card styles */
 .hero-card {
   display: inline-flex;
-  margin: 0.25em;
-  width: 12em;
-  height: 2.5em;
+  margin: 0.2em;
+  width: 10em;
+  height: 2.1em;
   background-color: #0192c7;
   align-items: center;
   cursor: pointer;
@@ -128,7 +128,7 @@ a:hover {
 }
 
 .hero-card-image {
-  height: 2.5em;
+  height: 2.1em;
   vertical-align: bottom;
   background-color: #343a40;
 }
@@ -136,7 +136,7 @@ a:hover {
 .hero-card-name {
   min-height: 100%;
   padding: 0 0.2em;
-  font-size: 1.75em;
+  font-size: 1.45em;
   white-space: nowrap;
   outline: none;
   display: flex;
@@ -208,31 +208,31 @@ a:hover {
 /* Hero card responsive */
 @media (max-width: 1375px) {
   .hero-card {
-    width: 13em;
+    width: 11em;
   }
   .hero-card-name {
-    font-size: 1.75em;
+    font-size: 1.45em;
   }
   .hero-card-image {
-    height: 2.75em;
+    height: 2.3em;
   }
 }
 
 @media (max-width: 1090px) {
   .hero-card {
-    width: 12em;
+    width: 10em;
   }
   .hero-card-name {
-    font-size: 1.75em;
+    font-size: 1.45em;
   }
   .hero-card-image {
-    height: 2.75em;
+    height: 2.3em;
   }
 }
 
 @media (max-width: 710px) {
   .hero-card-image {
-    height: 2.75em;
+    height: 2.3em;
   }
 }
 
@@ -247,7 +247,7 @@ a:hover {
     width: 100%;
   }
   .hero-card-name {
-    font-size: 1.5em;
+    font-size: 1.25em;
   }
 }
 
