@@ -178,6 +178,48 @@ a:hover {
   color: white;
 }
 
+/* Info icon tooltip */
+.info-icon {
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: help;
+  position: relative;
+}
+
+.info-icon:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.info-icon:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  font-size: 0.8rem;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0.3em 0.6em;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Options toggle */
+.options-toggle {
+  font-size: 0.95rem;
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  margin-bottom: 0.3em;
+}
+
+.options-toggle:hover {
+  color: white;
+}
+
 /* Perks animation */
 .perks-animate {
   animation: perksFadeIn 0.15s ease-out;

@@ -18,6 +18,7 @@ export default function PickerPage() {
   const [nonRepeatingMode, setNonRepeatingMode] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [perksCount, setPerksCount] = useState(0);
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const portraitRef = useRef<HTMLImageElement>(null);
 
   // Restore preferences and pick initial hero
@@ -88,41 +89,53 @@ export default function PickerPage() {
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
           <h1 className="text-white underline">You should play</h1>
 
-          <div>
-            <div>
-              <input
-                id="checkbox-show-portrait"
-                type="checkbox"
-                checked={showPortrait}
-                onChange={(e) => handleShowPortrait(e.target.checked)}
-              />
-              <label htmlFor="checkbox-show-portrait" className="ml-1 mr-2.5">
-                Show hero portrait
-              </label>
-
-              <input
-                id="checkbox-show-perks"
-                type="checkbox"
-                checked={showPerks}
-                onChange={(e) => handleShowPerks(e.target.checked)}
-              />
-              <label htmlFor="checkbox-show-perks" className="ml-1">
-                Randomize perks
-              </label>
-            </div>
-
-            <div>
-              <input
-                id="checkbox-non-repeating"
-                type="checkbox"
-                checked={nonRepeatingMode}
-                onChange={(e) => handleNonRepeating(e.target.checked)}
-              />
-              <label htmlFor="checkbox-non-repeating" className="ml-1">
-                Non-repeating mode
-              </label>
-            </div>
+          <div
+            className="options-toggle"
+            onClick={() => setOptionsOpen(!optionsOpen)}
+          >
+            ⚙ Options {optionsOpen ? "▾" : "▸"}
           </div>
+          {optionsOpen && (
+            <div className="mb-2">
+              <div>
+                <input
+                  id="checkbox-show-portrait"
+                  type="checkbox"
+                  checked={showPortrait}
+                  onChange={(e) => handleShowPortrait(e.target.checked)}
+                />
+                <label htmlFor="checkbox-show-portrait" className="ml-1 mr-1">
+                  Show hero portrait
+                </label>
+                <span className="info-icon" data-tip="Show or hide the full hero portrait image">ⓘ</span>
+
+                <input
+                  id="checkbox-show-perks"
+                  type="checkbox"
+                  checked={showPerks}
+                  className="ml-2"
+                  onChange={(e) => handleShowPerks(e.target.checked)}
+                />
+                <label htmlFor="checkbox-show-perks" className="ml-1 mr-1">
+                  Randomize perks
+                </label>
+                <span className="info-icon" data-tip="Randomly assign ability perks when picking a hero">ⓘ</span>
+              </div>
+
+              <div>
+                <input
+                  id="checkbox-non-repeating"
+                  type="checkbox"
+                  checked={nonRepeatingMode}
+                  onChange={(e) => handleNonRepeating(e.target.checked)}
+                />
+                <label htmlFor="checkbox-non-repeating" className="ml-1 mr-1">
+                  Non-repeating mode
+                </label>
+                <span className="info-icon" data-tip="Prevent the same hero from being picked twice in a row">ⓘ</span>
+              </div>
+            </div>
+          )}
 
           {showPortrait && selectedHero && (
             <img

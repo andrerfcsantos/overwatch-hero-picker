@@ -16,6 +16,7 @@ export default function SquadPage() {
   const [force122, setForce122] = useState(true);
   const [copyText, setCopyText] = useState("Copy to clipboard");
   const [mounted, setMounted] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   const generateSquad = useCallback(() => {
     const heroesByRole = {
@@ -72,7 +73,13 @@ export default function SquadPage() {
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
           <h1 className="text-white underline">Team Generator</h1>
 
-          <div className="text-center">
+          <div
+            className="options-toggle"
+            onClick={() => setOptionsOpen(!optionsOpen)}
+          >
+            ⚙ Options {optionsOpen ? "▾" : "▸"}
+          </div>
+          {optionsOpen && (
             <div className="text-center text-[1.25rem] mb-4">
               <input
                 id="checkbox-force122"
@@ -80,10 +87,14 @@ export default function SquadPage() {
                 checked={force122}
                 onChange={(e) => setForce122(e.target.checked)}
               />
-              <label htmlFor="checkbox-force122" className="ml-1">
+              <label htmlFor="checkbox-force122" className="ml-1 mr-1">
                 Force 1-2-2
               </label>
+              <span className="info-icon" data-tip="Force team composition to 1 Tank, 2 Damage, 2 Support">ⓘ</span>
             </div>
+          )}
+
+          <div className="text-center">
 
             <div className="squad-hero-list">
               {squad.tanks.map((h) => (
