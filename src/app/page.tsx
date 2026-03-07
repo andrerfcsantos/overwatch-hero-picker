@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Hero } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
@@ -17,6 +17,7 @@ export default function PickerPage() {
   const [showPerks, setShowPerks] = useState(true);
   const [nonRepeatingMode, setNonRepeatingMode] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const portraitRef = useRef<HTMLImageElement>(null);
 
   // Restore preferences and pick initial hero
   useEffect(() => {
@@ -45,6 +46,13 @@ export default function PickerPage() {
     setSelectedHero(hero);
     setPerks(getRandomHeroPerks(hero.key));
     setHeroCount((c) => c + 1);
+
+    // Re-trigger portrait animation without remounting
+    if (portraitRef.current) {
+      portraitRef.current.classList.remove("hero-portrait-animate");
+      void portraitRef.current.offsetWidth;
+      portraitRef.current.classList.add("hero-portrait-animate");
+    }
   }, [heroes, getSelected, nonRepeatingMode, selectedHero]);
 
   const handleNewPerks = useCallback(() => {
@@ -115,8 +123,9 @@ export default function PickerPage() {
 
           {showPortrait && selectedHero && (
             <img
+              ref={portraitRef}
               src={`/assets/imgs/heroes/portraits/${selectedHero.key}.png`}
-              className="max-w-[75%] mx-auto"
+              className="max-w-[75%] mx-auto hero-portrait-animate"
               alt={`${selectedHero.name} portrait`}
             />
           )}
