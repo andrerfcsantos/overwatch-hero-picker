@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![Hero Picker Logo](images/logo/logo_black.png)
 
-## Getting Started
+Repository for the Random Hero Picker for Overwatch.
+This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.
 
-First, run the development server:
+* **Website:** https://owheropicker.com
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Hero Picker Main Page Screenshot](images/screenshots/main_page.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Bugs and feature requests
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+If you find any bug or have a feature request, please post it on the [issue section](https://github.com/andrerfcsantos/overwatch-hero-picker/issues) of this repository.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Feedback
 
-## Learn More
+Any feedback that is not a bug report or a feature request, please send to owheropicker@gmail.com. You can also join the [discord server](https://discord.gg/rwQMrCa).
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* [Next.js](https://nextjs.org/) (App Router)
+* [React](https://react.dev/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [Tailwind CSS](https://tailwindcss.com/)
+* [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Building the site from source
 
-## Deploy on Vercel
+Use these instructions to build the site from the source code and having it run on your own machine or server.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* [Node.js](https://nodejs.org/en/) (v18 or later)
+
+### Running the site
+
+* Clone the repo
+* `cd` into the repo folder
+* `npm install` to install the dependencies
+* You can now run the site using `npm` directly or generate static files:
+    * `npm run dev` to serve the site on localhost in development mode
+    * `npm run build` to generate a production build
+    * `npm run start` to serve the production build on localhost
