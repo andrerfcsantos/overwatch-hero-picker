@@ -163,7 +163,8 @@ export default function PickerPage() {
                   </span>
                   <br />
                   <button
-                    className="text-[0.55em] text-white bg-[rgb(30,100,30)] border-none rounded px-4 py-1 mt-1 cursor-pointer"
+                    className="text-[0.55em] text-white bg-[#0192c7] border-none rounded w-full px-2 py-1.5 mt-1 cursor-pointer"
+                    style={{ transform: "skewX(-10deg)" }}
                     onClick={handleNewPerks}
                   >
                     Randomize perks

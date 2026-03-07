@@ -80,7 +80,7 @@ export default function SquadPage() {
             ⚙ Options {optionsOpen ? "▾" : "▸"}
           </div>
           {optionsOpen && (
-            <div className="text-center text-[1.25rem] mb-4">
+            <div className="text-center text-[1.25rem] mb-2">
               <input
                 id="checkbox-force122"
                 type="checkbox"
@@ -93,6 +93,14 @@ export default function SquadPage() {
               <span className="info-icon" data-tip="Force team composition to 1 Tank, 2 Damage, 2 Support">ⓘ</span>
             </div>
           )}
+
+          <button
+            className="text-white border-none text-[1.2rem] bg-[#0192c7] outline-none px-[0.3em] cursor-pointer mb-3 rounded"
+            style={{ transform: "skewX(-10deg)" }}
+            onClick={handleCopy}
+          >
+            {copyText}
+          </button>
 
           <div className="text-center">
 
@@ -143,16 +151,6 @@ export default function SquadPage() {
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="my-4">
-            <button
-              className="text-white border-none text-[1rem] bg-[#0192c7] outline-none px-3 py-1 min-w-[120px] cursor-pointer rounded"
-              style={{ transform: "skewX(-10deg)" }}
-              onClick={handleCopy}
-            >
-              {copyText}
-            </button>
           </div>
 
           <div className="random-hero-button mt-4" onClick={generateSquad}>
