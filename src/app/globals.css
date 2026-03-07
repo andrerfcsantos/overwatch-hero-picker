@@ -95,11 +95,12 @@ a:hover {
 .skew-button {
   color: white;
   border: none;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   outline: none;
-  padding: 0 0.3em;
+  padding: 0.05em 0.3em;
   margin: 0 0.1em;
   height: min-content;
+  border-radius: 0.25rem;
   transform: skewX(-10deg);
   cursor: pointer;
 }
