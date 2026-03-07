@@ -3,13 +3,7 @@
 import { useHeroes } from "@/context/HeroContext";
 import RoleSection from "./RoleSection";
 
-interface HeroFilterPanelProps {
-  description: string;
-}
-
-export default function HeroFilterPanel({
-  description,
-}: HeroFilterPanelProps) {
+export default function HeroFilterPanel() {
   const { getSelected } = useHeroes();
   const numberOfSelected = getSelected().length;
 
@@ -19,9 +13,7 @@ export default function HeroFilterPanel({
         Filter Heroes
       </h1>
 
-      <p className="filter-description">{description}</p>
-
-      <div className="text-[0.85rem] text-orange-400 mt-4 font-bold font-sans">
+      <div className="text-[1.05rem] text-orange-400 mt-2 font-bold font-sans">
         {numberOfSelected === 0 ? (
           <p className="m-0">
             You have no heroes selected, so all heroes are being considered by

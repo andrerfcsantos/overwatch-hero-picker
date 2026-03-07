@@ -151,9 +151,7 @@ export default function SquadPage() {
 
         {/* Right panel */}
         <div className="w-full lg:w-3/4">
-          <HeroFilterPanel
-            description='Select the heroes you wish to include in your squad and click in the "Get Random Team" button to get a random team which will include the selected heroes.'
-          />
+          <HeroFilterPanel />
         </div>
       </div>
     </div>
