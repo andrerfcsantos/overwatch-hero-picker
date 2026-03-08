@@ -93,7 +93,7 @@ export default function SquadPage() {
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left panel */}
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
-          <h1 className="text-white underline">Team Generator</h1>
+          <h1 className="text-white">Team Generator</h1>
 
           <div
             className="options-toggle"

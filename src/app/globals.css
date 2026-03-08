@@ -27,6 +27,7 @@
   p {
     margin-top: 0;
     margin-bottom: 1rem;
+    font-family: "Config", Arial, Helvetica, sans-serif;
   }
 
   ul {
@@ -43,6 +44,17 @@
     url("/assets/fonts/big_noodle_titling-webfont.ttf") format("truetype"),
     url("/assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular")
       format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src:
+    local("Config Text"),
+    url("/assets/fonts/Config Text.woff2") format("woff2"),
+    url("/assets/fonts/Config Text.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -255,7 +267,7 @@ a:hover {
 /* Options toggle */
 .options-toggle {
   font-size: 0.95rem;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Config", Arial, Helvetica, sans-serif;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   margin-bottom: 0.3em;
@@ -388,9 +400,3 @@ a:hover {
   white-space: nowrap;
 }
 
-/* About page text */
-.about-text {
-  font-size: 1.1em;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  text-align: start;
-}

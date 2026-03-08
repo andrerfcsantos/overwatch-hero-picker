@@ -9,7 +9,7 @@ export default function HeroFilterPanel() {
 
   return (
     <div className="block text-start max-[991.98px]:text-center pr-[3%]">
-      <h1 className="text-white underline max-[991.98px]:mt-[5%]">
+      <h1 className="text-white max-[991.98px]:mt-[5%]">
         Filter Heroes
       </h1>
 

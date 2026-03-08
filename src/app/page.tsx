@@ -87,7 +87,7 @@ export default function PickerPage() {
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left panel */}
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
-          <h1 className="text-white underline">You should play</h1>
+          <h1 className="text-white">You should play</h1>
 
           <div
             className="options-toggle"
