@@ -103,8 +103,8 @@ a:hover {
   border-bottom: 2px solid rgb(240, 100, 20);
 }
 
-/* Skewed button base */
-.skew-button {
+/* Action button base */
+.action-button {
   color: white;
   border: none;
   font-size: 1.15rem;
@@ -113,15 +113,12 @@ a:hover {
   margin: 0 0.1em;
   height: min-content;
   border-radius: 0.25rem;
-  transform: skewX(-10deg);
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
 }
 
-.skew-button::after {
+.action-button::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -131,15 +128,15 @@ a:hover {
   pointer-events: none;
 }
 
-.skew-button:hover::after {
+.action-button:hover::after {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.skew-button:active {
-  transform: skewX(-10deg) scale(0.95);
+.action-button:active {
+  transform: scale(0.95);
 }
 
-.skew-button:active::after {
+.action-button:active::after {
   background: rgba(0, 0, 0, 0.1);
 }
 

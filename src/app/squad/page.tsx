@@ -131,7 +131,7 @@ export default function SquadPage() {
           )}
 
           <button
-            className="skew-button text-[1.2rem] bg-[#0192c7] mb-3"
+            className="action-button text-[1.2rem] bg-[#0192c7] mb-3"
             onClick={handleCopy}
           >
             {copyText}

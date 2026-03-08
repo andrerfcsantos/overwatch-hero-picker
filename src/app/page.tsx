@@ -164,7 +164,7 @@ export default function PickerPage() {
                   </span>
                   <br />
                   <button
-                    className="skew-button text-[1.2rem] bg-[#0192c7] w-full !px-2 !py-1.5 !mt-3"
+                    className="action-button text-[1.2rem] bg-[#0192c7] w-full !px-2 !py-1.5 !mt-3"
                     onClick={handleNewPerks}
                   >
                     Randomize perks
