@@ -22,8 +22,8 @@ export default function Navbar() {
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-start lg:items-center justify-between flex-1`}
       >
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
-          <a
-            href="https://owheropicker.com"
+          <Link
+            href="/"
             className="flex items-center no-underline text-white"
           >
             <img
@@ -34,7 +34,7 @@ export default function Navbar() {
             <span className="text-[1.5rem] text-white">
               Overwatch Hero Picker
             </span>
-          </a>
+          </Link>
 
           <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 lg:ml-6 text-[1.25em]">
             <Link
