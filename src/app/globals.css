@@ -192,6 +192,20 @@ a:hover {
   font-weight: bold;
 }
 
+/* Orange button shared brightness */
+.btn-orange {
+  filter: brightness(0.93);
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.btn-orange:hover {
+  filter: brightness(1.03);
+}
+
+.btn-orange:active {
+  filter: brightness(0.9);
+}
+
 /* Random hero button */
 .random-hero-button {
   font-size: 1.75rem;
@@ -203,16 +217,10 @@ a:hover {
   cursor: pointer;
   -webkit-appearance: none;
   text-align: center;
-  transition: filter 0.15s ease, transform 0.1s ease;
-}
-
-.random-hero-button:hover {
-  filter: brightness(0.85);
 }
 
 .random-hero-button:active {
   transform: scale(0.97);
-  filter: brightness(0.9);
 }
 
 /* Info icon tooltip */

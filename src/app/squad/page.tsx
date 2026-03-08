@@ -60,13 +60,9 @@ export default function SquadPage() {
 
   useEffect(() => {
     setMounted(true);
+    generateSquad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      generateSquad();
-    }
-  }, [mounted, generateSquad]);
 
   const handleCopy = async () => {
     const allHeroes = [...squad.tanks, ...squad.damage, ...squad.supports];
@@ -181,7 +177,7 @@ export default function SquadPage() {
             </div>
           </div>
 
-          <div className="random-hero-button mt-4" onClick={generateSquad}>
+          <div className="random-hero-button btn-orange mt-4" onClick={generateSquad}>
             Randomize Squad
           </div>
         </div>

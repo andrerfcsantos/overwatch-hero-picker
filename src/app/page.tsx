@@ -173,7 +173,7 @@ export default function PickerPage() {
             </h2>
           )}
 
-          <div className="random-hero-button" onClick={handleRandomHero}>
+          <div className="random-hero-button btn-orange" onClick={handleRandomHero}>
             Randomize Hero
           </div>
         </div>

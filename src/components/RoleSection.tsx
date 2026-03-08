@@ -31,7 +31,7 @@ export default function RoleSection({
           Select All
         </button>
         <button
-          className="skew-button bg-[rgb(240,100,20)]"
+          className="skew-button bg-[rgb(240,100,20)] btn-orange"
           onClick={() => unselectByRole(role)}
         >
           Unselect All
