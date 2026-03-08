@@ -147,30 +147,31 @@ export default function PickerPage() {
           )}
 
           {selectedHero && (
-            <h2
-              key={`hero-name-${heroCount}`}
-              className="hero-name-animate mx-4 my-4 !text-[2.2rem]"
-            >
-              {selectedHero.name}
+            <>
+              <h2
+                key={`hero-name-${heroCount}`}
+                className="hero-name-animate mx-4 mt-4 mb-0 !text-[2.2rem]"
+              >
+                {selectedHero.name}
+              </h2>
               {showPerks && (
-                <div style={{ lineHeight: "0.5em", marginTop: "0.3em" }}>
+                <div className="mx-4 mb-4" style={{ lineHeight: "0.5em", marginTop: "0.8em" }}>
                   <span
                     key={`perks-${perksCount}`}
-                    className="perks-animate"
-                    style={{ fontSize: "0.55em" }}
+                    className="perks-animate text-[1.2rem]"
                   >
                     <span className="text-blue-300">{perks[0]}</span> <span className="text-gray-500">|</span> <span className="text-yellow-300">{perks[1]}</span>
                   </span>
                   <br />
                   <button
-                    className="skew-button text-[0.55em] bg-[#0192c7] w-full !px-2 !py-1.5 !mt-1"
+                    className="skew-button text-[1.2rem] bg-[#0192c7] w-full !px-2 !py-1.5 !mt-3"
                     onClick={handleNewPerks}
                   >
                     Randomize perks
                   </button>
                 </div>
               )}
-            </h2>
+            </>
           )}
 
           <div className="random-hero-button btn-orange" onClick={handleRandomHero}>
