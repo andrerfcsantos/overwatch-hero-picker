@@ -9,13 +9,13 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.owheropicker.com"),
   title: "Overwatch Random Hero Picker | For teams and solo players",
   description:
-    "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads.",
+    "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes.",
   openGraph: {
     locale: "en_US",
     type: "website",
     title: "Overwatch Random Hero Picker",
     description:
-      "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads.",
+      "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes.",
     url: "https://www.owheropicker.com/",
     siteName: "Overwatch Random Hero Picker",
     images: ["/assets/imgs/heroes/icons/tracer.png"],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Overwatch Random Hero Picker",
     description:
-      "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes. No ads.",
+      "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes.",
     images: ["/assets/imgs/heroes/icons/tracer.png"],
   },
 };
@@ -37,6 +37,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006903176175824"
+          crossOrigin="anonymous"
+        ></script>
+
         {/* Preload navbar images */}
         <link rel="preload" as="image" href="/assets/imgs/navbar/ow-logo.svg" />
         <link rel="preload" as="image" href="/assets/imgs/navbar/bmc.svg" />
