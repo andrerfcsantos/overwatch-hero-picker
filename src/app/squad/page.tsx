@@ -131,7 +131,7 @@ export default function SquadPage() {
           )}
 
           <button
-            className="action-button text-[1.2rem] bg-[#0192c7] mb-3"
+            className="action-button text-[1.2rem] bg-[#0192c7] mb-3 max-w-[14rem] self-center"
             onClick={handleCopy}
           >
             {copyText}
@@ -161,7 +161,7 @@ export default function SquadPage() {
                       <span className="squad-hero-name">{h.name}</span>
                     </div>
                     {randomizePerks && perkAssignments[h.key] && (
-                      <div className="flex justify-center text-[0.85rem] mb-2 opacity-80 gap-1">
+                      <div className="flex justify-center text-[1rem] mb-1 opacity-80 gap-1">
                         <span className="text-blue-300">
                           {perkAssignments[h.key].minor}
                         </span>

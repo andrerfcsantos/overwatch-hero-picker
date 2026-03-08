@@ -398,6 +398,7 @@ a:hover {
   display: inline-flex;
   flex-direction: column;
   align-items: stretch;
+  margin-top: 1em;
 }
 
 .squad-hero-row {
@@ -405,7 +406,6 @@ a:hover {
   flex-direction: row;
   align-items: center;
   gap: 0.25em;
-  margin-bottom: 0.25em;
 }
 
 .squad-role-icon {
