@@ -115,16 +115,32 @@ a:hover {
   border-radius: 0.25rem;
   transform: skewX(-10deg);
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.1s ease;
+  position: relative;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-.skew-button:hover {
-  filter: brightness(1.2);
+.skew-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.15s ease;
+  pointer-events: none;
+}
+
+.skew-button:hover::after {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .skew-button:active {
   transform: skewX(-10deg) scale(0.95);
-  filter: brightness(0.9);
+}
+
+.skew-button:active::after {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 /* Hero card styles */
@@ -205,17 +221,16 @@ a:hover {
 }
 
 /* Orange button shared brightness */
-.btn-orange {
-  filter: brightness(0.93);
-  transition: filter 0.15s ease, transform 0.1s ease;
+.btn-orange::after {
+  background: rgba(0, 0, 0, 0.07);
 }
 
-.btn-orange:hover {
-  filter: brightness(1.03);
+.btn-orange:hover::after {
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.btn-orange:active {
-  filter: brightness(0.9);
+.btn-orange:active::after {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 /* Random hero button */
@@ -229,6 +244,18 @@ a:hover {
   cursor: pointer;
   -webkit-appearance: none;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.random-hero-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.15s ease;
+  pointer-events: none;
 }
 
 .random-hero-button:active {
