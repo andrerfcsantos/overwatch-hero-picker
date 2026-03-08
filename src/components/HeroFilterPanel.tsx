@@ -8,7 +8,7 @@ export default function HeroFilterPanel() {
   const numberOfSelected = getSelected().length;
 
   return (
-    <div className="block text-start max-[991.98px]:text-center pr-[3%]">
+    <div className="block text-start max-[991.98px]:text-center max-[991.98px]:px-[3%] pr-[3%]">
       <h1 className="text-white max-[991.98px]:mt-[5%]">
         Filter Heroes
       </h1>
