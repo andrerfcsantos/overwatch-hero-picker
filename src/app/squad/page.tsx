@@ -135,8 +135,7 @@ export default function SquadPage() {
           )}
 
           <button
-            className="text-white border-none text-[1.2rem] bg-[#0192c7] outline-none px-[0.3em] cursor-pointer mb-3 rounded"
-            style={{ transform: "skewX(-10deg)" }}
+            className="skew-button text-[1.2rem] bg-[#0192c7] mb-3"
             onClick={handleCopy}
           >
             {copyText}

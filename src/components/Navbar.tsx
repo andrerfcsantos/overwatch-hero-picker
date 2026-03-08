@@ -11,7 +11,7 @@ export default function Navbar() {
   return (
     <nav className="bg-[#343a40] min-h-[5vh] flex flex-wrap items-center justify-between px-4 py-2 lg:px-6">
       <button
-        className="lg:hidden text-white text-2xl border border-gray-500 rounded px-2 py-1"
+        className="lg:hidden text-white text-2xl border border-gray-500 rounded px-2 py-1 transition-[filter,transform] duration-150 ease-in-out hover:brightness-125 active:scale-95 active:brightness-90"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle navigation"
       >
