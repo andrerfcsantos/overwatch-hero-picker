@@ -22,7 +22,7 @@ function getSpriteStyle(sprite: SpriteConfig, col: number, row: number) {
   return {
     backgroundImage: `url(${sprite.src})`,
     backgroundPosition: `${bgPctX}% ${bgPctY}%`,
-    backgroundSize: `${sprite.columns * 100}% auto`,
+    backgroundSize: `${sprite.columns * 100}% ${sprite.rows * 100}%`,
     backgroundRepeat: "no-repeat",
   } as const;
 }
