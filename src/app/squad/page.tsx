@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Hero } from "@/types/hero";
+import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import { randomSquad, randomSquadWithRoles } from "@/lib/heroService";
 import { heroPerks } from "@/data/heroPerks";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
 import SpriteIcon from "@/components/SpriteIcon";
 
 export default function SquadPage() {
-  const { getByRole } = useHeroes();
+  const { getByRole, getSelectedByRole, selectByRole, unselectByRole, unselectAll } = useHeroes();
   const [squad, setSquad] = useState<{
     tanks: Hero[];
     damage: Hero[];
@@ -86,6 +88,35 @@ export default function SquadPage() {
 
     setTimeout(() => setCopyText("Copy to clipboard"), 1500);
   };
+
+  const rerollPerks = useCallback(() => {
+    const allHeroes = [...squad.tanks, ...squad.damage, ...squad.supports];
+    if (allHeroes.length > 0) {
+      setPerkAssignments(assignPerks(allHeroes));
+    }
+  }, [squad, assignPerks]);
+
+  const toggleRole = useCallback(
+    (role: HeroRole) => {
+      const allOfRole = getByRole(role);
+      const selectedOfRole = getSelectedByRole(role);
+      if (selectedOfRole.length === allOfRole.length) {
+        unselectByRole(role);
+      } else {
+        selectByRole(role);
+      }
+    },
+    [getByRole, getSelectedByRole, selectByRole, unselectByRole],
+  );
+
+  useKeyboardShortcuts({
+    r: generateSquad,
+    t: () => toggleRole("TANK"),
+    d: () => toggleRole("DAMAGE"),
+    s: () => toggleRole("SUPPORT"),
+    u: unselectAll,
+    p: rerollPerks,
+  });
 
   if (!mounted) return null;
 

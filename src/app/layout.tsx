@@ -3,6 +3,7 @@ import "./globals.css";
 import { HeroProvider } from "@/context/HeroContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
 import { ICON_SPRITE, PORTRAIT_SPRITE } from "@/data/spriteMap";
 
 export const metadata: Metadata = {
@@ -71,6 +72,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <KeyboardShortcutHint />
         </HeroProvider>
       </body>
     </html>

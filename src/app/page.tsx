@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Hero } from "@/types/hero";
+import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
 import SpriteIcon from "@/components/SpriteIcon";
 
 export default function PickerPage() {
-  const { heroes, getSelected } = useHeroes();
+  const { heroes, getSelected, getSelectedByRole, getByRole, selectByRole, unselectByRole, unselectAll } = useHeroes();
 
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
   const [perks, setPerks] = useState<[string, string]>(["", ""]);
@@ -80,6 +82,28 @@ export default function PickerPage() {
     setNonRepeatingMode(checked);
     setBoolToLS("nonRepeatingMode", checked);
   };
+
+  const toggleRole = useCallback(
+    (role: HeroRole) => {
+      const allOfRole = getByRole(role);
+      const selectedOfRole = getSelectedByRole(role);
+      if (selectedOfRole.length === allOfRole.length) {
+        unselectByRole(role);
+      } else {
+        selectByRole(role);
+      }
+    },
+    [getByRole, getSelectedByRole, selectByRole, unselectByRole],
+  );
+
+  useKeyboardShortcuts({
+    r: handleRandomHero,
+    t: () => toggleRole("TANK"),
+    d: () => toggleRole("DAMAGE"),
+    s: () => toggleRole("SUPPORT"),
+    u: unselectAll,
+    p: handleNewPerks,
+  });
 
   if (!mounted) return null;
 

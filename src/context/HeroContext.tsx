@@ -21,6 +21,7 @@ type HeroAction =
   | { type: "TOGGLE_HERO"; key: string }
   | { type: "SET_ROLE_SELECTED"; role: HeroRole; selected: boolean }
   | { type: "SELECT_JUST_ROLE"; role: HeroRole }
+  | { type: "UNSELECT_ALL" }
   | { type: "SET_HERO_STATUS"; key: string; selected: boolean }
   | { type: "RESTORE_SELECTIONS"; selections: { key: string; selected: boolean }[] };
 
@@ -34,6 +35,7 @@ interface HeroContextValue {
   selectByRole: (role: HeroRole) => void;
   unselectByRole: (role: HeroRole) => void;
   selectJustRole: (role: HeroRole) => void;
+  unselectAll: () => void;
   isHydrated: boolean;
 }
 
@@ -67,6 +69,13 @@ function heroReducer(state: HeroState, action: HeroAction): HeroState {
           ...updated[key],
           selected: updated[key].role === action.role,
         };
+      }
+      return { heroes: updated };
+    }
+    case "UNSELECT_ALL": {
+      const updated = { ...state.heroes };
+      for (const key in updated) {
+        updated[key] = { ...updated[key], selected: false };
       }
       return { heroes: updated };
     }
@@ -168,6 +177,11 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const unselectAll = useCallback(
+    () => dispatch({ type: "UNSELECT_ALL" }),
+    [],
+  );
+
   const value = useMemo(
     () => ({
       heroes,
@@ -179,6 +193,7 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectByRole,
       unselectByRole,
       selectJustRole,
+      unselectAll,
       isHydrated: isHydrated.current,
     }),
     [
@@ -191,6 +206,7 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectByRole,
       unselectByRole,
       selectJustRole,
+      unselectAll,
     ],
   );
 
