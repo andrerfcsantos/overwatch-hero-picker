@@ -2,6 +2,7 @@
 
 import { Hero } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
+import SpriteIcon from "@/components/SpriteIcon";
 
 interface HeroCardProps {
   hero: Hero;
@@ -16,10 +17,11 @@ export default function HeroCard({ hero }: HeroCardProps) {
       className={`hero-card ${selected ? "selected" : ""}`}
       onClick={() => toggleHero(hero.key)}
     >
-      <img
+      <SpriteIcon
         className="hero-card-image"
+        heroKey={hero.key}
+        type="icon"
         alt={`${hero.name} icon`}
-        src={`/assets/imgs/heroes/icons/${hero.key}.webp`}
       />
       <div className="hero-card-name">{hero.name}</div>
     </div>

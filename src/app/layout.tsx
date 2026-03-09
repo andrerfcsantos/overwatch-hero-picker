@@ -3,7 +3,7 @@ import "./globals.css";
 import { HeroProvider } from "@/context/HeroContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { heroKeys } from "@/data/heroes";
+import { ICON_SPRITE, PORTRAIT_SPRITE } from "@/data/spriteMap";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.owheropicker.com"),
@@ -62,25 +62,9 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
-        {/* Preload hero icons */}
-        {heroKeys.map((key) => (
-          <link
-            key={`preload-icon-${key}`}
-            rel="preload"
-            as="image"
-            href={`/assets/imgs/heroes/icons/${key}.webp`}
-          />
-        ))}
-
-        {/* Prefetch hero portraits (loaded on demand) */}
-        {heroKeys.map((key) => (
-          <link
-            key={`prefetch-portrait-${key}`}
-            rel="prefetch"
-            as="image"
-            href={`/assets/imgs/heroes/portraits/${key}.webp`}
-          />
-        ))}
+        {/* Preload hero sprite sheets */}
+        <link rel="preload" as="image" href={ICON_SPRITE.src} />
+        <link rel="prefetch" as="image" href={PORTRAIT_SPRITE.src} />
       </head>
       <body>
         <HeroProvider>

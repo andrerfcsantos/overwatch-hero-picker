@@ -193,8 +193,15 @@ a:hover {
 
 .hero-card-image {
   height: 2.1em;
+  aspect-ratio: 95 / 85;
   vertical-align: bottom;
   background-color: #343a40;
+  display: inline-block;
+}
+
+.hero-portrait {
+  width: min(180px, 75%);
+  aspect-ratio: 180 / 310;
 }
 
 .hero-card-name {

@@ -6,6 +6,7 @@ import { useHeroes } from "@/context/HeroContext";
 import { randomSquad, randomSquadWithRoles } from "@/lib/heroService";
 import { heroPerks } from "@/data/heroPerks";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
+import SpriteIcon from "@/components/SpriteIcon";
 
 export default function SquadPage() {
   const { getByRole } = useHeroes();
@@ -153,10 +154,11 @@ export default function SquadPage() {
                         alt={`${label} role icon`}
                         src={`/assets/imgs/roles/${role}.webp`}
                       />
-                      <img
+                      <SpriteIcon
                         className="squad-hero-icon"
+                        heroKey={h.key}
+                        type="icon"
                         alt={`${h.name} icon`}
-                        src={`/assets/imgs/heroes/icons/${h.key}.webp`}
                       />
                       <span className="squad-hero-name">{h.name}</span>
                     </div>

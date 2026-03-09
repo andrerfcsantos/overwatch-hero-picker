@@ -6,6 +6,7 @@ import { useHeroes } from "@/context/HeroContext";
 import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
+import SpriteIcon from "@/components/SpriteIcon";
 
 export default function PickerPage() {
   const { heroes, getSelected } = useHeroes();
@@ -19,7 +20,7 @@ export default function PickerPage() {
   const [mounted, setMounted] = useState(false);
   const [perksCount, setPerksCount] = useState(0);
   const [optionsOpen, setOptionsOpen] = useState(false);
-  const portraitRef = useRef<HTMLImageElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
 
   // Restore preferences and pick initial hero
   useEffect(() => {
@@ -138,10 +139,11 @@ export default function PickerPage() {
           )}
 
           {showPortrait && selectedHero && (
-            <img
+            <SpriteIcon
               ref={portraitRef}
-              src={`/assets/imgs/heroes/portraits/${selectedHero.key}.webp`}
-              className="max-w-[75%] mx-auto hero-portrait-animate"
+              heroKey={selectedHero.key}
+              type="portrait"
+              className="hero-portrait mx-auto hero-portrait-animate"
               alt={`${selectedHero.name} portrait`}
             />
           )}
