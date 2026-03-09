@@ -19,7 +19,7 @@ export default function HeroCard({ hero }: HeroCardProps) {
       <img
         className="hero-card-image"
         alt={`${hero.name} icon`}
-        src={`/assets/imgs/heroes/icons/${hero.key}.png`}
+        src={`/assets/imgs/heroes/icons/${hero.key}.webp`}
       />
       <div className="hero-card-name">{hero.name}</div>
     </div>

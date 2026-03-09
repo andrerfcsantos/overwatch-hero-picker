@@ -151,12 +151,12 @@ export default function SquadPage() {
                       <img
                         className="squad-role-icon"
                         alt={`${label} role icon`}
-                        src={`/assets/imgs/roles/${role}.png`}
+                        src={`/assets/imgs/roles/${role}.webp`}
                       />
                       <img
                         className="squad-hero-icon"
                         alt={`${h.name} icon`}
-                        src={`/assets/imgs/heroes/icons/${h.key}.png`}
+                        src={`/assets/imgs/heroes/icons/${h.key}.webp`}
                       />
                       <span className="squad-hero-name">{h.name}</span>
                     </div>

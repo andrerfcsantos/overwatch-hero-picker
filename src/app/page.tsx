@@ -140,7 +140,7 @@ export default function PickerPage() {
           {showPortrait && selectedHero && (
             <img
               ref={portraitRef}
-              src={`/assets/imgs/heroes/portraits/${selectedHero.key}.png`}
+              src={`/assets/imgs/heroes/portraits/${selectedHero.key}.webp`}
               className="max-w-[75%] mx-auto hero-portrait-animate"
               alt={`${selectedHero.name} portrait`}
             />

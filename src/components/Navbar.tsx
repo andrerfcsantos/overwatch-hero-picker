@@ -75,7 +75,7 @@ export default function Navbar() {
           >
             <img
               className="h-[1.5em]"
-              src="/assets/imgs/discord.png"
+              src="/assets/imgs/discord.webp"
               alt="Discord"
             />
           </a>

@@ -33,17 +33,17 @@ export default function HeroFilterPanel() {
       <RoleSection
         role="TANK"
         roleName="Tank"
-        roleIcon="/assets/imgs/roles/tank.png"
+        roleIcon="/assets/imgs/roles/tank.webp"
       />
       <RoleSection
         role="DAMAGE"
         roleName="Damage"
-        roleIcon="/assets/imgs/roles/damage.png"
+        roleIcon="/assets/imgs/roles/damage.webp"
       />
       <RoleSection
         role="SUPPORT"
         roleName="Support"
-        roleIcon="/assets/imgs/roles/support.png"
+        roleIcon="/assets/imgs/roles/support.webp"
       />
     </div>
   );

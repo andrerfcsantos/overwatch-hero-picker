@@ -46,12 +46,12 @@ export default function RootLayout({
         {/* Preload navbar images */}
         <link rel="preload" as="image" href="/assets/imgs/navbar/ow-logo.svg" />
         <link rel="preload" as="image" href="/assets/imgs/navbar/bmc.svg" />
-        <link rel="preload" as="image" href="/assets/imgs/discord.png" />
+        <link rel="preload" as="image" href="/assets/imgs/discord.webp" />
 
         {/* Preload role icons */}
-        <link rel="preload" as="image" href="/assets/imgs/roles/tank.png" />
-        <link rel="preload" as="image" href="/assets/imgs/roles/damage.png" />
-        <link rel="preload" as="image" href="/assets/imgs/roles/support.png" />
+        <link rel="preload" as="image" href="/assets/imgs/roles/tank.webp" />
+        <link rel="preload" as="image" href="/assets/imgs/roles/damage.webp" />
+        <link rel="preload" as="image" href="/assets/imgs/roles/support.webp" />
 
         {/* Preload font */}
         <link
@@ -68,7 +68,7 @@ export default function RootLayout({
             key={`preload-icon-${key}`}
             rel="preload"
             as="image"
-            href={`/assets/imgs/heroes/icons/${key}.png`}
+            href={`/assets/imgs/heroes/icons/${key}.webp`}
           />
         ))}
 
@@ -78,7 +78,7 @@ export default function RootLayout({
             key={`prefetch-portrait-${key}`}
             rel="prefetch"
             as="image"
-            href={`/assets/imgs/heroes/portraits/${key}.png`}
+            href={`/assets/imgs/heroes/portraits/${key}.webp`}
           />
         ))}
       </head>
