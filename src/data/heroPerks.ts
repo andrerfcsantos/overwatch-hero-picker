@@ -186,8 +186,8 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Heat Sink", "Cyber Adhesion"],
   },
   jetpackcat: {
-    minor: ["Claws Out", "Transport Shielding"],
-    major: ["Headbutt", "Territorial"],
+    minor: ["Ulterior Motive", "Transport Shielding"],
+    major: ["Headbutt", "Claws Out"],
   },
   mizuki: {
     minor: ["Wellspring", "Exposed Soul"],
@@ -198,7 +198,7 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Ebb and Flow", "Falling Rain"],
   },
   vendetta: {
-    minor: ["Extra Edge", "Siphoning Strike"],
-    major: ["Relentless", "Raging Storm"],
+    minor: ["Extra Edge", "Raging Storm"],
+    major: ["Relentless", "Siphoning Strike"],
   },
 };
