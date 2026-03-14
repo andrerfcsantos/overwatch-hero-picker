@@ -142,7 +142,7 @@ const heroDefinitions: Record<string, Hero> = {
   },
   kiriko: { name: "Kiriko", role: "SUPPORT", selected: false, key: "kiriko" },
   lifeweaver: {
-    name: "lifeweaver",
+    name: "Lifeweaver",
     role: "SUPPORT",
     selected: false,
     key: "lifeweaver",

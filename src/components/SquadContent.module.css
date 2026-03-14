@@ -47,12 +47,10 @@
   color: white;
 }
 
-.actions {
+.randomizeWrapper {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 0.75rem;
 }
 
 .randomizeBtn {
@@ -86,17 +84,29 @@
   transform: scale(0.97);
 }
 
+.buttonRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .copyBtn {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: white;
-  background: #0192c7;
-  border: none;
+  background: #0f1923;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0.25rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.75rem;
   cursor: pointer;
   font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
   position: relative;
   overflow: hidden;
+  min-width: 13rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .copyBtn::after {
@@ -153,9 +163,25 @@
   margin-top: 0.5rem;
 }
 
+@media (min-width: 769px) {
+  .container {
+    flex-wrap: wrap;
+  }
+
+  .randomizeWrapper {
+    order: 10;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .slots {
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
   }
 }

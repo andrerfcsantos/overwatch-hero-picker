@@ -114,10 +114,7 @@ export default function SquadSlot({
 
       <details className={styles.filterDetails}>
         <summary className={styles.filterSummary}>
-          ▸ Filters
-          {disabledHeroes.size > 0 && (
-            <span> ({allHeroes.length - disabledHeroes.size}/{allHeroes.length})</span>
-          )}
+          ▸ Filters ({allHeroes.length - disabledHeroes.size})
         </summary>
         <div className={styles.filterContent}>
           {ROLES.map(({ key, label, icon }) => {
