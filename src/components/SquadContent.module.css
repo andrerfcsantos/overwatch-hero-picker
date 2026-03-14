@@ -1,0 +1,187 @@
+.container {
+  min-height: 85vh;
+  background: #2c3e50;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1rem 3rem;
+  user-select: none;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.sizeSelector {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.sizeBtn {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #1a2332;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.sizeBtn:hover {
+  border-color: #e67e22;
+  color: white;
+}
+
+.sizeBtnActive {
+  background: #e67e22;
+  border-color: #e67e22;
+  color: white;
+}
+
+.randomizeWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.randomizeBtn {
+  font-size: 1.4rem;
+  color: white;
+  background-color: rgb(240, 100, 20);
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+}
+
+.randomizeBtn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.15s ease;
+  pointer-events: none;
+}
+
+.randomizeBtn:hover::after {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.randomizeBtn:active {
+  transform: scale(0.97);
+}
+
+.buttonRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.copyBtn {
+  font-size: 1rem;
+  color: white;
+  background: #0f1923;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+  position: relative;
+  overflow: hidden;
+  min-width: 13rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copyBtn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.15s ease;
+  pointer-events: none;
+}
+
+.copyBtn:hover::after {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.copyBtn:active {
+  transform: scale(0.95);
+}
+
+.optionsToggle {
+  font-size: 0.95rem;
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  margin-bottom: 0.3rem;
+}
+
+.optionsToggle:hover {
+  color: white;
+}
+
+.optionsPanel {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.optionLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-wrap: wrap;
+  }
+
+  .randomizeWrapper {
+    order: 10;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .slots {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+}

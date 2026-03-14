@@ -1,0 +1,204 @@
+.slot {
+  background: #1a2332;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  width: 13rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.15s ease;
+}
+
+.slot:hover {
+  border-color: rgba(230, 126, 34, 0.4);
+}
+
+.nameInput {
+  background: #0f1923;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.25rem;
+  color: white;
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nameInput:focus {
+  border-color: #e67e22;
+}
+
+.nameInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.heroRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.2rem;
+}
+
+.heroIcon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.heroName {
+  font-size: 1.4rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.rerollBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.rerollBtn:hover {
+  background: rgba(230, 126, 34, 0.2);
+  border-color: #e67e22;
+  color: white;
+}
+
+.rerollBtn:active {
+  transform: scale(0.9);
+}
+
+.perks {
+  display: flex;
+  gap: 0.3rem;
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.perkMinor {
+  color: #93c5fd;
+}
+
+.perkSep {
+  color: #6b7280;
+}
+
+.perkMajor {
+  color: #fde047;
+}
+
+.filterDetails {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+}
+
+.filterSummary {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  list-style: none;
+  user-select: none;
+}
+
+.filterSummary::-webkit-details-marker {
+  display: none;
+}
+
+.filterSummary:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.filterContent {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.filterContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filterContent::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.roleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.roleHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.roleHeader:hover {
+  color: #e67e22;
+}
+
+.roleIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.roleLabel {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.heroCheckRow {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-left: 0.5rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.heroCheckRow:hover {
+  color: white;
+}
+
+.heroCheckIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.heroCheckLabel {
+  font-size: 0.75rem;
+}
+
+.emptySlot {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .slot {
+    width: 100%;
+  }
+}

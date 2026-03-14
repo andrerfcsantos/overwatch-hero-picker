@@ -25,3 +25,43 @@ export function setJsonToLS(key: string, value: unknown): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
 }
+
+export interface SlotConfig {
+  name: string;
+  disabledHeroes: Set<string>;
+}
+
+interface SlotConfigJson {
+  name: string;
+  disabledHeroes: string[];
+}
+
+export function loadSquadSlotConfigs(): SlotConfig[] {
+  const raw = getJsonFromLS<SlotConfigJson[]>("squadSlotConfigs");
+  if (!raw) return [];
+  return raw.map((s) => ({
+    name: s.name,
+    disabledHeroes: new Set(s.disabledHeroes),
+  }));
+}
+
+export function saveSquadSlotConfigs(configs: SlotConfig[]): void {
+  const json: SlotConfigJson[] = configs.map((s) => ({
+    name: s.name,
+    disabledHeroes: [...s.disabledHeroes],
+  }));
+  setJsonToLS("squadSlotConfigs", json);
+}
+
+export function loadSquadSize(): number {
+  if (typeof window === "undefined") return 5;
+  const val = localStorage.getItem("squadSize");
+  if (val === null) return 5;
+  const n = parseInt(val, 10);
+  return n >= 1 && n <= 5 ? n : 5;
+}
+
+export function saveSquadSize(size: number): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("squadSize", String(size));
+}

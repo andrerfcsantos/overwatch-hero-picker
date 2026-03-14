@@ -10,11 +10,24 @@ export function useKeyboardShortcuts(shortcuts: ShortcutMap) {
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-
       const tag = (e.target as HTMLElement).tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      if ((e.target as HTMLElement).isContentEditable) return;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+      const isEditable = (e.target as HTMLElement).isContentEditable;
+
+      // Check ctrl+ shortcuts first (allowed even in inputs for things like ctrl+c)
+      if (e.ctrlKey && !e.metaKey && !e.altKey) {
+        const combo = `ctrl+${e.key.toLowerCase()}`;
+        const handler = shortcutsRef.current[combo];
+        if (handler) {
+          e.preventDefault();
+          handler();
+          return;
+        }
+      }
+
+      // Plain key shortcuts — skip if modifier held or in input
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isInput || isEditable) return;
 
       const handler = shortcutsRef.current[e.key.toLowerCase()];
       if (handler) {

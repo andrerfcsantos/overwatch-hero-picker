@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
-const shortcuts = [
-  { key: "R", description: "Randomize hero / squad" },
+const soloShortcuts = [
+  { key: "R", description: "Randomize hero" },
   { key: "T", description: "Toggle all Tanks" },
   { key: "D", description: "Toggle all Damage" },
   { key: "S", description: "Toggle all Support" },
@@ -11,9 +12,17 @@ const shortcuts = [
   { key: "P", description: "Randomize perks" },
 ];
 
+const squadShortcuts = [
+  { key: "R", description: "Randomize squad" },
+  { key: "Ctrl+C", description: "Copy squad to clipboard" },
+];
+
 export default function KeyboardShortcutHint() {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  const shortcuts = pathname === "/squad" ? squadShortcuts : soloShortcuts;
 
   useEffect(() => {
     if (!open) return;

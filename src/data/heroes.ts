@@ -1,4 +1,10 @@
-import { Hero } from "@/types/hero";
+import { Hero, HeroRole } from "@/types/hero";
+
+export const ROLES: { key: HeroRole; label: string; icon: string }[] = [
+  { key: "TANK", label: "Tank", icon: "/assets/imgs/roles/tank.webp" },
+  { key: "DAMAGE", label: "Damage", icon: "/assets/imgs/roles/damage.webp" },
+  { key: "SUPPORT", label: "Support", icon: "/assets/imgs/roles/support.webp" },
+];
 
 const heroDefinitions: Record<string, Hero> = {
   dva: { name: "D.Va", role: "TANK", selected: false, key: "dva" },
@@ -136,7 +142,7 @@ const heroDefinitions: Record<string, Hero> = {
   },
   kiriko: { name: "Kiriko", role: "SUPPORT", selected: false, key: "kiriko" },
   lifeweaver: {
-    name: "lifeweaver",
+    name: "Lifeweaver",
     role: "SUPPORT",
     selected: false,
     key: "lifeweaver",
@@ -158,3 +164,13 @@ export function getInitialHeroes(): Record<string, Hero> {
 }
 
 export const heroKeys = Object.keys(heroDefinitions);
+
+export function getAllHeroes(): Hero[] {
+  return Object.values(heroDefinitions)
+    .map((h) => ({ ...h }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export function getHeroesByRole(role: HeroRole): Hero[] {
+  return getAllHeroes().filter((h) => h.role === role);
+}
