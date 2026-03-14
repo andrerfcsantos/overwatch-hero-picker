@@ -400,37 +400,6 @@ a:hover {
   }
 }
 
-/* Squad hero list */
-.squad-hero-list {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: stretch;
-  margin-top: 1em;
-}
-
-.squad-hero-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.25em;
-}
-
-.squad-role-icon {
-  width: 1.8em;
-  height: 1.8em;
-  justify-self: center;
-}
-
-.squad-hero-icon {
-  width: 1.8em;
-  height: 1.8em;
-}
-
-.squad-hero-name {
-  font-size: 1.8em;
-  white-space: nowrap;
-}
-
 /* Keyboard shortcut hint */
 .shortcut-hint-container {
   position: fixed;
