@@ -108,7 +108,7 @@ export default function PickerPage() {
   if (!mounted) return null;
 
   return (
-    <div className="unselectable w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-4">
+    <div className="w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-4">
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left panel */}
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">

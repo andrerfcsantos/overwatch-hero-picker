@@ -6,7 +6,6 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem 1rem 3rem;
-  user-select: none;
 }
 
 .title {
@@ -21,6 +20,7 @@
 }
 
 .sizeBtn {
+  user-select: none;
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 0.25rem;
@@ -54,6 +54,7 @@
 }
 
 .randomizeBtn {
+  user-select: none;
   font-size: 1.4rem;
   color: white;
   background-color: rgb(240, 100, 20);
@@ -93,6 +94,7 @@
 }
 
 .copyBtn {
+  user-select: none;
   font-size: 1rem;
   color: white;
   background: #0f1923;
@@ -128,6 +130,7 @@
 }
 
 .optionsToggle {
+  user-select: none;
   font-size: 0.95rem;
   font-family: "Config", Arial, Helvetica, sans-serif;
   color: rgba(255, 255, 255, 0.7);
@@ -149,6 +152,7 @@
 }
 
 .optionLabel {
+  user-select: none;
   display: flex;
   align-items: center;
   gap: 0.3rem;
