@@ -19,14 +19,12 @@ export const metadata: Metadata = {
       "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes.",
     url: "https://www.owheropicker.com/",
     siteName: "Overwatch Random Hero Picker",
-    images: ["/assets/imgs/heroes/icons/tracer.png"],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Overwatch Random Hero Picker",
     description:
       "Overwatch Hero Picker for teams and solo players. Get random heroes from the ones you select. Choose heroes for Quick Play, Competitive and other game modes.",
-    images: ["/assets/imgs/heroes/icons/tracer.png"],
   },
 };
 
