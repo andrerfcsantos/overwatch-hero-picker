@@ -280,7 +280,7 @@ export default function SquadContent() {
       <h1 className={styles.title}>Build Your Squad</h1>
 
       <div className="mt-3 mb-1 max-w-1/2">
-        <p className="text-sm text-gray-400 m-0 mb-2">
+        <p className="text-gray-400 m-0 mb-2">
           Choose your squad size and hit <strong>Randomize Squad</strong> to get
           a random squad.
           <br />

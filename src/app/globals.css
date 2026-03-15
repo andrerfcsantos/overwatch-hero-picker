@@ -51,12 +51,161 @@
 
 @font-face {
   font-family: "Config";
-  src:
-    local("Config Text"),
-    url("/assets/fonts/Config Text.woff2") format("woff2"),
-    url("/assets/fonts/Config Text.woff") format("woff");
-  font-weight: normal;
+  src: url("/assets/fonts/ConfigCondensedThin.otf") format("opentype");
+  font-weight: 100;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedThinItalic.otf") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraLight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraLightItalic.otf") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedLight.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedLightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedRegular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedItalic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedText.otf") format("opentype");
+  font-weight: 450;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedTextItalic.otf") format("opentype");
+  font-weight: 450;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedMedium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedMediumItalic.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedSemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedSemiBoldItalic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraBoldItalic.otf") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBlack.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBlackItalic.otf") format("opentype");
+  font-weight: 900;
+  font-style: italic;
   font-display: swap;
 }
 

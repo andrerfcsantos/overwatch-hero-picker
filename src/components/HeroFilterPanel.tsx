@@ -12,13 +12,11 @@ export default function HeroFilterPanel() {
       <h1 className="text-white max-[991.98px]:mt-[5%]">Filter Heroes</h1>
 
       <div className="mt-3 mb-1">
-        <p className="text-sm text-gray-400 m-0 mb-2">
+        <p className="text-gray-400 m-0 mb-2">
           Select which agents you want to include for the random selection, then
           hit <strong>Randomize Agent</strong> to get your pick.
           <br />
-          You can select/unselect agents individually or by role.
-          <br />
-          Keyboard shortcuts are available — click <strong>?</strong> on the
+          You can select/unselect agents individually or by role. Keyboard shortcuts are available — click <strong>?</strong> on the
           bottom of the page to see the full list.
         </p>
       </div>
