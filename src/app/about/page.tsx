@@ -1,7 +1,21 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About - Overwatch Hero Picker",
+  title: "About | Overwatch Hero Picker",
+  description:
+    "Learn about the Overwatch Random Hero Picker, a fan-made tool to help you decide which hero to play.",
+  openGraph: {
+    title: "About | Overwatch Hero Picker",
+    description:
+      "Learn about the Overwatch Random Hero Picker, a fan-made tool to help you decide which hero to play.",
+    url: "https://www.owheropicker.com/about",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About | Overwatch Hero Picker",
+    description:
+      "Learn about the Overwatch Random Hero Picker, a fan-made tool to help you decide which hero to play.",
+  },
 };
 
 export default function AboutPage() {

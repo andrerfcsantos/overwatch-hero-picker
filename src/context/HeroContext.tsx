@@ -125,8 +125,8 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
   // Persist to localStorage on changes (skip initial render)
   useEffect(() => {
     if (!hydrated.current) return;
-    const selected = Object.values(state.heroes).filter((h) => h.selected);
-    setJsonToLS("selectedHeroes", selected);
+    const selections = Object.values(state.heroes).map((h) => ({ key: h.key, selected: h.selected }));
+    setJsonToLS("selectedHeroes", selections);
   }, [state.heroes]);
 
   const heroes = useMemo(

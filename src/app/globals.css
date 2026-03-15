@@ -51,12 +51,161 @@
 
 @font-face {
   font-family: "Config";
-  src:
-    local("Config Text"),
-    url("/assets/fonts/Config Text.woff2") format("woff2"),
-    url("/assets/fonts/Config Text.woff") format("woff");
-  font-weight: normal;
+  src: url("/assets/fonts/ConfigCondensedThin.otf") format("opentype");
+  font-weight: 100;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedThinItalic.otf") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraLight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraLightItalic.otf") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedLight.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedLightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedRegular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedItalic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedText.otf") format("opentype");
+  font-weight: 450;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedTextItalic.otf") format("opentype");
+  font-weight: 450;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedMedium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedMediumItalic.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedSemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedSemiBoldItalic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedExtraBoldItalic.otf") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBlack.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedBlackItalic.otf") format("opentype");
+  font-weight: 900;
+  font-style: italic;
   font-display: swap;
 }
 
@@ -83,12 +232,6 @@ a:hover {
   color: orangered;
 }
 
-/* Unselectable utility */
-.unselectable {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
 /* Navbar link styles */
 .nav-link,
 .nav-link:link,
@@ -105,6 +248,7 @@ a:hover {
 
 /* Action button base */
 .action-button {
+  user-select: none;
   color: white;
   border: none;
   font-size: 1.15rem;
@@ -219,7 +363,6 @@ a:hover {
   display: block;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
-  user-select: text;
   margin: 0;
   font-weight: bold;
 }
@@ -239,6 +382,7 @@ a:hover {
 
 /* Random hero button */
 .random-hero-button {
+  user-select: none;
   font-size: 1.75rem;
   color: white;
   background-color: rgb(240, 100, 20);
@@ -297,6 +441,7 @@ a:hover {
 
 /* Options toggle */
 .options-toggle {
+  user-select: none;
   font-size: 0.95rem;
   font-family: "Config", Arial, Helvetica, sans-serif;
   color: rgba(255, 255, 255, 0.7);
