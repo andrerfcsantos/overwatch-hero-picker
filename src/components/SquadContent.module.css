@@ -176,6 +176,10 @@
   }
 }
 
+.highlight {
+  font-weight: bold;
+}
+
 @media (max-width: 768px) {
   .slots {
     flex-direction: column;

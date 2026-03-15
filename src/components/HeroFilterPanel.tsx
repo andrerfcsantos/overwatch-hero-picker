@@ -9,9 +9,19 @@ export default function HeroFilterPanel() {
 
   return (
     <div className="block text-start max-[991.98px]:text-center max-[991.98px]:px-[3%] pr-[3%]">
-      <h1 className="text-white max-[991.98px]:mt-[5%]">
-        Filter Heroes
-      </h1>
+      <h1 className="text-white max-[991.98px]:mt-[5%]">Filter Heroes</h1>
+
+      <div className="mt-3 mb-1">
+        <p className="text-sm text-gray-400 m-0 mb-2">
+          Select which agents you want to include for the random selection, then
+          hit <strong>Randomize Agent</strong> to get your pick.
+          <br />
+          You can select/unselect agents individually or by role.
+          <br />
+          Keyboard shortcuts are available — click <strong>?</strong> on the
+          bottom of the page to see the full list.
+        </p>
+      </div>
 
       <div className="text-[1.05rem] text-orange-400 mt-2 font-bold font-sans">
         {numberOfSelected === 0 ? (
@@ -20,13 +30,9 @@ export default function HeroFilterPanel() {
             default.
           </p>
         ) : numberOfSelected === 1 ? (
-          <p className="m-0">
-            You have {numberOfSelected} hero selected.
-          </p>
+          <p className="m-0">You have {numberOfSelected} hero selected.</p>
         ) : (
-          <p className="m-0">
-            You have {numberOfSelected} heroes selected.
-          </p>
+          <p className="m-0">You have {numberOfSelected} heroes selected.</p>
         )}
       </div>
 
