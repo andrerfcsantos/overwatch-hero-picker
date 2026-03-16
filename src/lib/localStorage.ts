@@ -58,7 +58,15 @@ export function loadSquadSize(): number {
   const val = localStorage.getItem("squadSize");
   if (val === null) return 5;
   const n = parseInt(val, 10);
-  return n >= 1 && n <= 5 ? n : 5;
+  return n >= 1 && n <= 6 ? n : 5;
+}
+
+export function loadSquadForce222(): boolean {
+  return getBoolFromLS("squadForce222", true);
+}
+
+export function saveSquadForce222(value: boolean): void {
+  setBoolToLS("squadForce222", value);
 }
 
 export function saveSquadSize(size: number): void {

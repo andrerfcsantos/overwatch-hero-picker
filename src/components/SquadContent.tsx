@@ -11,6 +11,8 @@ import {
   saveSquadSlotConfigs,
   loadSquadSize,
   saveSquadSize,
+  loadSquadForce222,
+  saveSquadForce222,
   getBoolFromLS,
   setBoolToLS,
 } from "@/lib/localStorage";
@@ -80,6 +82,40 @@ function compute122Heroes(configs: SlotConfig[]): (Hero | null)[] {
   return result;
 }
 
+function compute222Heroes(configs: SlotConfig[]): (Hero | null)[] {
+  // Force 2 Tank, 2 Damage, 2 Support
+  const roleSlots: Array<"TANK" | "DAMAGE" | "SUPPORT"> = [
+    "TANK",
+    "TANK",
+    "DAMAGE",
+    "DAMAGE",
+    "SUPPORT",
+    "SUPPORT",
+  ];
+  const result: (Hero | null)[] = [];
+  const taken = new Set<string>();
+
+  for (let i = 0; i < 6; i++) {
+    const cfg = configs[i] || { name: "", disabledHeroes: new Set<string>() };
+    const role = roleSlots[i];
+    const roleHeroes = getHeroesByRole(role);
+    let pool = roleHeroes.filter(
+      (h) => !cfg.disabledHeroes.has(h.key) && !taken.has(h.key),
+    );
+    if (pool.length === 0) {
+      pool = roleHeroes.filter((h) => !taken.has(h.key));
+    }
+    if (pool.length === 0) {
+      result.push(null);
+    } else {
+      const hero = pickRandom(pool);
+      taken.add(hero.key);
+      result.push(hero);
+    }
+  }
+  return result;
+}
+
 function assignPerks(
   heroes: (Hero | null)[],
 ): Record<string, { minor: string; major: string }> {
@@ -97,7 +133,7 @@ function assignPerks(
   return assignments;
 }
 
-const MAX_SLOTS = 5;
+const MAX_SLOTS = 6;
 
 function ensureConfigs(configs: SlotConfig[], count: number): SlotConfig[] {
   const result = [...configs];
@@ -116,6 +152,7 @@ export default function SquadContent() {
     Record<string, { minor: string; major: string }>
   >({});
   const [force122, setForce122] = useState(true);
+  const [force222, setForce222] = useState(true);
   const [randomizePerks, setRandomizePerks] = useState(false);
   const [copied, setCopied] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
@@ -125,18 +162,22 @@ export default function SquadContent() {
     const savedSize = loadSquadSize();
     const savedConfigs = ensureConfigs(loadSquadSlotConfigs(), MAX_SLOTS);
     const savedForce122 = getBoolFromLS("squadForce122", true);
+    const savedForce222 = loadSquadForce222();
     const savedPerks = getBoolFromLS("squadRandomizePerks", false);
 
     setSquadSize(savedSize);
     setConfigs(savedConfigs);
     setForce122(savedForce122);
+    setForce222(savedForce222);
     setRandomizePerks(savedPerks);
 
     // Generate initial squad
     const initial =
       savedForce122 && savedSize === 5
         ? compute122Heroes(savedConfigs)
-        : computeRandomHeroes(savedConfigs, savedSize);
+        : savedForce222 && savedSize === 6
+          ? compute222Heroes(savedConfigs)
+          : computeRandomHeroes(savedConfigs, savedSize);
     setHeroes(initial);
     if (savedPerks) setPerkAssignments(assignPerks(initial));
 
@@ -153,10 +194,12 @@ export default function SquadContent() {
     const newHeroes =
       force122 && squadSize === 5
         ? compute122Heroes(cfgs)
-        : computeRandomHeroes(cfgs, squadSize);
+        : force222 && squadSize === 6
+          ? compute222Heroes(cfgs)
+          : computeRandomHeroes(cfgs, squadSize);
     setHeroes(newHeroes);
     if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
-  }, [configs, force122, squadSize, randomizePerks]);
+  }, [configs, force122, force222, squadSize, randomizePerks]);
 
   const randomizeSingle = useCallback(
     (index: number) => {
@@ -224,11 +267,13 @@ export default function SquadContent() {
       const newHeroes =
         force122 && size === 5
           ? compute122Heroes(cfgs)
-          : computeRandomHeroes(cfgs, size);
+          : force222 && size === 6
+            ? compute222Heroes(cfgs)
+            : computeRandomHeroes(cfgs, size);
       setHeroes(newHeroes);
       if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
     },
-    [configs, force122, randomizePerks],
+    [configs, force122, force222, randomizePerks],
   );
 
   const handleNameChange = useCallback(
@@ -249,10 +294,31 @@ export default function SquadContent() {
     [configs],
   );
 
+  const resetSlotFilters = useCallback(
+    (index: number) => {
+      const next = ensureConfigs([...configs], MAX_SLOTS);
+      next[index] = { ...next[index], disabledHeroes: new Set<string>() };
+      setConfigs(next);
+    },
+    [configs],
+  );
+
+  const resetAllFilters = useCallback(() => {
+    setConfigs((prev) => prev.map((cfg) => ({ ...cfg, disabledHeroes: new Set<string>() })));
+  }, []);
+
   const handleForce122Change = useCallback(
     (checked: boolean) => {
       setForce122(checked);
       setBoolToLS("squadForce122", checked);
+    },
+    [],
+  );
+
+  const handleForce222Change = useCallback(
+    (checked: boolean) => {
+      setForce222(checked);
+      saveSquadForce222(checked);
     },
     [],
   );
@@ -273,6 +339,8 @@ export default function SquadContent() {
     "ctrl+c": handleCopy,
   });
 
+  const hasAnyActiveFilters = configs.slice(0, squadSize).some((cfg) => cfg.disabledHeroes.size > 0);
+
   if (!mounted) return null;
 
   return (
@@ -292,7 +360,7 @@ export default function SquadContent() {
       </div>
 
       <div className={styles.sizeSelector}>
-        {[1, 2, 3, 4, 5].map((n) => (
+        {[1, 2, 3, 4, 5, 6].map((n) => (
           <button
             key={n}
             className={`${styles.sizeBtn} ${n === squadSize ? styles.sizeBtnActive : ""}`}
@@ -335,6 +403,20 @@ export default function SquadContent() {
           <label className={styles.optionLabel}>
             <input
               type="checkbox"
+              checked={force222}
+              onChange={(e) => handleForce222Change(e.target.checked)}
+            />
+            Force 2-2-2
+            <span
+              className="info-icon"
+              data-tip="Force 2 Tanks, 2 Damage, 2 Support (only when size = 6)"
+            >
+              ⓘ
+            </span>
+          </label>
+          <label className={styles.optionLabel}>
+            <input
+              type="checkbox"
               checked={randomizePerks}
               onChange={(e) => handlePerksChange(e.target.checked)}
             />
@@ -350,6 +432,11 @@ export default function SquadContent() {
       )}
 
       <div className={styles.buttonRow}>
+        {hasAnyActiveFilters && (
+          <button className={styles.resetFiltersBtn} onClick={resetAllFilters}>
+            Reset All Filters
+          </button>
+        )}
         <button className={styles.copyBtn} onClick={handleCopy}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -391,6 +478,7 @@ export default function SquadContent() {
               showPerks={randomizePerks}
               onNameChange={handleNameChange}
               onDisabledChange={handleDisabledChange}
+              onResetFilters={resetSlotFilters}
               onReroll={randomizeSingle}
             />
           );

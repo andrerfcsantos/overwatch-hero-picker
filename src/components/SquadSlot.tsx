@@ -15,6 +15,7 @@ interface SquadSlotProps {
   showPerks: boolean;
   onNameChange: (index: number, name: string) => void;
   onDisabledChange: (index: number, disabled: Set<string>) => void;
+  onResetFilters: (index: number) => void;
   onReroll: (index: number) => void;
 }
 
@@ -27,6 +28,7 @@ export default function SquadSlot({
   showPerks,
   onNameChange,
   onDisabledChange,
+  onResetFilters,
   onReroll,
 }: SquadSlotProps) {
   const roleCheckboxRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -91,6 +93,11 @@ export default function SquadSlot({
               type="icon"
               alt={`${hero.name} icon`}
             />
+            <img
+              className={styles.heroRoleIcon}
+              src={ROLES.find((r) => r.key === hero.role)?.icon}
+              alt={hero.role}
+            />
             <span className={styles.heroName}>{hero.name}</span>
             <button
               className={styles.rerollBtn}
@@ -114,7 +121,18 @@ export default function SquadSlot({
 
       <details className={styles.filterDetails}>
         <summary className={styles.filterSummary}>
-          ▸ Filters ({allHeroes.length - disabledHeroes.size})
+          <span className={styles.filterSummaryText}>
+            ▸ Filters ({allHeroes.length - disabledHeroes.size})
+          </span>
+          {disabledHeroes.size > 0 && (
+            <button
+              className={styles.filterResetBtn}
+              onClick={(e) => { e.preventDefault(); onResetFilters(index); }}
+              title="Reset filters for this slot"
+            >
+              ✕
+            </button>
+          )}
         </summary>
         <div className={styles.filterContent}>
           {ROLES.map(({ key, label, icon }) => {

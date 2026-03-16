@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Hero } from "@/types/hero";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
+import { ROLES } from "@/data/heroes";
 import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -176,8 +177,13 @@ export default function PickerContent() {
             <>
               <h2
                 key={`hero-name-${heroCount}`}
-                className="hero-name-animate mx-4 mt-4 mb-0 !text-[2.2rem]"
+                className="hero-name-animate mx-4 mt-4 mb-0 !text-[2.2rem] flex items-center justify-center gap-2"
               >
+                <img
+                  src={ROLES.find((r) => r.key === selectedHero.role)?.icon}
+                  alt={selectedHero.role}
+                  className="w-8 h-8"
+                />
                 {selectedHero.name}
               </h2>
               {showPerks && (

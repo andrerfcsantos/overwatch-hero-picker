@@ -129,6 +129,54 @@
   transform: scale(0.95);
 }
 
+.resetFiltersBtn {
+  user-select: none;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  background: #0f1923;
+  border: 1px solid rgba(230, 126, 34, 0.35);
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.resetFiltersBtn::before {
+  content: "✕";
+  font-size: 0.75rem;
+  color: #e67e22;
+}
+
+.resetFiltersBtn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.15s ease;
+  pointer-events: none;
+}
+
+.resetFiltersBtn:hover {
+  border-color: #e67e22;
+  color: white;
+}
+
+.resetFiltersBtn:hover::after {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.resetFiltersBtn:active {
+  transform: scale(0.95);
+}
+
 .optionsToggle {
   user-select: none;
   font-size: 0.95rem;
