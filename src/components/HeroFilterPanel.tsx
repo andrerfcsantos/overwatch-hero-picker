@@ -4,7 +4,7 @@ import { useHeroes } from "@/context/HeroContext";
 import RoleSection from "./RoleSection";
 
 export default function HeroFilterPanel() {
-  const { getSelected } = useHeroes();
+  const { getSelected, selectAll, unselectAll } = useHeroes();
   const numberOfSelected = getSelected().length;
 
   return (
@@ -32,6 +32,21 @@ export default function HeroFilterPanel() {
         ) : (
           <p className="m-0">You have {numberOfSelected} heroes selected.</p>
         )}
+      </div>
+
+      <div className="flex flex-row flex-wrap gap-1 mt-2 mb-1">
+        <button
+          className="action-button bg-[rgb(51,150,31)]"
+          onClick={selectAll}
+        >
+          Select All
+        </button>
+        <button
+          className="action-button bg-[rgb(240,100,20)] btn-orange"
+          onClick={unselectAll}
+        >
+          Unselect All
+        </button>
       </div>
 
       <RoleSection
