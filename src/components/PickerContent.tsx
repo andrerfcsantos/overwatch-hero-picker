@@ -181,19 +181,19 @@ export default function PickerContent() {
                 {selectedHero.name}
               </h2>
               {showPerks && (
-                <div className="mx-4 mb-4" style={{ lineHeight: "0.5em", marginTop: "0.8em" }}>
+                <div className="mx-4 mb-4" style={{ marginTop: "0.8em" }}>
                   <span
                     key={`perks-${perksCount}`}
-                    className="perks-animate text-[1.2rem]"
+                    className="perks-animate text-[1.2rem] leading-snug"
                   >
                     <span className="text-blue-300">{perks[0]}</span> <span className="text-gray-500">|</span> <span className="text-yellow-300">{perks[1]}</span>
                   </span>
                   <br />
                   <button
-                    className="action-button text-[1.2rem] bg-[#0192c7] !px-4 !py-2 !mt-3"
+                    className="action-button text-[1.2rem] bg-[#0192c7] !px-2 !py-1 !mt-3"
                     onClick={handleNewPerks}
                   >
-                    Randomize perks
+                    ↻ Randomize perks
                   </button>
                 </div>
               )}
