@@ -36,13 +36,13 @@ export default function HeroFilterPanel() {
 
       <div className="flex flex-row flex-wrap gap-1 mt-2 mb-1">
         <button
-          className="action-button bg-[rgb(51,150,31)]"
+          className="action-button"
           onClick={selectAll}
         >
           Select All
         </button>
         <button
-          className="action-button bg-[rgb(240,100,20)] btn-orange"
+          className="action-button"
           onClick={unselectAll}
         >
           Unselect All

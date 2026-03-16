@@ -196,7 +196,7 @@ export default function PickerContent() {
                   </span>
                   <br />
                   <button
-                    className="action-button text-[1.2rem] bg-[#0192c7] !px-2 !py-1 !mt-3"
+                    className="action-button btn-perks text-[1.2rem] !px-2 !py-1 !mt-3"
                     onClick={handleNewPerks}
                   >
                     ↻ Randomize perks

@@ -25,19 +25,19 @@ export default function RoleSection({
         <img className="max-h-[2em]" alt={`${roleName} role icon`} src={roleIcon} />
         <h2 className="m-[0.5em] ml-0">{roleName}</h2>
         <button
-          className="action-button bg-[rgb(51,150,31)]"
+          className="action-button"
           onClick={() => selectByRole(role)}
         >
           Select All
         </button>
         <button
-          className="action-button bg-[rgb(240,100,20)] btn-orange"
+          className="action-button"
           onClick={() => unselectByRole(role)}
         >
           Unselect All
         </button>
         <button
-          className="action-button bg-[rgb(131,125,125)]"
+          className="action-button"
           onClick={() => selectJustRole(role)}
         >
           Just this role

@@ -249,7 +249,8 @@ a:hover {
 /* Action button base */
 .action-button {
   user-select: none;
-  color: white;
+  color: rgba(255, 255, 255, 0.75);
+  background: #0f1923;
   border: none;
   font-size: 1.15rem;
   outline: none;
@@ -260,6 +261,11 @@ a:hover {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: color 0.15s ease;
+}
+
+.action-button:hover {
+  color: white;
 }
 
 .action-button::after {
@@ -272,16 +278,23 @@ a:hover {
   pointer-events: none;
 }
 
-.action-button:hover::after {
-  background: rgba(255, 255, 255, 0.15);
-}
-
 .action-button:active {
   transform: scale(0.95);
 }
 
 .action-button:active::after {
   background: rgba(0, 0, 0, 0.1);
+}
+
+/* Randomize perks button */
+.btn-perks {
+  background: #082d3d;
+  border: 1px solid rgba(1, 146, 199, 0.25);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-perks:hover {
+  border-color: rgba(1, 146, 199, 0.5);
 }
 
 /* Hero card styles */
@@ -366,19 +379,6 @@ a:hover {
   font-size: 1rem;
   margin: 0;
   font-weight: bold;
-}
-
-/* Orange button shared brightness */
-.btn-orange::after {
-  background: rgba(0, 0, 0, 0.07);
-}
-
-.btn-orange:hover::after {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.btn-orange:active::after {
-  background: rgba(0, 0, 0, 0.1);
 }
 
 /* Random hero button */
