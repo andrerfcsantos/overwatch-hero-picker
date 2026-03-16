@@ -116,7 +116,7 @@ export default function SquadContent() {
     Record<string, { minor: string; major: string }>
   >({});
   const [force122, setForce122] = useState(true);
-  const [randomizePerks, setRandomizePerks] = useState(true);
+  const [randomizePerks, setRandomizePerks] = useState(false);
   const [copied, setCopied] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
 
@@ -125,7 +125,7 @@ export default function SquadContent() {
     const savedSize = loadSquadSize();
     const savedConfigs = ensureConfigs(loadSquadSlotConfigs(), MAX_SLOTS);
     const savedForce122 = getBoolFromLS("squadForce122", true);
-    const savedPerks = getBoolFromLS("squadRandomizePerks", true);
+    const savedPerks = getBoolFromLS("squadRandomizePerks", false);
 
     setSquadSize(savedSize);
     setConfigs(savedConfigs);
