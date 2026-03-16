@@ -328,7 +328,8 @@ a:hover {
   font-size: 1.6em;
   font-family: Arial, sans-serif;
   color: rgb(240, 100, 20);
-  font-weight: bold;
+  font-weight: 900;
+  -webkit-text-stroke: 0.08em rgb(240, 100, 20);
   pointer-events: none;
   line-height: 1;
 }
