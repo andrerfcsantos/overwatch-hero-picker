@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Script from "next/script";
 import { HeroProvider } from "@/context/HeroContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -36,12 +37,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006903176175824"
-          crossOrigin="anonymous"
-        ></script>
-
         {/* Preload navbar images */}
         <link rel="preload" as="image" href="/assets/imgs/navbar/ow-logo.svg" />
         <link rel="preload" as="image" href="/assets/imgs/navbar/bmc.svg" />
@@ -64,6 +59,27 @@ export default function RootLayout({
         {/* Preload hero sprite sheets */}
         <link rel="preload" as="image" href={ICON_SPRITE.src} />
         <link rel="prefetch" as="image" href={PORTRAIT_SPRITE.src} />
+
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006903176175824"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        ></Script>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-JLMCGX0Z78"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-JLMCGX0Z78');
+          `}
+        </Script>
       </head>
       <body>
         <HeroProvider>
