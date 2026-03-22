@@ -24,7 +24,10 @@ type HeroAction =
   | { type: "SELECT_ALL" }
   | { type: "UNSELECT_ALL" }
   | { type: "SET_HERO_STATUS"; key: string; selected: boolean }
-  | { type: "RESTORE_SELECTIONS"; selections: { key: string; selected: boolean }[] };
+  | {
+      type: "RESTORE_SELECTIONS";
+      selections: { key: string; selected: boolean }[];
+    };
 
 interface HeroContextValue {
   heroes: Hero[];
@@ -121,9 +124,8 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
 
   // Restore from localStorage on mount
   useEffect(() => {
-    const saved = getJsonFromLS<{ key: string; selected: boolean }[]>(
-      "selectedHeroes",
-    );
+    const saved =
+      getJsonFromLS<{ key: string; selected: boolean }[]>("selectedHeroes");
     if (saved && Array.isArray(saved)) {
       dispatch({ type: "RESTORE_SELECTIONS", selections: saved });
     }
@@ -134,7 +136,10 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
   // Persist to localStorage on changes (skip initial render)
   useEffect(() => {
     if (!hydrated.current) return;
-    const selections = Object.values(state.heroes).map((h) => ({ key: h.key, selected: h.selected }));
+    const selections = Object.values(state.heroes).map((h) => ({
+      key: h.key,
+      selected: h.selected,
+    }));
     setJsonToLS("selectedHeroes", selections);
   }, [state.heroes]);
 
@@ -186,15 +191,9 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const selectAll = useCallback(
-    () => dispatch({ type: "SELECT_ALL" }),
-    [],
-  );
+  const selectAll = useCallback(() => dispatch({ type: "SELECT_ALL" }), []);
 
-  const unselectAll = useCallback(
-    () => dispatch({ type: "UNSELECT_ALL" }),
-    [],
-  );
+  const unselectAll = useCallback(() => dispatch({ type: "UNSELECT_ALL" }), []);
 
   const value = useMemo(
     () => ({

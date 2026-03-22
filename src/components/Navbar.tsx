@@ -22,10 +22,7 @@ export default function Navbar() {
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-start lg:items-center justify-between flex-1`}
       >
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
-          <Link
-            href="/"
-            className="flex items-center no-underline text-white"
-          >
+          <Link href="/" prefetch={false} className="flex items-center no-underline text-white">
             <img
               className="max-h-[2em] pr-2"
               src="/assets/imgs/navbar/ow-logo.svg"
@@ -39,12 +36,14 @@ export default function Navbar() {
           <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 lg:ml-6 text-[1.25em]">
             <Link
               href="/"
+              prefetch={false}
               className={`nav-link ${pathname === "/" ? "nav-link-active" : ""}`}
             >
               Random Hero
             </Link>
             <Link
               href="/squad"
+              prefetch={false}
               className={`nav-link ${pathname === "/squad" ? "nav-link-active" : ""}`}
             >
               Squad Generator
@@ -55,6 +54,7 @@ export default function Navbar() {
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mt-2 lg:mt-0 text-[1.25em]">
           <Link
             href="/about"
+            prefetch={false}
             className={`nav-link ${pathname === "/about" ? "nav-link-active" : ""}`}
           >
             About

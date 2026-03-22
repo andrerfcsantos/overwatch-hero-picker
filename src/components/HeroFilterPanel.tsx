@@ -16,8 +16,9 @@ export default function HeroFilterPanel() {
           Select which heroes you want to include for the random selection, then
           hit <strong>Randomize Hero</strong> to get your pick.
           <br />
-          You can select/unselect heroes individually or by role. Keyboard shortcuts are available — click <strong>?</strong> on the
-          bottom of the page to see the full list.
+          You can select/unselect heroes individually or by role. Keyboard
+          shortcuts are available — click <strong>?</strong> on the bottom of
+          the page to see the full list.
         </p>
       </div>
 
@@ -35,35 +36,17 @@ export default function HeroFilterPanel() {
       </div>
 
       <div className="flex flex-row flex-wrap gap-1 mt-2 mb-1">
-        <button
-          className="action-button"
-          onClick={selectAll}
-        >
+        <button className="action-button" onClick={selectAll}>
           Select All
         </button>
-        <button
-          className="action-button"
-          onClick={unselectAll}
-        >
+        <button className="action-button" onClick={unselectAll}>
           Unselect All
         </button>
       </div>
 
-      <RoleSection
-        role="TANK"
-        roleName="Tank"
-        roleIcon="/assets/imgs/roles/tank.webp"
-      />
-      <RoleSection
-        role="DAMAGE"
-        roleName="Damage"
-        roleIcon="/assets/imgs/roles/damage.webp"
-      />
-      <RoleSection
-        role="SUPPORT"
-        roleName="Support"
-        roleIcon="/assets/imgs/roles/support.webp"
-      />
+      <RoleSection role="TANK" roleName="Tank" />
+      <RoleSection role="DAMAGE" roleName="Damage" />
+      <RoleSection role="SUPPORT" roleName="Support" />
     </div>
   );
 }

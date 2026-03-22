@@ -21,9 +21,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="text-white flex flex-col max-w-full px-[20%] pt-8 mb-12 max-[1000px]:px-6">
-      <h2 className="text-[rgb(248,158,74)] text-start">
-        About this site
-      </h2>
+      <h2 className="text-[rgb(248,158,74)] text-start">About this site</h2>
 
       <p>
         When playing Overwatch, we all had those moments where we are unsure
@@ -102,9 +100,7 @@ export default function AboutPage() {
         />
       </a>
 
-      <h2 className="text-[rgb(248,158,74)] text-start">
-        Contact me
-      </h2>
+      <h2 className="text-[rgb(248,158,74)] text-start">Contact me</h2>
 
       <p>
         If you have feedback, suggestions, comments about the site or you just
@@ -113,9 +109,7 @@ export default function AboutPage() {
         <a href="https://discord.gg/rwQMrCa">discord server</a>.
       </p>
 
-      <h2 className="text-[rgb(248,158,74)] text-start">
-        Disclaimer
-      </h2>
+      <h2 className="text-[rgb(248,158,74)] text-start">Disclaimer</h2>
 
       <p>
         This is a fan-site for Overwatch and it is not affiliated with Blizzard

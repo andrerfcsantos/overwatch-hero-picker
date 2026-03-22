@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { Hero, HeroRole } from "@/types/hero";
 import { getAllHeroes, getHeroesByRole, ROLES } from "@/data/heroes";
 import SpriteIcon from "@/components/SpriteIcon";
+import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import styles from "./SquadSlot.module.css";
 
 interface SquadSlotProps {
@@ -93,9 +94,9 @@ export default function SquadSlot({
               type="icon"
               alt={`${hero.name} icon`}
             />
-            <img
+            <RoleSpriteIcon
               className={styles.heroRoleIcon}
-              src={ROLES.find((r) => r.key === hero.role)?.icon}
+              roleKey={hero.role}
               alt={hero.role}
             />
             <span className={styles.heroName}>{hero.name}</span>
@@ -127,7 +128,10 @@ export default function SquadSlot({
           {disabledHeroes.size > 0 && (
             <button
               className={styles.filterResetBtn}
-              onClick={(e) => { e.preventDefault(); onResetFilters(index); }}
+              onClick={(e) => {
+                e.preventDefault();
+                onResetFilters(index);
+              }}
               title="Reset filters for this slot"
             >
               ✕
@@ -135,7 +139,7 @@ export default function SquadSlot({
           )}
         </summary>
         <div className={styles.filterContent}>
-          {ROLES.map(({ key, label, icon }) => {
+          {ROLES.map(({ key, label }) => {
             const roleHeroes = getHeroesByRole(key);
             const allDisabled = roleHeroes.every((h) =>
               disabledHeroes.has(h.key),
@@ -144,14 +148,16 @@ export default function SquadSlot({
               <div key={key} className={styles.roleSection}>
                 <label className={styles.roleHeader}>
                   <input
-                    ref={(el) => { roleCheckboxRefs.current[key] = el; }}
+                    ref={(el) => {
+                      roleCheckboxRefs.current[key] = el;
+                    }}
                     type="checkbox"
                     checked={!allDisabled}
                     onChange={() => toggleRole(key)}
                   />
-                  <img
+                  <RoleSpriteIcon
                     className={styles.roleIcon}
-                    src={icon}
+                    roleKey={key}
                     alt={`${label} icon`}
                   />
                   <span className={styles.roleLabel}>{label}</span>

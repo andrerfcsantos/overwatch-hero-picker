@@ -23,7 +23,10 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function pickForSlot(disabledHeroes: Set<string>, taken: Set<string>): Hero | null {
+function pickForSlot(
+  disabledHeroes: Set<string>,
+  taken: Set<string>,
+): Hero | null {
   const all = getAllHeroes();
   let pool = all.filter((h) => !disabledHeroes.has(h.key) && !taken.has(h.key));
   if (pool.length === 0) {
@@ -304,24 +307,20 @@ export default function SquadContent() {
   );
 
   const resetAllFilters = useCallback(() => {
-    setConfigs((prev) => prev.map((cfg) => ({ ...cfg, disabledHeroes: new Set<string>() })));
+    setConfigs((prev) =>
+      prev.map((cfg) => ({ ...cfg, disabledHeroes: new Set<string>() })),
+    );
   }, []);
 
-  const handleForce122Change = useCallback(
-    (checked: boolean) => {
-      setForce122(checked);
-      setBoolToLS("squadForce122", checked);
-    },
-    [],
-  );
+  const handleForce122Change = useCallback((checked: boolean) => {
+    setForce122(checked);
+    setBoolToLS("squadForce122", checked);
+  }, []);
 
-  const handleForce222Change = useCallback(
-    (checked: boolean) => {
-      setForce222(checked);
-      saveSquadForce222(checked);
-    },
-    [],
-  );
+  const handleForce222Change = useCallback((checked: boolean) => {
+    setForce222(checked);
+    saveSquadForce222(checked);
+  }, []);
 
   const handlePerksChange = useCallback(
     (checked: boolean) => {
@@ -339,7 +338,9 @@ export default function SquadContent() {
     "ctrl+c": handleCopy,
   });
 
-  const hasAnyActiveFilters = configs.slice(0, squadSize).some((cfg) => cfg.disabledHeroes.size > 0);
+  const hasAnyActiveFilters = configs
+    .slice(0, squadSize)
+    .some((cfg) => cfg.disabledHeroes.size > 0);
 
   if (!mounted) return null;
 
@@ -354,7 +355,7 @@ export default function SquadContent() {
           <br />
           You can select the pool of random heroes for each slot and give it a
           name.
-          <br/>
+          <br />
           <strong>Copy to clipboard</strong> to share the squad with others!
         </p>
       </div>

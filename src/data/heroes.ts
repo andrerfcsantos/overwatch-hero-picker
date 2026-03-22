@@ -1,9 +1,9 @@
 import { Hero, HeroRole } from "@/types/hero";
 
-export const ROLES: { key: HeroRole; label: string; icon: string }[] = [
-  { key: "TANK", label: "Tank", icon: "/assets/imgs/roles/tank.webp" },
-  { key: "DAMAGE", label: "Damage", icon: "/assets/imgs/roles/damage.webp" },
-  { key: "SUPPORT", label: "Support", icon: "/assets/imgs/roles/support.webp" },
+export const ROLES: { key: HeroRole; label: string }[] = [
+  { key: "TANK", label: "Tank" },
+  { key: "DAMAGE", label: "Damage" },
+  { key: "SUPPORT", label: "Support" },
 ];
 
 const heroDefinitions: Record<string, Hero> = {

@@ -5,7 +5,7 @@ import { HeroProvider } from "@/context/HeroContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
-import { ICON_SPRITE, PORTRAIT_SPRITE } from "@/data/spriteMap";
+import { ICON_SPRITE, PORTRAIT_SPRITE, ROLE_SPRITE } from "@/data/spriteMap";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.owheropicker.com"),
@@ -37,15 +37,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Preload navbar images */}
+        {/* Preload critical navbar image */}
         <link rel="preload" as="image" href="/assets/imgs/navbar/ow-logo.svg" />
-        <link rel="preload" as="image" href="/assets/imgs/navbar/bmc.svg" />
-        <link rel="preload" as="image" href="/assets/imgs/discord.webp" />
 
-        {/* Preload role icons */}
-        <link rel="preload" as="image" href="/assets/imgs/roles/tank.webp" />
-        <link rel="preload" as="image" href="/assets/imgs/roles/damage.webp" />
-        <link rel="preload" as="image" href="/assets/imgs/roles/support.webp" />
+        {/* Prefetch below-fold role icon sprite */}
+        <link rel="prefetch" as="image" href={ROLE_SPRITE.src} />
 
         {/* Preload font */}
         <link
@@ -60,12 +56,6 @@ export default function RootLayout({
         <link rel="preload" as="image" href={ICON_SPRITE.src} />
         <link rel="prefetch" as="image" href={PORTRAIT_SPRITE.src} />
 
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006903176175824"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        ></Script>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-JLMCGX0Z78"

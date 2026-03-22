@@ -4,15 +4,23 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Hero } from "@/types/hero";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
-import { ROLES } from "@/data/heroes";
 import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
 import SpriteIcon from "@/components/SpriteIcon";
+import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 
 export default function PickerContent() {
-  const { heroes, getSelected, getSelectedByRole, getByRole, selectByRole, unselectByRole, unselectAll } = useHeroes();
+  const {
+    heroes,
+    getSelected,
+    getSelectedByRole,
+    getByRole,
+    selectByRole,
+    unselectByRole,
+    unselectAll,
+  } = useHeroes();
 
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
   const [perks, setPerks] = useState<[string, string]>(["", ""]);
@@ -133,7 +141,12 @@ export default function PickerContent() {
                 <label htmlFor="checkbox-show-portrait" className="ml-1 mr-1">
                   Show hero portrait
                 </label>
-                <span className="info-icon" data-tip="Show or hide the full hero portrait image">ⓘ</span>
+                <span
+                  className="info-icon"
+                  data-tip="Show or hide the full hero portrait image"
+                >
+                  ⓘ
+                </span>
 
                 <input
                   id="checkbox-show-perks"
@@ -145,7 +158,12 @@ export default function PickerContent() {
                 <label htmlFor="checkbox-show-perks" className="ml-1 mr-1">
                   Randomize perks
                 </label>
-                <span className="info-icon" data-tip="Randomly assign ability perks when picking a hero">ⓘ</span>
+                <span
+                  className="info-icon"
+                  data-tip="Randomly assign ability perks when picking a hero"
+                >
+                  ⓘ
+                </span>
               </div>
 
               <div>
@@ -158,7 +176,12 @@ export default function PickerContent() {
                 <label htmlFor="checkbox-non-repeating" className="ml-1 mr-1">
                   Non-repeating mode
                 </label>
-                <span className="info-icon" data-tip="Prevent the same hero from being picked twice in a row">ⓘ</span>
+                <span
+                  className="info-icon"
+                  data-tip="Prevent the same hero from being picked twice in a row"
+                >
+                  ⓘ
+                </span>
               </div>
             </div>
           )}
@@ -179,8 +202,8 @@ export default function PickerContent() {
                 key={`hero-name-${heroCount}`}
                 className="hero-name-animate mx-4 mt-4 mb-0 !text-[2.2rem] flex items-center justify-center gap-2"
               >
-                <img
-                  src={ROLES.find((r) => r.key === selectedHero.role)?.icon}
+                <RoleSpriteIcon
+                  roleKey={selectedHero.role}
                   alt={selectedHero.role}
                   className="w-8 h-8"
                 />
@@ -192,7 +215,9 @@ export default function PickerContent() {
                     key={`perks-${perksCount}`}
                     className="perks-animate text-[1.2rem] leading-snug"
                   >
-                    <span className="text-blue-300">{perks[0]}</span> <span className="text-gray-500">|</span> <span className="text-yellow-300">{perks[1]}</span>
+                    <span className="text-blue-300">{perks[0]}</span>{" "}
+                    <span className="text-gray-500">|</span>{" "}
+                    <span className="text-yellow-300">{perks[1]}</span>
                   </span>
                   <br />
                   <button
@@ -206,7 +231,10 @@ export default function PickerContent() {
             </>
           )}
 
-          <div className="random-hero-button btn-orange" onClick={handleRandomHero}>
+          <div
+            className="random-hero-button btn-orange"
+            onClick={handleRandomHero}
+          >
             Randomize Hero
           </div>
         </div>

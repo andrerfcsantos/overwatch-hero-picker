@@ -12,6 +12,12 @@ export const PORTRAIT_SPRITE = {
   rows: 5,
 } as const;
 
+export const ROLE_SPRITE = {
+  src: "/assets/imgs/roles/role-icons-sprite.webp",
+  columns: 3,
+  rows: 1,
+} as const;
+
 export const spritePositions: Record<string, { col: number; row: number }> = {
   ana: { col: 0, row: 0 },
   anran: { col: 1, row: 0 },
@@ -64,3 +70,10 @@ export const spritePositions: Record<string, { col: number; row: number }> = {
   zarya: { col: 8, row: 4 },
   zenyatta: { col: 9, row: 4 },
 };
+
+export const roleSpritePositions: Record<string, { col: number; row: number }> =
+  {
+    tank: { col: 0, row: 0 },
+    damage: { col: 1, row: 0 },
+    support: { col: 2, row: 0 },
+  };

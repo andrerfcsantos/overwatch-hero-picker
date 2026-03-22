@@ -40,60 +40,9 @@
   src:
     local("Big Noodle Titling"),
     url("/assets/fonts/big_noodle_titling-webfont.woff2") format("woff2"),
-    url("/assets/fonts/big_noodle_titling-webfont.woff") format("woff"),
-    url("/assets/fonts/big_noodle_titling-webfont.ttf") format("truetype"),
-    url("/assets/fonts/big_noodle_titling-webfont.svg#bignoodletitlingregular")
-      format("svg");
+    url("/assets/fonts/big_noodle_titling-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedThin.otf") format("opentype");
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedThinItalic.otf") format("opentype");
-  font-weight: 100;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedExtraLight.otf") format("opentype");
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedExtraLightItalic.otf") format("opentype");
-  font-weight: 200;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedLight.otf") format("opentype");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedLightItalic.otf") format("opentype");
-  font-weight: 300;
-  font-style: italic;
   font-display: swap;
 }
 
@@ -107,105 +56,9 @@
 
 @font-face {
   font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedItalic.otf") format("opentype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedText.otf") format("opentype");
-  font-weight: 450;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedTextItalic.otf") format("opentype");
-  font-weight: 450;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedMedium.otf") format("opentype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedMediumItalic.otf") format("opentype");
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedSemiBold.otf") format("opentype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedSemiBoldItalic.otf") format("opentype");
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
   src: url("/assets/fonts/ConfigCondensedBold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedBoldItalic.otf") format("opentype");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedExtraBold.otf") format("opentype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedExtraBoldItalic.otf") format("opentype");
-  font-weight: 800;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedBlack.otf") format("opentype");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Config";
-  src: url("/assets/fonts/ConfigCondensedBlackItalic.otf") format("opentype");
-  font-weight: 900;
-  font-style: italic;
   font-display: swap;
 }
 
@@ -290,7 +143,9 @@ a:hover {
 .btn-perks {
   background: #082d3d;
   border: 1px solid rgba(1, 146, 199, 0.25);
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .btn-perks:hover {
@@ -310,7 +165,11 @@ a:hover {
   border-left: 3px solid transparent;
   opacity: 0.5;
   filter: saturate(0.4);
-  transition: opacity 0.15s ease, filter 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    filter 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .hero-card.selected {
@@ -568,7 +427,10 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .shortcut-hint-button:hover {
@@ -643,4 +505,3 @@ a:hover {
   color: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
-

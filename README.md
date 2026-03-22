@@ -3,7 +3,7 @@
 Repository for the Random Hero Picker for Overwatch.
 This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.
 
-* **Website:** https://owheropicker.com
+- **Website:** https://owheropicker.com
 
 ![Hero Picker Main Page Screenshot](images/screenshots/main_page.png)
 
@@ -17,11 +17,11 @@ Any feedback that is not a bug report or a feature request, please send to owher
 
 ## Tech Stack
 
-* [Next.js](https://nextjs.org/) (App Router)
-* [React](https://react.dev/)
-* [TypeScript](https://www.typescriptlang.org/)
-* [Tailwind CSS](https://tailwindcss.com/)
-* [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
+- [Next.js](https://nextjs.org/) (App Router)
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
 
 ## Building the site from source
 
@@ -29,14 +29,14 @@ Use these instructions to build the site from the source code and having it run 
 
 ### Prerequisites
 
-* [Node.js](https://nodejs.org/en/) (v18 or later)
+- [Node.js](https://nodejs.org/en/) (v18 or later)
 
 ### Running the site
 
-* Clone the repo
-* `cd` into the repo folder
-* `npm install` to install the dependencies
-* You can now run the site using `npm` directly or generate static files:
-    * `npm run dev` to serve the site on localhost in development mode
-    * `npm run build` to generate a production build
-    * `npm run start` to serve the production build on localhost
+- Clone the repo
+- `cd` into the repo folder
+- `npm install` to install the dependencies
+- You can now run the site using `npm` directly or generate static files:
+  - `npm run dev` to serve the site on localhost in development mode
+  - `npm run build` to generate a production build
+  - `npm run start` to serve the production build on localhost
