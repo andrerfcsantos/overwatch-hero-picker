@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -22,11 +23,17 @@ export default function Navbar() {
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-start lg:items-center justify-between flex-1`}
       >
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
-          <Link href="/" prefetch={false} className="flex items-center no-underline text-white">
-            <img
+          <Link
+            href="/"
+            prefetch={false}
+            className="flex items-center no-underline text-white"
+          >
+            <Image
               className="max-h-[2em] pr-2"
               src="/assets/imgs/navbar/ow-logo.svg"
               alt="Overwatch logo"
+              width={32}
+              height={32}
             />
             <span className="text-[1.5rem] text-white">
               Overwatch Hero Picker
@@ -73,10 +80,12 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className="nav-link"
           >
-            <img
-              className="h-[1.5em]"
+            <Image
+              className="h-[1.5em] w-auto"
               src="/assets/imgs/discord.webp"
               alt="Discord"
+              width={24}
+              height={24}
             />
           </a>
           <a
@@ -85,10 +94,12 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className="nav-link"
           >
-            <img
-              className="h-[1.5em]"
+            <Image
+              className="h-[1.5em] w-auto"
               src="/assets/imgs/navbar/bmc.svg"
               alt="Buy Me a Coffee"
+              width={150}
+              height={42}
             />
           </a>
         </div>

@@ -123,12 +123,12 @@ export default function PickerContent() {
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
           <h1 className="text-white">You should play</h1>
 
-          <div
+          <button
             className="options-toggle"
             onClick={() => setOptionsOpen(!optionsOpen)}
           >
             ⚙ Options {optionsOpen ? "▾" : "▸"}
-          </div>
+          </button>
           {optionsOpen && (
             <div className="mb-2">
               <div>
@@ -231,12 +231,12 @@ export default function PickerContent() {
             </>
           )}
 
-          <div
+          <button
             className="random-hero-button btn-orange"
             onClick={handleRandomHero}
           >
             Randomize Hero
-          </div>
+          </button>
         </div>
 
         {/* Right panel */}

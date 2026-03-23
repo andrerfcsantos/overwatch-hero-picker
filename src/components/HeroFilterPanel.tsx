@@ -44,9 +44,9 @@ export default function HeroFilterPanel() {
         </button>
       </div>
 
-      <RoleSection role="TANK" roleName="Tank" />
-      <RoleSection role="DAMAGE" roleName="Damage" />
-      <RoleSection role="SUPPORT" roleName="Support" />
+      <RoleSection heroRole="TANK" roleName="Tank" />
+      <RoleSection heroRole="DAMAGE" roleName="Damage" />
+      <RoleSection heroRole="SUPPORT" roleName="Support" />
     </div>
   );
 }

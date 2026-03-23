@@ -6,11 +6,11 @@ import HeroCard from "./HeroCard";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 
 interface RoleSectionProps {
-  role: HeroRole;
+  heroRole: HeroRole;
   roleName: string;
 }
 
-export default function RoleSection({ role, roleName }: RoleSectionProps) {
+export default function RoleSection({ heroRole: role, roleName }: RoleSectionProps) {
   const { getByRole, selectByRole, unselectByRole, selectJustRole } =
     useHeroes();
   const heroes = getByRole(role);

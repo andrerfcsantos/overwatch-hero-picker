@@ -188,9 +188,11 @@ export default function TwitterImage() {
           }}
         >
           {iconUrls.map((src, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               key={i}
               src={src}
+              alt=""
               width={iconSize}
               height={iconSize}
               style={{

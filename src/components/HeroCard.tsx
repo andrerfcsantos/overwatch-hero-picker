@@ -13,7 +13,7 @@ export default function HeroCard({ hero }: HeroCardProps) {
   const selected = getHeroSelected(hero.key);
 
   return (
-    <div
+    <button
       className={`hero-card ${selected ? "selected" : ""}`}
       onClick={() => toggleHero(hero.key)}
     >
@@ -24,6 +24,6 @@ export default function HeroCard({ hero }: HeroCardProps) {
         alt={`${hero.name} icon`}
       />
       <div className="hero-card-name">{hero.name}</div>
-    </div>
+    </button>
   );
 }

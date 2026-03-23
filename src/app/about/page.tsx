@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "About | Overwatch Hero Picker",
@@ -93,10 +94,12 @@ export default function AboutPage() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img
+        <Image
           className="w-[20em]"
           src="/assets/imgs/navbar/bmc.svg"
           alt="Buy Me a Coffee"
+          width={320}
+          height={90}
         />
       </a>
 

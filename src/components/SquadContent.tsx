@@ -378,12 +378,12 @@ export default function SquadContent() {
         </button>
       </div>
 
-      <div
+      <button
         className={styles.optionsToggle}
         onClick={() => setOptionsOpen(!optionsOpen)}
       >
         ⚙ Options {optionsOpen ? "▾" : "▸"}
-      </div>
+      </button>
 
       {optionsOpen && (
         <div className={styles.optionsPanel}>

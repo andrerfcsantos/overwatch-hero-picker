@@ -10,15 +10,6 @@ function popRandomFromArray<T>(list: T[]): T {
   return list.splice(idx, 1)[0];
 }
 
-function popNRandomFromArray<T>(list: T[], n: number): T[] {
-  const res: T[] = [];
-  const copy = [...list];
-  while (n > 0 && copy.length > 0) {
-    res.push(popRandomFromArray(copy));
-    n--;
-  }
-  return res;
-}
 
 export function randomHero(
   heroPool: Hero[],
