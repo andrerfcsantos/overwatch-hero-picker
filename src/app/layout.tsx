@@ -40,9 +40,6 @@ export default function RootLayout({
         {/* Preload critical navbar image */}
         <link rel="preload" as="image" href="/assets/imgs/navbar/ow-logo.svg" />
 
-        {/* Prefetch below-fold role icon sprite */}
-        <link rel="prefetch" as="image" href={ROLE_SPRITE.src} />
-
         {/* Preload font */}
         <link
           rel="preload"
@@ -52,9 +49,10 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
-        {/* Preload hero sprite sheets */}
+        {/* Preload sprite sheets */}
         <link rel="preload" as="image" href={ICON_SPRITE.src} />
-        <link rel="prefetch" as="image" href={PORTRAIT_SPRITE.src} />
+        <link rel="preload" as="image" href={PORTRAIT_SPRITE.src} />
+        <link rel="preload" as="image" href={ROLE_SPRITE.src} />
 
         <Script
           async
