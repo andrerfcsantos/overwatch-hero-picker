@@ -15,7 +15,7 @@ export const heroPerks: Record<string, HeroPerk> = {
   },
   roadhog: {
     minor: ["Scrap Hook", "Shrapnel Launcher"],
-    major: ["Invigorate", "Pulled Pork"],
+    major: ["Hogdrogen Exposure", "Pulled Pork"],
   },
   winston: {
     minor: ["Heavy Landing", "Electric Charge"],
@@ -46,8 +46,8 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Frost Arrow", "Scatter Arrows"],
   },
   junkrat: {
-    minor: ["Mine Recycling", "Nitro Boost"],
-    major: ["Frag Cannon", "Bomb Voyage"],
+    minor: ["Bomb Voyage", "Nitro Boost"],
+    major: ["Frag Cannon", "Mine Recycling"],
   },
   cassidy: {
     minor: ["Even the Odds", "Bang Bang"],
@@ -58,16 +58,20 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Cryo-Storm", "Deep Freeze"],
   },
   pharah: {
-    minor: ["Helix Shields", "Drift Thrusters"],
+    minor: ["Helix Shields", "Concussive Force"],
     major: ["Fuel Stores", "Rocket Salvo"],
   },
   reaper: {
     minor: ["Soul Reaving", "Lingering Wraith"],
-    major: ["Shadow Blink", "Dire Triggers"],
+    major: ["Shadow Blink", "Trigger Finger"],
+  },
+  sierra: {
+    minor: ["Full Flight", "Tight Grip"],
+    major: ["Medi-Drone", "Locked In"],
   },
   soldier76: {
     minor: ["Tactical Salvo", "Helix Propulsion"],
-    major: ["Stim Pack", "Agility Training"],
+    major: ["Stim Pack", "Full Stride"],
   },
   sombra: {
     minor: ["CTRL ALT ESC", "Encrypted Upload"],
@@ -103,7 +107,7 @@ export const heroPerks: Record<string, HeroPerk> = {
   },
   mercy: {
     minor: ["Angelic Resurrection", "Divine Momentum"],
-    major: ["Chain Boost", "Flash Heal"],
+    major: ["Chain Boost", "Double Dose"],
   },
   moira: {
     minor: ["Destruction's Divide", "Ethical Nourishment"],
@@ -142,8 +146,8 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Ready Step", "Foxtrot"],
   },
   ramattra: {
-    minor: ["Void Surge", "Relentless Form"],
-    major: ["Nanite Repair", "Vengeful Vortex"],
+    minor: ["Prolonged Barrier", "Relentless Form"],
+    major: ["Nanite Repair", "Void Surge"],
   },
   lifeweaver: {
     minor: ["Petal Protection", "Dashing Escape"],

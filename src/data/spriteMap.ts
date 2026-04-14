@@ -3,13 +3,13 @@
 export const ICON_SPRITE = {
   src: "/assets/imgs/heroes/hero-icons-sprite.webp",
   columns: 10,
-  rows: 5,
+  rows: 6,
 } as const;
 
 export const PORTRAIT_SPRITE = {
   src: "/assets/imgs/heroes/hero-portraits-sprite.webp",
   columns: 10,
-  rows: 5,
+  rows: 6,
 } as const;
 
 export const ROLE_SPRITE = {
@@ -54,26 +54,26 @@ export const spritePositions: Record<string, { col: number; row: number }> = {
   reaper: { col: 2, row: 3 },
   reinhardt: { col: 3, row: 3 },
   roadhog: { col: 4, row: 3 },
-  sigma: { col: 5, row: 3 },
-  sojourn: { col: 6, row: 3 },
-  soldier76: { col: 7, row: 3 },
-  sombra: { col: 8, row: 3 },
-  symmetra: { col: 9, row: 3 },
-  torbjorn: { col: 0, row: 4 },
-  tracer: { col: 1, row: 4 },
-  vendetta: { col: 2, row: 4 },
-  venture: { col: 3, row: 4 },
-  widowmaker: { col: 4, row: 4 },
-  winston: { col: 5, row: 4 },
-  wreckingball: { col: 6, row: 4 },
-  wuyang: { col: 7, row: 4 },
-  zarya: { col: 8, row: 4 },
-  zenyatta: { col: 9, row: 4 },
+  sierra: { col: 5, row: 3 },
+  sigma: { col: 6, row: 3 },
+  sojourn: { col: 7, row: 3 },
+  soldier76: { col: 8, row: 3 },
+  sombra: { col: 9, row: 3 },
+  symmetra: { col: 0, row: 4 },
+  torbjorn: { col: 1, row: 4 },
+  tracer: { col: 2, row: 4 },
+  vendetta: { col: 3, row: 4 },
+  venture: { col: 4, row: 4 },
+  widowmaker: { col: 5, row: 4 },
+  winston: { col: 6, row: 4 },
+  wreckingball: { col: 7, row: 4 },
+  wuyang: { col: 8, row: 4 },
+  zarya: { col: 9, row: 4 },
+  zenyatta: { col: 0, row: 5 },
 };
 
-export const roleSpritePositions: Record<string, { col: number; row: number }> =
-  {
-    tank: { col: 0, row: 0 },
-    damage: { col: 1, row: 0 },
-    support: { col: 2, row: 0 },
-  };
+export const roleSpritePositions: Record<string, { col: number; row: number }> = {
+  tank: { col: 0, row: 0 },
+  damage: { col: 1, row: 0 },
+  support: { col: 2, row: 0 },
+};
