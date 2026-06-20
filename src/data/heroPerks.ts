@@ -30,7 +30,7 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Energy Lance", "Extra Oomph"],
   },
   bastion: {
-    minor: ["Configuration Reload", "Armored Artillery"],
+    minor: ["Configuration Reload", "Smart Bomb"],
     major: ["Self-Repair", "Lindholm Explosives"],
   },
   doomfist: {
@@ -65,9 +65,13 @@ export const heroPerks: Record<string, HeroPerk> = {
     minor: ["Soul Reaving", "Lingering Wraith"],
     major: ["Shadow Blink", "Trigger Finger"],
   },
+  shion: {
+    minor: ["Rapid Reload", "X Machina"],
+    major: ["Refuel", "Faces of Death"],
+  },
   sierra: {
     minor: ["Full Flight", "Tight Grip"],
-    major: ["Medi-Drone", "Locked In"],
+    major: ["Medi-Drone", "Locked-In"],
   },
   soldier76: {
     minor: ["Tactical Salvo", "Helix Propulsion"],
@@ -106,7 +110,7 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Noise Violation", "Accelerando"],
   },
   mercy: {
-    minor: ["Angelic Resurrection", "Divine Momentum"],
+    minor: ["Angelic Resurrection", "Winged Reach"],
     major: ["Chain Boost", "Double Dose"],
   },
   moira: {
@@ -127,7 +131,7 @@ export const heroPerks: Record<string, HeroPerk> = {
   },
   ashe: {
     minor: ["Remote Detonator", "Double-Barreled"],
-    major: ["Airburst", "Viper's Sting"],
+    major: ["Airburst", "Viper Sting"],
   },
   echo: {
     minor: ["Focused Rush", "Partial Scan"],
@@ -170,8 +174,8 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Lift Off", "Faster Blaster"],
   },
   hazard: {
-    minor: ["Deep Leap", "Anarchic Zeal"],
-    major: ["Reconstitution", "Explosive Impalements"],
+    minor: ["Reconstitution", "Anarchic Zeal"],
+    major: ["Deep Leap", "Explosive Impalements"],
   },
   freja: {
     minor: ["Momentum Boost", "Relentless Barrage"],
@@ -183,7 +187,7 @@ export const heroPerks: Record<string, HeroPerk> = {
   },
   domina: {
     minor: ["Efficient Design", "Extended Power"],
-    major: ["Disruptive Detonation", "Power Move"],
+    major: ["Disruptive Detonation", "Corporate Retreat"],
   },
   emre: {
     minor: ["Suppressive Security", "Enhanced Agility"],

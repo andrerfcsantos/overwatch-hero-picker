@@ -4,6 +4,7 @@ import path from "node:path";
 import { describe, expect, test } from "vite-plus/test";
 
 import { getAllHeroes, heroKeys } from "./heroes";
+import { heroPerks } from "./heroPerks";
 import { spritePositions } from "./spriteMap";
 
 const heroAssetsDir = path.join(process.cwd(), "public/assets/imgs/heroes");
@@ -18,6 +19,14 @@ describe("hero data", () => {
         selected: true,
       }),
     );
+  });
+
+  test("has perk data for every hero", () => {
+    for (const key of heroKeys) {
+      expect(heroPerks[key]).toBeDefined();
+      expect(heroPerks[key].minor).toHaveLength(2);
+      expect(heroPerks[key].major).toHaveLength(2);
+    }
   });
 
   test("has sprite map entries and webp assets for every hero", () => {
