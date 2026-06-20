@@ -69,6 +69,7 @@ const heroDefinitions: Record<string, Hero> = {
   mei: { name: "Mei", role: "DAMAGE", selected: true, key: "mei" },
   pharah: { name: "Pharah", role: "DAMAGE", selected: true, key: "pharah" },
   reaper: { name: "Reaper", role: "DAMAGE", selected: true, key: "reaper" },
+  shion: { name: "Shion", role: "DAMAGE", selected: true, key: "shion" },
   sierra: { name: "Sierra", role: "DAMAGE", selected: true, key: "sierra" },
   soldier76: {
     name: "Soldier: 76",

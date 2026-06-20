@@ -10,7 +10,6 @@ function popRandomFromArray<T>(list: T[]): T {
   return list.splice(idx, 1)[0];
 }
 
-
 export function randomHero(
   heroPool: Hero[],
   options: { preventRepeat?: boolean; previousHeroKey?: string } = {},

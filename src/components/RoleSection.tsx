@@ -10,7 +10,10 @@ interface RoleSectionProps {
   roleName: string;
 }
 
-export default function RoleSection({ heroRole: role, roleName }: RoleSectionProps) {
+export default function RoleSection({
+  heroRole: role,
+  roleName,
+}: RoleSectionProps) {
   const { getByRole, selectByRole, unselectByRole, selectJustRole } =
     useHeroes();
   const heroes = getByRole(role);
