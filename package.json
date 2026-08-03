@@ -8,23 +8,26 @@
     "start": "next start",
     "lint": "vp lint",
     "format": "vp fmt \"src/**/*.{ts,tsx,css}\"",
-    "generate-sprites": "npx tsx scripts/generate-sprites.ts"
+    "generate-sprites": "npx tsx scripts/generate-sprites.ts",
+    "deps:check": "node scripts/deps.mts",
+    "deps:update": "vp update && node scripts/deps.mts",
+    "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
   },
   "dependencies": {
-    "next": "16.2.6",
-    "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "next": "^16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^25.8.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@types/sharp": "^0.31.1",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
     "vite-plus": "latest"
   },
@@ -32,5 +35,15 @@
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.0.0",
+      "onFail": "download"
+    }
   }
 }

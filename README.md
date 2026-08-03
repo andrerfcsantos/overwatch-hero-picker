@@ -29,7 +29,13 @@ Use these instructions to build the site from the source code and having it run 
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/) (v18 or later)
+- [Node.js](https://nodejs.org/en/) 24 (the active LTS line)
+
+The required major is declared in `package.json` in two places: `engines.node`,
+which makes `npm install` fail on the wrong major (`engine-strict=true` is set in
+`.npmrc`), and `devEngines.runtime`, which [Vite+](https://viteplus.dev) uses to
+download and select the right runtime automatically. `@types/node` is kept on the
+same major so the types match what actually runs.
 
 ### Running the site
 
@@ -40,3 +46,29 @@ Use these instructions to build the site from the source code and having it run 
   - `npm run dev` to serve the site on localhost in development mode
   - `npm run build` to generate a production build
   - `npm run start` to serve the production build on localhost
+
+## Upgrading dependencies
+
+Every dependency is declared as a caret range, so `vp update` is free to move
+within a major. The lockfile is what pins exact versions.
+
+| Command                     | What it does                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `npm run deps:check`        | Reports the Node.js version alignment and splits pending updates into minor/patch and major |
+| `npm run deps:update`       | Applies every minor/patch update the declared ranges already allow                          |
+| `npm run deps:update:major` | Interactively picks major updates, which widen the ranges in `package.json`                 |
+
+`deps:update` is the routine one — it only moves the lockfile, so `package.json`
+stays untouched and the changes are non-breaking by semver. Run `vp check` and
+`npm run build` afterwards and commit `package-lock.json`.
+
+`deps:update:major` crosses major boundaries and needs real testing: read the
+changelog for each package, take them one at a time where possible, and validate
+with `vp check` and `npm run build` before committing.
+
+Bumping `@types/node` across a major is a Node.js upgrade, not a types upgrade.
+Do it together with `vp env pin <major>` and a matching `engines.node`, in one
+commit — `npm run deps:check` fails if the three ever disagree.
+
+`npm run deps:check -- --ci` exits non-zero when the Node.js declarations are out
+of sync or when in-range updates are pending, which makes it usable as a CI gate.
