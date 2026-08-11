@@ -152,6 +152,18 @@ a:hover {
   border-color: rgba(1, 146, 199, 0.5);
 }
 
+/* Share button, given a border so it reads as a sibling of the perks button */
+.btn-share {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn-share:hover {
+  border-color: rgba(240, 100, 20, 0.6);
+}
+
 /* Share link fallback (clipboard unavailable) */
 .share-fallback-input {
   display: block;
@@ -312,8 +324,63 @@ a:hover {
 }
 
 /* Random hero button */
+/* Picker result: hero, perks and the actions that operate on them, grouped so
+   the single orange call to action below stands on its own. */
+.result-card {
+  width: 100%;
+  max-width: 20rem;
+  align-self: center;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  padding: 0.9rem 0.75rem 1rem;
+  margin: 0.5rem 0 0.9rem;
+}
+
+.result-hero-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 2.2rem;
+  margin: 0.6rem 0 0;
+}
+
+.result-perks {
+  display: block;
+  font-size: 1.2rem;
+  line-height: 1.3;
+  margin-top: 0.5rem;
+}
+
+/* Side by side when the column is wide enough, stacked when it is not, but
+   always sharing the same edges rather than centring as ragged pills. */
+.result-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+
+.result-actions .action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  padding: 0.25rem 0.5rem;
+  margin: 0;
+}
+
+.result-actions .share-fallback-input {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 .random-hero-button {
   user-select: none;
+  width: 100%;
+  max-width: 20rem;
+  align-self: center;
   font-size: 1.75rem;
   color: white;
   background-color: rgb(240, 100, 20);

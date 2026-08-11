@@ -273,21 +273,21 @@ export default function PickerContent() {
             </div>
           )}
 
-          {showPortrait && selectedHero && (
-            <SpriteIcon
-              ref={portraitRef}
-              heroKey={selectedHero.key}
-              type="portrait"
-              className="hero-portrait mx-auto hero-portrait-animate"
-              alt={`${selectedHero.name} portrait`}
-            />
-          )}
-
           {selectedHero && (
-            <>
+            <div className="result-card">
+              {showPortrait && (
+                <SpriteIcon
+                  ref={portraitRef}
+                  heroKey={selectedHero.key}
+                  type="portrait"
+                  className="hero-portrait mx-auto hero-portrait-animate"
+                  alt={`${selectedHero.name} portrait`}
+                />
+              )}
+
               <h2
                 key={`hero-name-${heroCount}`}
-                className="hero-name-animate mx-4 mt-4 mb-0 !text-[2.2rem] flex items-center justify-center gap-2"
+                className="hero-name-animate result-hero-name"
               >
                 <RoleSpriteIcon
                   roleKey={selectedHero.role}
@@ -296,26 +296,35 @@ export default function PickerContent() {
                 />
                 {selectedHero.name}
               </h2>
+
               {showPerks && perkLabels && (
-                <div className="mx-4 mb-4" style={{ marginTop: "0.8em" }}>
-                  <span
-                    key={`perks-${perksCount}`}
-                    className="perks-animate text-[1.2rem] leading-snug"
-                  >
-                    <span className="text-blue-300">{perkLabels.minor}</span>{" "}
-                    <span className="text-gray-500">|</span>{" "}
-                    <span className="text-yellow-300">{perkLabels.major}</span>
-                  </span>
-                  <br />
+                <span
+                  key={`perks-${perksCount}`}
+                  className="perks-animate result-perks"
+                >
+                  <span className="text-blue-300">{perkLabels.minor}</span>{" "}
+                  <span className="text-gray-500">|</span>{" "}
+                  <span className="text-yellow-300">{perkLabels.major}</span>
+                </span>
+              )}
+
+              <div className="result-actions">
+                {showPerks && perkLabels && (
                   <button
-                    className="action-button btn-perks text-[1.2rem] !px-2 !py-1 !mt-3"
+                    className="action-button btn-perks"
                     onClick={handleNewPerks}
                   >
                     ↻ Randomize perks
                   </button>
-                </div>
-              )}
-            </>
+                )}
+                <ShareButton
+                  className="action-button btn-share"
+                  buildUrl={buildResultUrl}
+                  label="Share this hero"
+                  title="Copy a link that reveals this hero"
+                />
+              </div>
+            </div>
           )}
 
           <button
@@ -324,16 +333,6 @@ export default function PickerContent() {
           >
             Randomize Hero
           </button>
-
-          {selectedHero && (
-            <div className="mt-2">
-              <ShareButton
-                buildUrl={buildResultUrl}
-                label="Share this hero"
-                title="Copy a link that reveals this hero"
-              />
-            </div>
-          )}
         </div>
 
         {/* Right panel */}
