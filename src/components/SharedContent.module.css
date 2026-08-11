@@ -67,6 +67,9 @@
   flex-wrap: wrap;
   gap: 0.6rem;
   justify-content: center;
+  /* The buttons differ in height, so center them instead of letting the
+     shorter one stretch-align to the top of the row. */
+  align-items: center;
   margin-top: 1.5rem;
 }
 

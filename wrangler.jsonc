@@ -9,4 +9,21 @@
   "observability": {
     "enabled": true,
   },
+  "env": {
+    "beta": {
+      "assets": {
+        "directory": "out",
+        "not_found_handling": "404-page",
+      },
+      "observability": {
+        "enabled": true,
+      },
+      "routes": [
+        {
+          "pattern": "beta.owheropicker.com",
+          "custom_domain": true,
+        },
+      ],
+    },
+  },
 }

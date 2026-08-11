@@ -159,9 +159,7 @@ export default function SharedHeroContent() {
 
   return (
     <div className={styles.container}>
-      <p className={styles.eyebrow}>
-        {view.ownRoll ? "Your roll" : "Shared with you"}
-      </p>
+      {view.ownRoll && <p className={styles.eyebrow}>Your roll</p>}
       <h1 className={styles.headline}>
         {view.ownRoll
           ? "Here's your hero"
