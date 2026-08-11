@@ -31,7 +31,7 @@ export default function PresetBar() {
     clearApplied,
   } = usePresets();
 
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [menuAlignEnd, setMenuAlignEnd] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export default function PresetBar() {
   const applied = presets.find((preset) => preset.id === appliedId) ?? null;
 
   useEffect(() => {
-    setCollapsed(getBoolFromLS("presetsCollapsed", false));
+    setCollapsed(getBoolFromLS("presetsCollapsed", true));
   }, []);
 
   const toggleCollapsed = useCallback(() => {
