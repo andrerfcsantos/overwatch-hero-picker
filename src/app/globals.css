@@ -323,6 +323,580 @@ a:hover {
   font-weight: bold;
 }
 
+/* ---------------------------------------------------------------- Presets */
+
+/* One row between the filter buttons and the roles: a click applies, and each
+   preset carries its own menu for the things done once in its life. */
+.preset-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin: 0.6rem 0 0.2rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.3rem;
+}
+
+.preset-bar-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preset-bar-toggle {
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: inherit;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.preset-bar-toggle:hover {
+  color: white;
+}
+
+.preset-bar-caret {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* What the collapsed bar still has to say: which preset the filters came from.
+   Same size and line box as the toggle beside it, so centring the two boxes
+   also lands the caps on the same baseline. */
+.preset-bar-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* The way out of a preset: keeps the heroes, drops the tie to the preset. */
+.preset-unselect {
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.25rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.02em 0.45em;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.preset-unselect:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.preset-unselect:active {
+  transform: scale(0.96);
+}
+
+/* Three stacked lines: what changed, the presets, then the tools. */
+.preset-bar-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.preset-dirty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.preset-dirty-text {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 44rem;
+}
+
+.preset-dirty-name {
+  color: rgb(240, 100, 20);
+  font-weight: bold;
+}
+
+.preset-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.preset-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  background: #0f1923;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0.25rem;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.preset-chip:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  border-left-color: rgba(240, 100, 20, 0.5);
+}
+
+.preset-chip.applied {
+  background: rgba(240, 100, 20, 0.16);
+  border-color: rgba(240, 100, 20, 0.4);
+  border-left-color: rgb(240, 100, 20);
+}
+
+.preset-chip-apply,
+.preset-chip-menu {
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: inherit;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  padding: 0.05em 0.45em;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.preset-chip-apply:hover,
+.preset-chip-menu:hover,
+.preset-chip.applied .preset-chip-apply {
+  color: white;
+}
+
+.preset-chip-apply:active {
+  transform: scale(0.97);
+}
+
+.preset-chip-name {
+  white-space: nowrap;
+}
+
+.preset-chip-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(240, 100, 20);
+}
+
+/* Dimmed rather than hidden: revealing it on hover would resize the chip under
+   the pointer. */
+.preset-chip-menu {
+  padding: 0.05em 0.35em 0.05em 0.15em;
+  opacity: 0.35;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
+}
+
+.preset-chip:hover .preset-chip-menu,
+.preset-chip:focus-within .preset-chip-menu,
+.preset-chip.applied .preset-chip-menu {
+  opacity: 1;
+}
+
+.preset-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.2rem;
+  color: rgb(240, 100, 20);
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.66rem;
+  font-weight: bold;
+}
+
+.preset-menu {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  z-index: 30;
+  min-width: 13rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem;
+  background: rgba(15, 25, 35, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.3rem;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.55);
+  animation: presetMenuIn 0.12s ease-out;
+}
+
+/* Set by the bar when the menu would otherwise run off the right of the page. */
+.preset-menu.align-end {
+  left: auto;
+  right: 0;
+}
+
+@keyframes presetMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+.preset-menu button {
+  text-align: start;
+  background: none;
+  border: none;
+  border-radius: 0.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: inherit;
+  font-size: 1.05rem;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+}
+
+.preset-menu button:hover {
+  background: rgba(240, 100, 20, 0.18);
+  color: white;
+}
+
+.preset-menu-separator {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0.25rem 0.2rem;
+}
+
+.preset-menu-danger:hover {
+  background: rgba(200, 60, 40, 0.25) !important;
+}
+
+/* Update and Revert only exist while the filters differ from the preset. */
+.preset-pending {
+  user-select: none;
+  background: none;
+  border: 1px solid rgba(240, 100, 20, 0.5);
+  border-radius: 0.25rem;
+  color: #fb923c;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.05em 0.5em;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.preset-pending:hover {
+  background: rgba(240, 100, 20, 0.16);
+}
+
+/* One answer is useless without the other, so they wrap together or not at all. */
+.preset-pending-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.preset-pending.quiet {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.preset-pending.quiet:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* On their own line: these act on the collection, not on a preset. */
+.preset-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.preset-tool,
+.preset-tool:link,
+.preset-tool:visited {
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  border-radius: 0.25rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.35;
+  padding: 0.05em 0.45em;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.preset-tool:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.preset-name-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.preset-name-field {
+  background: #0b131b;
+  border: 1px solid rgba(240, 100, 20, 0.6);
+  border-radius: 0.25rem;
+  color: white;
+  font-family: inherit;
+  font-size: 1.05rem;
+  padding: 0.05em 0.4em;
+  width: 9.5rem;
+  outline: none;
+}
+
+/* Enter and Escape still work; these are for everyone who reaches for a click. */
+.preset-name-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #0f1923;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.25rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.preset-name-action.confirm {
+  color: #6ee7a0;
+}
+
+.preset-name-action.confirm:hover {
+  border-color: rgba(110, 231, 160, 0.6);
+  background: rgba(110, 231, 160, 0.12);
+}
+
+.preset-name-action.cancel {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.preset-name-action.cancel:hover {
+  color: #ff8a70;
+  border-color: rgba(255, 138, 112, 0.6);
+}
+
+.preset-name-action:active {
+  transform: scale(0.94);
+}
+
+.preset-status {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.75rem;
+  color: #fb923c;
+}
+
+/* Manage presets page */
+
+.preset-page-intro {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+  color: #9ca3af;
+  max-width: 46rem;
+  margin: 0 0 0.6rem;
+}
+
+.preset-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.8rem 0;
+}
+
+.preset-page-actions .action-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.preset-empty {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+  color: #9ca3af;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 0.3rem;
+  padding: 1rem;
+  max-width: 40rem;
+}
+
+.preset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 60rem;
+}
+
+.preset-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.3rem;
+}
+
+.preset-row-order {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.preset-move {
+  background: #0f1923;
+  border: none;
+  border-radius: 0.2rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0.2rem 0.35rem;
+  cursor: pointer;
+}
+
+.preset-move:hover:not(:disabled) {
+  color: white;
+}
+
+.preset-move:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.preset-row-key {
+  padding-top: 0.2rem;
+}
+
+.preset-row-nokey {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.9rem;
+}
+
+.preset-row-main {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.preset-row-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preset-row-name {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.preset-row-applied {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(240, 100, 20);
+  border: 1px solid rgba(240, 100, 20, 0.5);
+  border-radius: 0.2rem;
+  padding: 0 0.35rem;
+}
+
+.preset-row-meta {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin: 0.1rem 0 0;
+}
+
+.preset-row-heroes {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-top: 0.2rem;
+}
+
+.preset-row-heroes summary {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.preset-row-heroes summary:hover {
+  color: white;
+}
+
+.preset-row-heroes p {
+  margin: 0.25rem 0 0;
+  max-width: 42rem;
+}
+
+.preset-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.preset-delete:hover {
+  color: #ff8a70;
+}
+
+@media (max-width: 700px) {
+  .preset-row {
+    flex-wrap: wrap;
+  }
+
+  .preset-row-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
 /* Random hero button */
 /* Result group: hero, perks and the actions that operate on them, grouped so
    the single orange call to action below stands on its own. Shared by the

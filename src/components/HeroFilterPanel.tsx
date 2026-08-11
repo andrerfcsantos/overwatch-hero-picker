@@ -1,6 +1,7 @@
 "use client";
 
 import { useHeroes } from "@/context/HeroContext";
+import PresetBar from "./PresetBar";
 import RoleSection from "./RoleSection";
 import ShareButton from "./ShareButton";
 
@@ -59,6 +60,8 @@ export default function HeroFilterPanel({
           />
         )}
       </div>
+
+      <PresetBar />
 
       <RoleSection heroRole="TANK" roleName="Tank" />
       <RoleSection heroRole="DAMAGE" roleName="Damage" />

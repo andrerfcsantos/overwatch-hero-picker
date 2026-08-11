@@ -1,10 +1,37 @@
 export type HeroRole = "TANK" | "DAMAGE" | "SUPPORT";
 
+/**
+ * The game's sub-roles. Each one belongs to a single role, and every hero
+ * belongs to exactly one sub-role. See `SUB_ROLES` in `@/data/heroes` for the
+ * membership, which is where sub-role changes are made.
+ */
+export type HeroSubRole =
+  // Tank
+  | "BRUISER"
+  | "INITIATOR"
+  | "STALWART"
+  // Damage
+  | "FLANKER"
+  | "RECON"
+  | "SHARPSHOOTER"
+  | "SPECIALIST"
+  // Support
+  | "MEDIC"
+  | "SURVIVOR"
+  | "TACTICIAN";
+
 export interface Hero {
   name: string;
   role: HeroRole;
+  subRole: HeroSubRole;
   selected: boolean;
   key: string;
+  /**
+   * Left out when the hero can be picked in Competitive Play, which is the
+   * usual case. Set to `false` for heroes Blizzard has disabled there; the
+   * built-in "Ranked" preset is built from this.
+   */
+  rankedEligible?: boolean;
 }
 
 /**

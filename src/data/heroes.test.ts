@@ -4,7 +4,13 @@ import path from "node:path";
 import { describe, expect, test } from "vite-plus/test";
 
 import { SHARE_HERO_ORDER } from "@/lib/share/heroOrder";
-import { getAllHeroes, heroKeys } from "./heroes";
+import {
+  SUB_ROLES,
+  getAllHeroes,
+  getHeroesBySubRole,
+  getRankedHeroes,
+  heroKeys,
+} from "./heroes";
 import { heroPerks } from "./heroPerks";
 import { spritePositions } from "./spriteMap";
 
@@ -114,6 +120,38 @@ describe("hero data", () => {
         fs.existsSync(path.join(heroAssetsDir, "portraits", `${key}.webp`)),
       ).toBe(true);
     }
+  });
+});
+
+describe("sub-roles", () => {
+  test("gives every hero a sub-role belonging to its own role", () => {
+    const roleOfSubRole = new Map(SUB_ROLES.map((s) => [s.key, s.role]));
+    for (const hero of getAllHeroes()) {
+      expect(roleOfSubRole.get(hero.subRole)).toBe(hero.role);
+    }
+  });
+
+  test("covers every hero exactly once across the sub-roles", () => {
+    const covered = SUB_ROLES.flatMap((s) =>
+      getHeroesBySubRole(s.key).map((h) => h.key),
+    );
+    expect(new Set(covered).size).toBe(covered.length);
+    expect([...covered].sort()).toEqual([...heroKeys].sort());
+  });
+
+  test("has no empty sub-role, so no built-in preset is empty", () => {
+    for (const subRole of SUB_ROLES) {
+      expect(getHeroesBySubRole(subRole.key).length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe("ranked eligibility", () => {
+  test("leaves out the heroes that cannot be picked in Competitive Play", () => {
+    const ranked = new Set(getRankedHeroes().map((h) => h.key));
+    expect(ranked.has("jetpackcat")).toBe(false);
+    expect(ranked.has("dmon")).toBe(false);
+    expect(ranked.size).toBe(heroKeys.length - 2);
   });
 });
 

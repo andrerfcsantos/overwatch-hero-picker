@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
 import { HeroProvider } from "@/context/HeroContext";
+import { PresetProvider } from "@/context/PresetContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
@@ -71,10 +72,12 @@ export default function RootLayout({
       </head>
       <body>
         <HeroProvider>
-          <Navbar />
-          {children}
-          <Footer />
-          <KeyboardShortcutHint />
+          <PresetProvider>
+            <Navbar />
+            {children}
+            <Footer />
+            <KeyboardShortcutHint />
+          </PresetProvider>
         </HeroProvider>
       </body>
     </html>

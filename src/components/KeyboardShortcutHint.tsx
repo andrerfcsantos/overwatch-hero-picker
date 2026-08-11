@@ -10,6 +10,7 @@ const soloShortcuts = [
   { key: "S", description: "Toggle all Support" },
   { key: "U", description: "Unselect all heroes" },
   { key: "P", description: "Randomize perks" },
+  { key: "1–0", description: "Apply preset 1 to 10" },
 ];
 
 const squadShortcuts = [

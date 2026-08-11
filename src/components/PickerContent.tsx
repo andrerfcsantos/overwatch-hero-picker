@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Hero, PerkPick } from "@/types/hero";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
+import { usePresets } from "@/context/PresetContext";
+import { SHORTCUT_COUNT, shortcutForIndex } from "@/lib/presets/types";
 import {
   perksFromIndices,
   randomHero,
@@ -33,6 +35,7 @@ export default function PickerContent() {
     undoSharedPreset,
     dismissSharedPreset,
   } = useHeroes();
+  const { presets, applyPreset } = usePresets();
 
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
   const [perks, setPerks] = useState<PerkPick | null>(null);
@@ -178,6 +181,17 @@ export default function PickerContent() {
     [getByRole, getSelectedByRole, selectByRole, unselectByRole],
   );
 
+  // The first ten presets answer to the number row, in list order. The order is
+  // the visitor's to change on the manage page, so the keys follow it.
+  const presetShortcuts = useMemo(() => {
+    const map: Record<string, () => void> = {};
+    presets.slice(0, SHORTCUT_COUNT).forEach((preset, index) => {
+      const key = shortcutForIndex(index);
+      if (key) map[key] = () => applyPreset(preset.id);
+    });
+    return map;
+  }, [presets, applyPreset]);
+
   useKeyboardShortcuts({
     r: handleRandomHero,
     t: () => toggleRole("TANK"),
@@ -185,6 +199,7 @@ export default function PickerContent() {
     s: () => toggleRole("SUPPORT"),
     u: unselectAll,
     p: handleNewPerks,
+    ...presetShortcuts,
   });
 
   if (!mounted) return null;
@@ -320,7 +335,7 @@ export default function PickerContent() {
                 <ShareButton
                   className="action-button btn-share"
                   buildUrl={buildResultUrl}
-                  label="Share this hero"
+                  label="Share this roll"
                   title="Copy a link that reveals this hero"
                 />
               </div>

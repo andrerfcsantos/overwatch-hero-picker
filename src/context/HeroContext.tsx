@@ -46,6 +46,8 @@ interface HeroContextValue {
   selectJustRole: (role: HeroRole) => void;
   selectAll: () => void;
   unselectAll: () => void;
+  /** Replaces the whole selection at once, as applying a preset does. */
+  setSelected: (keys: string[]) => void;
   isHydrated: boolean;
   /** Options that came with a shared preset on this page load, if any. */
   sharedPreset: PickerPreset | null;
@@ -244,6 +246,12 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
 
   const unselectAll = useCallback(() => dispatch({ type: "UNSELECT_ALL" }), []);
 
+  const setSelected = useCallback(
+    (keys: string[]) =>
+      dispatch({ type: "SET_SELECTIONS", selected: new Set(keys) }),
+    [],
+  );
+
   const value = useMemo(
     () => ({
       heroes,
@@ -257,6 +265,7 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectJustRole,
       selectAll,
       unselectAll,
+      setSelected,
       isHydrated: isHydrated.current,
       sharedPreset,
       sharedPresetApplied: noticeOpen,
@@ -275,6 +284,7 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectJustRole,
       selectAll,
       unselectAll,
+      setSelected,
       sharedPreset,
       noticeOpen,
       undoSharedPreset,
