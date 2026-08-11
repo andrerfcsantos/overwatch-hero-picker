@@ -1,13 +1,8 @@
-import { Hero, HeroRole, Squad } from "@/types/hero";
+import { Hero, PerkPick } from "@/types/hero";
 import { heroPerks } from "@/data/heroPerks";
 
-function randomFromList<T>(list: T[]): T {
-  return list[Math.floor(Math.random() * list.length)];
-}
-
-function popRandomFromArray<T>(list: T[]): T {
-  const idx = Math.floor(Math.random() * list.length);
-  return list.splice(idx, 1)[0];
+function randomIndex(length: number): number {
+  return Math.floor(Math.random() * length);
 }
 
 export function randomHero(
@@ -27,69 +22,34 @@ export function randomHero(
   return available[Math.floor(Math.random() * available.length)];
 }
 
-export function getRandomHeroPerks(heroKey: string): [string, string] {
+/**
+ * Picks perks as indices rather than strings so a roll can be put in a share
+ * link. Returns null for heroes with no perk data.
+ */
+export function randomPerkIndices(heroKey: string): PerkPick | null {
   const perks = heroPerks[heroKey];
-  if (!perks) return ["", ""];
-  return [randomFromList(perks.minor), randomFromList(perks.major)];
+  if (!perks) return null;
+  return {
+    minor: randomIndex(perks.minor.length),
+    major: randomIndex(perks.major.length),
+  };
 }
 
-export function randomSquad(heroesByRole: {
-  TANK: Hero[];
-  DAMAGE: Hero[];
-  SUPPORT: Hero[];
-}): Squad {
-  return randomSquadWithRoles(heroesByRole, [
-    "TANK",
-    "DAMAGE",
-    "DAMAGE",
-    "SUPPORT",
-    "SUPPORT",
-  ]);
-}
-
-export function randomSquadWithRoles(
-  heroesByRole: { TANK: Hero[]; DAMAGE: Hero[]; SUPPORT: Hero[] },
-  roles?: HeroRole[],
-): Squad {
-  const allByRole = {
-    TANK: [...heroesByRole.TANK],
-    DAMAGE: [...heroesByRole.DAMAGE],
-    SUPPORT: [...heroesByRole.SUPPORT],
-  };
-  const selectedByRole = {
-    TANK: allByRole.TANK.filter((h) => h.selected),
-    DAMAGE: allByRole.DAMAGE.filter((h) => h.selected),
-    SUPPORT: allByRole.SUPPORT.filter((h) => h.selected),
-  };
-
-  const res: Squad = { TANK: [], DAMAGE: [], SUPPORT: [] };
-
-  const roleSet: HeroRole[] = ["TANK", "DAMAGE", "SUPPORT"];
-  let rolesToGenerate: HeroRole[];
-
-  if (roles && roles.length > 0) {
-    rolesToGenerate = [...roles];
-  } else {
-    rolesToGenerate = [];
-    for (let i = 0; i < 5; i++) {
-      rolesToGenerate.push(randomFromList(roleSet));
-    }
-  }
-
-  for (let i = 0; i < 5; i++) {
-    const role = popRandomFromArray(rolesToGenerate);
-    let hero: Hero;
-
-    if (selectedByRole[role].length > 0) {
-      hero = popRandomFromArray(selectedByRole[role]);
-      const idx = allByRole[role].findIndex((h) => h.key === hero.key);
-      if (idx !== -1) allByRole[role].splice(idx, 1);
-    } else {
-      hero = popRandomFromArray(allByRole[role]);
-    }
-
-    res[role].push(hero);
-  }
-
-  return res;
+/**
+ * Resolves perk indices back to their labels. Returns null when the hero has no
+ * perk data or an index is out of range — which happens when a share link
+ * predates a change to the perk lists. Showing nothing beats showing the wrong
+ * perk.
+ */
+export function perksFromIndices(
+  heroKey: string,
+  pick: PerkPick | null,
+): { minor: string; major: string } | null {
+  if (!pick) return null;
+  const perks = heroPerks[heroKey];
+  if (!perks) return null;
+  const minor = perks.minor[pick.minor];
+  const major = perks.major[pick.major];
+  if (minor === undefined || major === undefined) return null;
+  return { minor, major };
 }

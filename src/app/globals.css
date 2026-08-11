@@ -152,6 +152,76 @@ a:hover {
   border-color: rgba(1, 146, 199, 0.5);
 }
 
+/* Share link fallback (clipboard unavailable) */
+.share-fallback-input {
+  display: block;
+  width: 100%;
+  max-width: 28rem;
+  margin: 0.4rem auto 0;
+  padding: 0.25rem 0.4rem;
+  background: #0f1923;
+  border: 1px solid rgba(240, 100, 20, 0.5);
+  border-radius: 0.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+}
+
+/* Shared preset notice */
+.shared-preset-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  background: rgba(240, 100, 20, 0.12);
+  border: 1px solid rgba(240, 100, 20, 0.45);
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  margin: 0.5rem auto;
+  max-width: 60rem;
+}
+
+.shared-preset-notice-text {
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+  text-align: start;
+}
+
+.shared-preset-notice-undo {
+  user-select: none;
+  background: rgb(240, 100, 20);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.15rem 0.7rem;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.shared-preset-notice-undo:hover {
+  filter: brightness(1.1);
+}
+
+.shared-preset-notice-undo:active {
+  transform: scale(0.96);
+}
+
+.shared-preset-notice-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 0.2rem;
+}
+
+.shared-preset-notice-dismiss:hover {
+  color: white;
+}
+
 /* Hero card styles */
 .hero-card {
   display: inline-flex;

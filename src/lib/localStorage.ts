@@ -1,3 +1,5 @@
+import { SlotConfig } from "@/types/hero";
+
 export function getBoolFromLS(key: string, defaultValue: boolean): boolean {
   if (typeof window === "undefined") return defaultValue;
   const val = localStorage.getItem(key);
@@ -24,11 +26,6 @@ export function getJsonFromLS<T>(key: string): T | null {
 export function setJsonToLS(key: string, value: unknown): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
-}
-
-export interface SlotConfig {
-  name: string;
-  disabledHeroes: Set<string>;
 }
 
 interface SlotConfigJson {

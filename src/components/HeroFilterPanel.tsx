@@ -2,8 +2,16 @@
 
 import { useHeroes } from "@/context/HeroContext";
 import RoleSection from "./RoleSection";
+import ShareButton from "./ShareButton";
 
-export default function HeroFilterPanel() {
+interface HeroFilterPanelProps {
+  /** Supplied by the picker, which owns the options the preset also carries. */
+  buildPresetUrl?: () => string;
+}
+
+export default function HeroFilterPanel({
+  buildPresetUrl,
+}: HeroFilterPanelProps) {
   const { getSelected, selectAll, unselectAll } = useHeroes();
   const numberOfSelected = getSelected().length;
 
@@ -42,6 +50,14 @@ export default function HeroFilterPanel() {
         <button className="action-button" onClick={unselectAll}>
           Unselect All
         </button>
+        {buildPresetUrl && (
+          <ShareButton
+            buildUrl={buildPresetUrl}
+            label="Share these filters"
+            copiedLabel="Filter link copied!"
+            title="Copy a link that sets up these filters and options"
+          />
+        )}
       </div>
 
       <RoleSection heroRole="TANK" roleName="Tank" />

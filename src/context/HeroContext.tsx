@@ -8,10 +8,14 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import { Hero, HeroRole } from "@/types/hero";
 import { getInitialHeroes } from "@/data/heroes";
 import { getJsonFromLS, setJsonToLS } from "@/lib/localStorage";
+import { tryDecodeShare } from "@/lib/share/codec";
+import { PickerPreset } from "@/lib/share/types";
+import { readShareParam, stripShareParam } from "@/lib/share/urls";
 
 interface HeroState {
   heroes: Record<string, Hero>;
@@ -24,6 +28,7 @@ type HeroAction =
   | { type: "SELECT_ALL" }
   | { type: "UNSELECT_ALL" }
   | { type: "SET_HERO_STATUS"; key: string; selected: boolean }
+  | { type: "SET_SELECTIONS"; selected: Set<string> }
   | {
       type: "RESTORE_SELECTIONS";
       selections: { key: string; selected: boolean }[];
@@ -42,6 +47,14 @@ interface HeroContextValue {
   selectAll: () => void;
   unselectAll: () => void;
   isHydrated: boolean;
+  /** Options that came with a shared preset on this page load, if any. */
+  sharedPreset: PickerPreset | null;
+  /** True while the shared-preset notice should be shown. */
+  sharedPresetApplied: boolean;
+  /** Puts back the filters the shared preset replaced. */
+  undoSharedPreset: () => void;
+  /** Hides the shared-preset notice without changing the filters. */
+  dismissSharedPreset: () => void;
 }
 
 const HeroContext = createContext<HeroContextValue | null>(null);
@@ -101,6 +114,13 @@ function heroReducer(state: HeroState, action: HeroAction): HeroState {
         },
       };
     }
+    case "SET_SELECTIONS": {
+      const updated = { ...state.heroes };
+      for (const key in updated) {
+        updated[key] = { ...updated[key], selected: action.selected.has(key) };
+      }
+      return { heroes: updated };
+    }
     case "RESTORE_SELECTIONS": {
       const updated = { ...state.heroes };
       for (const { key, selected } of action.selections) {
@@ -121,17 +141,46 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(heroReducer, initialState);
   const isHydrated = useRef(false);
   const hydrated = useRef(false);
+  const [sharedPreset, setSharedPreset] = useState<PickerPreset | null>(null);
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const replacedSelections = useRef<{ key: string; selected: boolean }[]>([]);
 
-  // Restore from localStorage on mount
+  // Restore from localStorage on mount, unless the URL carries a shared preset.
+  // This is the only place the URL is read, so no other component can race it.
   useEffect(() => {
     const saved =
       getJsonFromLS<{ key: string; selected: boolean }[]>("selectedHeroes");
-    if (saved && Array.isArray(saved)) {
+    const shared = tryDecodeShare(readShareParam(window.location.search));
+
+    if (shared.ok && shared.payload.kind === "picker-preset") {
+      replacedSelections.current = Array.isArray(saved) ? saved : [];
+      dispatch({
+        type: "SET_SELECTIONS",
+        selected: new Set(shared.payload.picker.selected),
+      });
+      setSharedPreset(shared.payload.picker);
+      setNoticeOpen(true);
+      stripShareParam();
+    } else if (saved && Array.isArray(saved)) {
       dispatch({ type: "RESTORE_SELECTIONS", selections: saved });
     }
+
     isHydrated.current = true;
     hydrated.current = true;
   }, []);
+
+  const undoSharedPreset = useCallback(() => {
+    // Reset to the app default first: heroes that did not exist when the saved
+    // selection was written are not in it, and default to selected.
+    dispatch({ type: "SELECT_ALL" });
+    dispatch({
+      type: "RESTORE_SELECTIONS",
+      selections: replacedSelections.current,
+    });
+    setNoticeOpen(false);
+  }, []);
+
+  const dismissSharedPreset = useCallback(() => setNoticeOpen(false), []);
 
   // Persist to localStorage on changes (skip initial render)
   useEffect(() => {
@@ -209,6 +258,10 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectAll,
       unselectAll,
       isHydrated: isHydrated.current,
+      sharedPreset,
+      sharedPresetApplied: noticeOpen,
+      undoSharedPreset,
+      dismissSharedPreset,
     }),
     [
       heroes,
@@ -222,6 +275,10 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectJustRole,
       selectAll,
       unselectAll,
+      sharedPreset,
+      noticeOpen,
+      undoSharedPreset,
+      dismissSharedPreset,
     ],
   );
 

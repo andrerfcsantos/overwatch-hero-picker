@@ -1,13 +1,21 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Hero } from "@/types/hero";
+import { Hero, PerkPick } from "@/types/hero";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
-import { randomHero, getRandomHeroPerks } from "@/lib/heroService";
+import {
+  perksFromIndices,
+  randomHero,
+  randomPerkIndices,
+} from "@/lib/heroService";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
+import { PickerPreset } from "@/lib/share/types";
+import { shareUrl } from "@/lib/share/urls";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
+import ShareButton from "@/components/ShareButton";
+import SharedPresetNotice from "@/components/SharedPresetNotice";
 import SpriteIcon from "@/components/SpriteIcon";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 
@@ -20,10 +28,14 @@ export default function PickerContent() {
     selectByRole,
     unselectByRole,
     unselectAll,
+    sharedPreset,
+    sharedPresetApplied,
+    undoSharedPreset,
+    dismissSharedPreset,
   } = useHeroes();
 
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
-  const [perks, setPerks] = useState<[string, string]>(["", ""]);
+  const [perks, setPerks] = useState<PerkPick | null>(null);
   const [heroCount, setHeroCount] = useState(0);
   const [showPortrait, setShowPortrait] = useState(true);
   const [showPerks, setShowPerks] = useState(true);
@@ -32,6 +44,11 @@ export default function PickerContent() {
   const [perksCount, setPerksCount] = useState(0);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const portraitRef = useRef<HTMLDivElement>(null);
+  const optionsBeforeShare = useRef<{
+    showPortrait: boolean;
+    showPerks: boolean;
+    nonRepeating: boolean;
+  } | null>(null);
 
   // Restore preferences and pick initial hero
   useEffect(() => {
@@ -41,12 +58,30 @@ export default function PickerContent() {
     setMounted(true);
   }, []);
 
+  // A shared preset carries options as well as filters. The provider publishes
+  // it after this component has already restored the saved preferences, so it
+  // lands here as an update rather than an initial value.
+  useEffect(() => {
+    if (!sharedPreset) return;
+    optionsBeforeShare.current = {
+      showPortrait: getBoolFromLS("showPortrait", true),
+      showPerks: getBoolFromLS("showPerks", true),
+      nonRepeating: getBoolFromLS("nonRepeatingMode", false),
+    };
+    setShowPortrait(sharedPreset.showPortrait);
+    setShowPerks(sharedPreset.showPerks);
+    setNonRepeatingMode(sharedPreset.nonRepeating);
+    setBoolToLS("showPortrait", sharedPreset.showPortrait);
+    setBoolToLS("showPerks", sharedPreset.showPerks);
+    setBoolToLS("nonRepeatingMode", sharedPreset.nonRepeating);
+  }, [sharedPreset]);
+
   // Pick initial hero once heroes are available
   useEffect(() => {
     if (mounted && heroes.length > 0 && !selectedHero) {
       const hero = randomHero(heroes);
       setSelectedHero(hero);
-      setPerks(getRandomHeroPerks(hero.key));
+      setPerks(randomPerkIndices(hero.key));
     }
   }, [mounted, heroes, selectedHero]);
 
@@ -58,7 +93,7 @@ export default function PickerContent() {
       previousHeroKey: selectedHero?.key ?? "",
     });
     setSelectedHero(hero);
-    setPerks(getRandomHeroPerks(hero.key));
+    setPerks(randomPerkIndices(hero.key));
     setHeroCount((c) => c + 1);
     setPerksCount((c) => c + 1);
 
@@ -72,7 +107,7 @@ export default function PickerContent() {
 
   const handleNewPerks = useCallback(() => {
     if (selectedHero) {
-      setPerks(getRandomHeroPerks(selectedHero.key));
+      setPerks(randomPerkIndices(selectedHero.key));
       setPerksCount((c) => c + 1);
     }
   }, [selectedHero]);
@@ -91,6 +126,44 @@ export default function PickerContent() {
     setNonRepeatingMode(checked);
     setBoolToLS("nonRepeatingMode", checked);
   };
+
+  const currentPreset = useCallback(
+    (): PickerPreset => ({
+      selected: getSelected().map((hero) => hero.key),
+      showPortrait,
+      showPerks,
+      nonRepeating: nonRepeatingMode,
+    }),
+    [getSelected, showPortrait, showPerks, nonRepeatingMode],
+  );
+
+  const buildResultUrl = useCallback(
+    () =>
+      shareUrl({
+        kind: "hero-result",
+        picker: currentPreset(),
+        result: {
+          heroKey: selectedHero?.key ?? null,
+          perks: showPerks ? perks : null,
+        },
+      }),
+    [currentPreset, selectedHero, showPerks, perks],
+  );
+
+  const buildPresetUrl = useCallback(
+    () => shareUrl({ kind: "picker-preset", picker: currentPreset() }),
+    [currentPreset],
+  );
+
+  const handleUndoShared = useCallback(() => {
+    const previous = optionsBeforeShare.current;
+    if (previous) {
+      handleShowPortrait(previous.showPortrait);
+      handleShowPerks(previous.showPerks);
+      handleNonRepeating(previous.nonRepeating);
+    }
+    undoSharedPreset();
+  }, [undoSharedPreset]);
 
   const toggleRole = useCallback(
     (role: HeroRole) => {
@@ -116,8 +189,22 @@ export default function PickerContent() {
 
   if (!mounted) return null;
 
+  const perkLabels = selectedHero
+    ? perksFromIndices(selectedHero.key, perks)
+    : null;
+
   return (
     <div className="w-full overflow-x-hidden bg-[#2c3e50] text-white min-h-[85vh] mb-4">
+      {sharedPresetApplied && (
+        <div className="px-[3%] pt-2">
+          <SharedPresetNotice
+            message="Filters and options from a shared link have been applied, replacing your own."
+            onUndo={handleUndoShared}
+            onDismiss={dismissSharedPreset}
+          />
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row w-full">
         {/* Left panel */}
         <div className="w-full lg:w-1/4 flex flex-col px-[3%] text-center">
@@ -209,15 +296,15 @@ export default function PickerContent() {
                 />
                 {selectedHero.name}
               </h2>
-              {showPerks && (
+              {showPerks && perkLabels && (
                 <div className="mx-4 mb-4" style={{ marginTop: "0.8em" }}>
                   <span
                     key={`perks-${perksCount}`}
                     className="perks-animate text-[1.2rem] leading-snug"
                   >
-                    <span className="text-blue-300">{perks[0]}</span>{" "}
+                    <span className="text-blue-300">{perkLabels.minor}</span>{" "}
                     <span className="text-gray-500">|</span>{" "}
-                    <span className="text-yellow-300">{perks[1]}</span>
+                    <span className="text-yellow-300">{perkLabels.major}</span>
                   </span>
                   <br />
                   <button
@@ -237,11 +324,21 @@ export default function PickerContent() {
           >
             Randomize Hero
           </button>
+
+          {selectedHero && (
+            <div className="mt-2">
+              <ShareButton
+                buildUrl={buildResultUrl}
+                label="Share this hero"
+                title="Copy a link that reveals this hero"
+              />
+            </div>
+          )}
         </div>
 
         {/* Right panel */}
         <div className="w-full lg:w-3/4">
-          <HeroFilterPanel />
+          <HeroFilterPanel buildPresetUrl={buildPresetUrl} />
         </div>
       </div>
     </div>

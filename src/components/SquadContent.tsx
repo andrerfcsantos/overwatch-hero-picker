@@ -1,12 +1,22 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Hero } from "@/types/hero";
-import { getAllHeroes, getHeroesByRole } from "@/data/heroes";
-import { heroPerks } from "@/data/heroPerks";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Hero, PerkPick, SlotConfig } from "@/types/hero";
+import { perksFromIndices, randomPerkIndices } from "@/lib/heroService";
+import {
+  assignPerks,
+  computeSquad,
+  emptySlotConfig,
+  enabledFromSlotConfigs,
+  ensureConfigs,
+  pickForSlot,
+  slotConfigsFromEnabled,
+} from "@/lib/squadService";
+import { tryDecodeShare } from "@/lib/share/codec";
+import { SquadPreset } from "@/lib/share/types";
+import { readShareParam, shareUrl, stripShareParam } from "@/lib/share/urls";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import {
-  SlotConfig,
   loadSquadSlotConfigs,
   saveSquadSlotConfigs,
   loadSquadSize,
@@ -16,134 +26,17 @@ import {
   getBoolFromLS,
   setBoolToLS,
 } from "@/lib/localStorage";
+import ShareButton from "./ShareButton";
+import SharedPresetNotice from "./SharedPresetNotice";
 import SquadSlot from "./SquadSlot";
 import styles from "./SquadContent.module.css";
 
-function pickRandom<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function pickForSlot(
-  disabledHeroes: Set<string>,
-  taken: Set<string>,
-): Hero | null {
-  const all = getAllHeroes();
-  let pool = all.filter((h) => !disabledHeroes.has(h.key) && !taken.has(h.key));
-  if (pool.length === 0) {
-    // Fallback: ignore filters, just avoid duplicates
-    pool = all.filter((h) => !taken.has(h.key));
-  }
-  if (pool.length === 0) return null;
-  return pickRandom(pool);
-}
-
-function computeRandomHeroes(
-  configs: SlotConfig[],
-  size: number,
-): (Hero | null)[] {
-  const result: (Hero | null)[] = [];
-  const taken = new Set<string>();
-  for (let i = 0; i < size; i++) {
-    const cfg = configs[i] || { name: "", disabledHeroes: new Set<string>() };
-    const hero = pickForSlot(cfg.disabledHeroes, taken);
-    if (hero) taken.add(hero.key);
-    result.push(hero);
-  }
-  return result;
-}
-
-function compute122Heroes(configs: SlotConfig[]): (Hero | null)[] {
-  // Force 1 Tank, 2 Damage, 2 Support
-  const roleSlots: Array<"TANK" | "DAMAGE" | "SUPPORT"> = [
-    "TANK",
-    "DAMAGE",
-    "DAMAGE",
-    "SUPPORT",
-    "SUPPORT",
-  ];
-  const result: (Hero | null)[] = [];
-  const taken = new Set<string>();
-
-  for (let i = 0; i < 5; i++) {
-    const cfg = configs[i] || { name: "", disabledHeroes: new Set<string>() };
-    const role = roleSlots[i];
-    const roleHeroes = getHeroesByRole(role);
-    let pool = roleHeroes.filter(
-      (h) => !cfg.disabledHeroes.has(h.key) && !taken.has(h.key),
-    );
-    if (pool.length === 0) {
-      pool = roleHeroes.filter((h) => !taken.has(h.key));
-    }
-    if (pool.length === 0) {
-      result.push(null);
-    } else {
-      const hero = pickRandom(pool);
-      taken.add(hero.key);
-      result.push(hero);
-    }
-  }
-  return result;
-}
-
-function compute222Heroes(configs: SlotConfig[]): (Hero | null)[] {
-  // Force 2 Tank, 2 Damage, 2 Support
-  const roleSlots: Array<"TANK" | "DAMAGE" | "SUPPORT"> = [
-    "TANK",
-    "TANK",
-    "DAMAGE",
-    "DAMAGE",
-    "SUPPORT",
-    "SUPPORT",
-  ];
-  const result: (Hero | null)[] = [];
-  const taken = new Set<string>();
-
-  for (let i = 0; i < 6; i++) {
-    const cfg = configs[i] || { name: "", disabledHeroes: new Set<string>() };
-    const role = roleSlots[i];
-    const roleHeroes = getHeroesByRole(role);
-    let pool = roleHeroes.filter(
-      (h) => !cfg.disabledHeroes.has(h.key) && !taken.has(h.key),
-    );
-    if (pool.length === 0) {
-      pool = roleHeroes.filter((h) => !taken.has(h.key));
-    }
-    if (pool.length === 0) {
-      result.push(null);
-    } else {
-      const hero = pickRandom(pool);
-      taken.add(hero.key);
-      result.push(hero);
-    }
-  }
-  return result;
-}
-
-function assignPerks(
-  heroes: (Hero | null)[],
-): Record<string, { minor: string; major: string }> {
-  const assignments: Record<string, { minor: string; major: string }> = {};
-  for (const hero of heroes) {
-    if (!hero) continue;
-    const perks = heroPerks[hero.key];
-    if (perks) {
-      assignments[hero.key] = {
-        minor: perks.minor[Math.floor(Math.random() * perks.minor.length)],
-        major: perks.major[Math.floor(Math.random() * perks.major.length)],
-      };
-    }
-  }
-  return assignments;
-}
-
-const MAX_SLOTS = 6;
-
-function ensureConfigs(configs: SlotConfig[], count: number): SlotConfig[] {
-  const result = [...configs];
-  while (result.length < count) {
-    result.push({ name: "", disabledHeroes: new Set<string>() });
-  }
-  return result;
+interface SquadSetup {
+  size: number;
+  configs: SlotConfig[];
+  force122: boolean;
+  force222: boolean;
+  randomizePerks: boolean;
 }
 
 export default function SquadContent() {
@@ -152,40 +45,67 @@ export default function SquadContent() {
   const [configs, setConfigs] = useState<SlotConfig[]>([]);
   const [heroes, setHeroes] = useState<(Hero | null)[]>([]);
   const [perkAssignments, setPerkAssignments] = useState<
-    Record<string, { minor: string; major: string }>
+    Record<string, PerkPick>
   >({});
   const [force122, setForce122] = useState(true);
   const [force222, setForce222] = useState(true);
   const [randomizePerks, setRandomizePerks] = useState(false);
   const [copied, setCopied] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [sharedPresetApplied, setSharedPresetApplied] = useState(false);
+  const setupBeforeShare = useRef<SquadSetup | null>(null);
 
-  // Load state from localStorage on mount
+  const applySetup = useCallback((setup: SquadSetup) => {
+    setSquadSize(setup.size);
+    setConfigs(setup.configs);
+    setForce122(setup.force122);
+    setForce222(setup.force222);
+    setRandomizePerks(setup.randomizePerks);
+
+    saveSquadSize(setup.size);
+    setBoolToLS("squadForce122", setup.force122);
+    saveSquadForce222(setup.force222);
+    setBoolToLS("squadRandomizePerks", setup.randomizePerks);
+
+    const rolled = computeSquad(
+      setup.configs,
+      setup.size,
+      setup.force122,
+      setup.force222,
+    );
+    setHeroes(rolled);
+    setPerkAssignments(setup.randomizePerks ? assignPerks(rolled) : {});
+  }, []);
+
+  // Load state from localStorage on mount, unless the URL carries a shared setup
   useEffect(() => {
-    const savedSize = loadSquadSize();
-    const savedConfigs = ensureConfigs(loadSquadSlotConfigs(), MAX_SLOTS);
-    const savedForce122 = getBoolFromLS("squadForce122", true);
-    const savedForce222 = loadSquadForce222();
-    const savedPerks = getBoolFromLS("squadRandomizePerks", false);
+    const saved: SquadSetup = {
+      size: loadSquadSize(),
+      configs: ensureConfigs(loadSquadSlotConfigs()),
+      force122: getBoolFromLS("squadForce122", true),
+      force222: loadSquadForce222(),
+      randomizePerks: getBoolFromLS("squadRandomizePerks", false),
+    };
 
-    setSquadSize(savedSize);
-    setConfigs(savedConfigs);
-    setForce122(savedForce122);
-    setForce222(savedForce222);
-    setRandomizePerks(savedPerks);
-
-    // Generate initial squad
-    const initial =
-      savedForce122 && savedSize === 5
-        ? compute122Heroes(savedConfigs)
-        : savedForce222 && savedSize === 6
-          ? compute222Heroes(savedConfigs)
-          : computeRandomHeroes(savedConfigs, savedSize);
-    setHeroes(initial);
-    if (savedPerks) setPerkAssignments(assignPerks(initial));
+    const shared = tryDecodeShare(readShareParam(window.location.search));
+    if (shared.ok && shared.payload.kind === "squad-preset") {
+      const preset = shared.payload.squad;
+      setupBeforeShare.current = saved;
+      applySetup({
+        size: preset.size,
+        configs: slotConfigsFromEnabled(preset.slots, preset.names),
+        force122: preset.force122,
+        force222: preset.force222,
+        randomizePerks: preset.randomizePerks,
+      });
+      setSharedPresetApplied(true);
+      stripShareParam();
+    } else {
+      applySetup(saved);
+    }
 
     setMounted(true);
-  }, []);
+  }, [applySetup]);
 
   // Persist configs when they change
   useEffect(() => {
@@ -193,13 +113,7 @@ export default function SquadContent() {
   }, [configs, mounted]);
 
   const randomizeAll = useCallback(() => {
-    const cfgs = ensureConfigs(configs, MAX_SLOTS);
-    const newHeroes =
-      force122 && squadSize === 5
-        ? compute122Heroes(cfgs)
-        : force222 && squadSize === 6
-          ? compute222Heroes(cfgs)
-          : computeRandomHeroes(cfgs, squadSize);
+    const newHeroes = computeSquad(configs, squadSize, force122, force222);
     setHeroes(newHeroes);
     if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
   }, [configs, force122, force222, squadSize, randomizePerks]);
@@ -210,28 +124,16 @@ export default function SquadContent() {
       for (let i = 0; i < heroes.length; i++) {
         if (i !== index && heroes[i]) taken.add(heroes[i]!.key);
       }
-      const cfg = configs[index] || {
-        name: "",
-        disabledHeroes: new Set<string>(),
-      };
+      const cfg = configs[index] || emptySlotConfig();
       const hero = pickForSlot(cfg.disabledHeroes, taken);
       const next = [...heroes];
       next[index] = hero;
       setHeroes(next);
       if (randomizePerks && hero) {
-        setPerkAssignments((prev) => {
-          const perks = heroPerks[hero.key];
-          if (!perks) return prev;
-          return {
-            ...prev,
-            [hero.key]: {
-              minor:
-                perks.minor[Math.floor(Math.random() * perks.minor.length)],
-              major:
-                perks.major[Math.floor(Math.random() * perks.major.length)],
-            },
-          };
-        });
+        const pick = randomPerkIndices(hero.key);
+        if (pick) {
+          setPerkAssignments((prev) => ({ ...prev, [hero.key]: pick }));
+        }
       }
     },
     [heroes, configs, randomizePerks],
@@ -245,9 +147,11 @@ export default function SquadContent() {
       const cfg = configs[i];
       const playerName = cfg?.name?.trim() || "";
       let entry = playerName ? `${playerName} - ${hero.name}` : hero.name;
-      if (randomizePerks && perkAssignments[hero.key]) {
-        const p = perkAssignments[hero.key];
-        entry += ` (${p.minor}, ${p.major})`;
+      const perks = randomizePerks
+        ? perksFromIndices(hero.key, perkAssignments[hero.key] ?? null)
+        : null;
+      if (perks) {
+        entry += ` (${perks.minor}, ${perks.major})`;
       }
       parts.push(entry);
     }
@@ -266,13 +170,7 @@ export default function SquadContent() {
       setSquadSize(size);
       saveSquadSize(size);
       // Re-randomize with new size
-      const cfgs = ensureConfigs(configs, MAX_SLOTS);
-      const newHeroes =
-        force122 && size === 5
-          ? compute122Heroes(cfgs)
-          : force222 && size === 6
-            ? compute222Heroes(cfgs)
-            : computeRandomHeroes(cfgs, size);
+      const newHeroes = computeSquad(configs, size, force122, force222);
       setHeroes(newHeroes);
       if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
     },
@@ -281,7 +179,7 @@ export default function SquadContent() {
 
   const handleNameChange = useCallback(
     (index: number, name: string) => {
-      const next = ensureConfigs([...configs], MAX_SLOTS);
+      const next = ensureConfigs([...configs]);
       next[index] = { ...next[index], name };
       setConfigs(next);
     },
@@ -290,7 +188,7 @@ export default function SquadContent() {
 
   const handleDisabledChange = useCallback(
     (index: number, disabled: Set<string>) => {
-      const next = ensureConfigs([...configs], MAX_SLOTS);
+      const next = ensureConfigs([...configs]);
       next[index] = { ...next[index], disabledHeroes: disabled };
       setConfigs(next);
     },
@@ -299,7 +197,7 @@ export default function SquadContent() {
 
   const resetSlotFilters = useCallback(
     (index: number) => {
-      const next = ensureConfigs([...configs], MAX_SLOTS);
+      const next = ensureConfigs([...configs]);
       next[index] = { ...next[index], disabledHeroes: new Set<string>() };
       setConfigs(next);
     },
@@ -333,6 +231,49 @@ export default function SquadContent() {
     [heroes],
   );
 
+  const currentPreset = useCallback(
+    (): SquadPreset => ({
+      size: squadSize,
+      force122,
+      force222,
+      randomizePerks,
+      slots: enabledFromSlotConfigs(configs),
+      names: ensureConfigs(configs).map((cfg) => cfg.name),
+    }),
+    [squadSize, force122, force222, randomizePerks, configs],
+  );
+
+  const buildResultUrl = useCallback(
+    () =>
+      shareUrl({
+        kind: "squad-result",
+        squad: currentPreset(),
+        result: {
+          heroes: Array.from(
+            { length: squadSize },
+            (_, i) => heroes[i]?.key ?? null,
+          ),
+          perks: Array.from({ length: squadSize }, (_, i) => {
+            const hero = heroes[i];
+            if (!randomizePerks || !hero) return null;
+            return perkAssignments[hero.key] ?? null;
+          }),
+        },
+      }),
+    [currentPreset, heroes, squadSize, randomizePerks, perkAssignments],
+  );
+
+  const buildPresetUrl = useCallback(
+    () => shareUrl({ kind: "squad-preset", squad: currentPreset() }),
+    [currentPreset],
+  );
+
+  const handleUndoShared = useCallback(() => {
+    const previous = setupBeforeShare.current;
+    if (previous) applySetup(previous);
+    setSharedPresetApplied(false);
+  }, [applySetup]);
+
   useKeyboardShortcuts({
     r: randomizeAll,
     "ctrl+c": handleCopy,
@@ -346,6 +287,14 @@ export default function SquadContent() {
 
   return (
     <div className={styles.container}>
+      {sharedPresetApplied && (
+        <SharedPresetNotice
+          message="A shared squad setup has been applied, replacing your own filters and options."
+          onUndo={handleUndoShared}
+          onDismiss={() => setSharedPresetApplied(false)}
+        />
+      )}
+
       <h1 className={styles.title}>Build Your Squad</h1>
 
       <div className="mt-3 mb-1 max-w-1/2">
@@ -356,7 +305,8 @@ export default function SquadContent() {
           You can select the pool of random heroes for each slot and give it a
           name.
           <br />
-          <strong>Copy to clipboard</strong> to share the squad with others!
+          <strong>Share squad</strong> sends a link that reveals this squad —
+          the heroes stay hidden until it is opened.
         </p>
       </div>
 
@@ -438,6 +388,20 @@ export default function SquadContent() {
             Reset All Filters
           </button>
         )}
+        <ShareButton
+          className={styles.copyBtn}
+          buildUrl={buildResultUrl}
+          label="Share squad"
+          copiedLabel="Squad link copied!"
+          title="Copy a link that reveals this squad"
+        />
+        <ShareButton
+          className={styles.copyBtn}
+          buildUrl={buildPresetUrl}
+          label="Share setup"
+          copiedLabel="Setup link copied!"
+          title="Copy a link that sets up these slot filters and options"
+        />
         <button className={styles.copyBtn} onClick={handleCopy}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -454,26 +418,27 @@ export default function SquadContent() {
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
-          {copied ? "Copied!" : "Copy to Clipboard"}
+          {copied ? "Copied!" : "Copy as text"}
         </button>
       </div>
 
       <div className={styles.slots}>
         {Array.from({ length: squadSize }, (_, i) => {
-          const cfg = configs[i] || {
-            name: "",
-            disabledHeroes: new Set<string>(),
-          };
+          const cfg = configs[i] || emptySlotConfig();
+          const hero = heroes[i] || null;
           return (
             <SquadSlot
               key={i}
               index={i}
-              hero={heroes[i] || null}
+              hero={hero}
               name={cfg.name}
               disabledHeroes={cfg.disabledHeroes}
               perks={
-                heroes[i] && perkAssignments[heroes[i]!.key]
-                  ? perkAssignments[heroes[i]!.key]
+                hero
+                  ? perksFromIndices(
+                      hero.key,
+                      perkAssignments[hero.key] ?? null,
+                    )
                   : null
               }
               showPerks={randomizePerks}
