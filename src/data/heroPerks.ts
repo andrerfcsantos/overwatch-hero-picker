@@ -209,4 +209,8 @@ export const heroPerks: Record<string, HeroPerk> = {
     minor: ["Extra Edge", "Raging Storm"],
     major: ["Relentless", "Siphoning Strike"],
   },
+  dmon: {
+    minor: ["Beast Within", "MEKA Mobility"],
+    major: ["Overstrike", "Focused Fusion"],
+  },
 };

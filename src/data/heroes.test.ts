@@ -82,6 +82,17 @@ describe("hero data", () => {
     );
   });
 
+  test("includes D.Mon as a selectable Tank hero", () => {
+    expect(getAllHeroes()).toContainEqual(
+      expect.objectContaining({
+        key: "dmon",
+        name: "D.Mon",
+        role: "TANK",
+        selected: true,
+      }),
+    );
+  });
+
   test("has perk data for every hero", () => {
     for (const key of heroKeys) {
       expect(heroPerks[key]).toBeDefined();

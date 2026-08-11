@@ -46,6 +46,7 @@ const heroDefinitions: Record<string, Hero> = {
   mauga: { name: "Mauga", role: "TANK", selected: true, key: "mauga" },
   hazard: { name: "Hazard", role: "TANK", selected: true, key: "hazard" },
   domina: { name: "Domina", role: "TANK", selected: true, key: "domina" },
+  dmon: { name: "D.Mon", role: "TANK", selected: true, key: "dmon" },
   bastion: {
     name: "Bastion",
     role: "DAMAGE",
