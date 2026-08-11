@@ -7,7 +7,7 @@ export const heroPerks: Record<string, HeroPerk> = {
   },
   orisa: {
     minor: ["Defense Protocol", "Mobile Fortification"],
-    major: ["Charged Javelin", "Protective Barrier"],
+    major: ["Heavy Javelin", "Protective Barrier"],
   },
   reinhardt: {
     minor: ["Crusader's Fire", "Crusader's Resolve"],
@@ -50,7 +50,7 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Frag Cannon", "Mine Recycling"],
   },
   cassidy: {
-    minor: ["Even the Odds", "Bang Bang"],
+    minor: ["Giddy Up", "Bang Bang"],
     major: ["Silver Bullet", "Rollin' Round-Ups"],
   },
   mei: {
@@ -90,7 +90,7 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Overloaded Turret", "Anchor Bolts"],
   },
   tracer: {
-    minor: ["Kinetic Reload", "Chronal Dash"],
+    minor: ["Kinetic Reload", "Temporal Regen"],
     major: ["Quantum Entanglement", "Blink Packs"],
   },
   widowmaker: {
@@ -134,8 +134,8 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Airburst", "Viper Sting"],
   },
   echo: {
-    minor: ["Focused Rush", "Partial Scan"],
-    major: ["High Beams", "Full Salvo"],
+    minor: ["Aerial Munitions", "Partial Scan"],
+    major: ["Focused Rush", "Full Salvo"],
   },
   sojourn: {
     minor: ["Deceleration Field", "Overcharged"],
@@ -195,7 +195,7 @@ export const heroPerks: Record<string, HeroPerk> = {
   },
   jetpackcat: {
     minor: ["Ulterior Motive", "Transport Shielding"],
-    major: ["Headbutt", "Claws Out"],
+    major: ["Purrfect Form", "Claws Out"],
   },
   mizuki: {
     minor: ["Wellspring", "Exposed Soul"],
