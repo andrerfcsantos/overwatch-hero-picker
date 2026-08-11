@@ -48,7 +48,9 @@ const ERROR_TEXT: Record<ShareErrorReason, string> = {
 
 export default function SharedHeroContent() {
   const [view, setView] = useState<ViewState>({ status: "loading" });
-  const [rolls, setRolls] = useState(0);
+  // Counted separately so re-rolling perks doesn't replay the hero animations.
+  const [heroRolls, setHeroRolls] = useState(0);
+  const [perkRolls, setPerkRolls] = useState(0);
   const [poolOpen, setPoolOpen] = useState(false);
   const portraitRef = useRef<HTMLDivElement>(null);
 
@@ -92,14 +94,22 @@ export default function SharedHeroContent() {
   }, [view]);
 
   const publish = useCallback(
-    (picker: PickerPreset, heroKey: string, perks: PerkPick | null) => {
+    (
+      picker: PickerPreset,
+      heroKey: string,
+      perks: PerkPick | null,
+      heroChanged: boolean,
+    ) => {
       setView({ status: "ready", picker, heroKey, perks, ownRoll: true });
-      setRolls((count) => count + 1);
+      setPerkRolls((count) => count + 1);
       window.history.replaceState(
         null,
         "",
         sharePath({ kind: "hero-result", picker, result: { heroKey, perks } }),
       );
+
+      if (!heroChanged) return;
+      setHeroRolls((count) => count + 1);
 
       if (portraitRef.current) {
         portraitRef.current.classList.remove("hero-portrait-animate");
@@ -120,12 +130,13 @@ export default function SharedHeroContent() {
       view.picker,
       hero.key,
       view.picker.showPerks ? randomPerkIndices(hero.key) : null,
+      true,
     );
   }, [view, pool, publish]);
 
   const handleRerollPerks = useCallback(() => {
     if (view.status !== "ready" || !view.heroKey) return;
-    publish(view.picker, view.heroKey, randomPerkIndices(view.heroKey));
+    publish(view.picker, view.heroKey, randomPerkIndices(view.heroKey), false);
   }, [view, publish]);
 
   if (view.status === "loading") {
@@ -159,7 +170,6 @@ export default function SharedHeroContent() {
 
   return (
     <div className={styles.container}>
-      {view.ownRoll && <p className={styles.eyebrow}>Your roll</p>}
       <h1 className={styles.headline}>
         {view.ownRoll
           ? "Here's your hero"
@@ -167,7 +177,7 @@ export default function SharedHeroContent() {
       </h1>
 
       {hero ? (
-        <>
+        <div className={`result-card ${styles.resultCard}`}>
           {view.picker.showPortrait && (
             <SpriteIcon
               ref={portraitRef}
@@ -179,7 +189,7 @@ export default function SharedHeroContent() {
           )}
 
           <h2
-            key={`name-${rolls}`}
+            key={`name-${heroRolls}`}
             className={`${styles.heroName} hero-name-animate`}
           >
             <RoleSpriteIcon
@@ -191,16 +201,27 @@ export default function SharedHeroContent() {
           </h2>
 
           {view.picker.showPerks && perkLabels && (
-            <div
-              key={`perks-${rolls}`}
-              className={`${styles.perks} perks-animate`}
-            >
-              <span className={styles.perkMinor}>{perkLabels.minor}</span>
-              <span className={styles.perkSep}>|</span>
-              <span className={styles.perkMajor}>{perkLabels.major}</span>
-            </div>
+            <>
+              <div
+                key={`perks-${perkRolls}`}
+                className={`${styles.perks} perks-animate`}
+              >
+                <span className={styles.perkMinor}>{perkLabels.minor}</span>
+                <span className={styles.perkSep}>|</span>
+                <span className={styles.perkMajor}>{perkLabels.major}</span>
+              </div>
+
+              <div className="result-actions">
+                <button
+                  className="action-button btn-perks"
+                  onClick={handleRerollPerks}
+                >
+                  ↻ Randomize perks
+                </button>
+              </div>
+            </>
           )}
-        </>
+        </div>
       ) : (
         <p className={styles.errorText}>
           This link points at a hero this version of the site doesn&apos;t know.
@@ -212,14 +233,6 @@ export default function SharedHeroContent() {
         <button className={styles.primaryBtn} onClick={handleReroll}>
           Randomize again
         </button>
-        {view.picker.showPerks && hero && perkLabels && (
-          <button
-            className="action-button btn-perks !text-[1.2rem] !px-2"
-            onClick={handleRerollPerks}
-          >
-            ↻ Randomize perks
-          </button>
-        )}
       </div>
 
       <div className={styles.secondaryRow}>
@@ -238,8 +251,12 @@ export default function SharedHeroContent() {
           A full page load, not a client navigation: the provider reads the
           preset once on mount, so a router push would not apply it.
         */}
-        <a className={styles.linkBtn} href={presetHref}>
-          Open in the picker with these filters
+        <a
+          className={styles.linkBtn}
+          href={presetHref}
+          title="Open the picker with these filters and options applied"
+        >
+          Open in the picker
         </a>
         <Link className={styles.linkBtn} href="/" prefetch={false}>
           Start fresh

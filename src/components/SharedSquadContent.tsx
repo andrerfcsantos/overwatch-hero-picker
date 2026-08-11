@@ -164,7 +164,6 @@ export default function SharedSquadContent() {
 
   return (
     <div className={styles.container}>
-      {view.ownRoll && <p className={styles.eyebrow}>Your roll</p>}
       <h1 className={styles.headline}>
         {view.ownRoll
           ? "Here's your squad"
@@ -253,8 +252,12 @@ export default function SharedSquadContent() {
           label="Share this squad"
         />
         {/* Full page load so the squad generator reads the preset on mount. */}
-        <a className={styles.linkBtn} href={presetHref}>
-          Open in the squad generator
+        <a
+          className={styles.linkBtn}
+          href={presetHref}
+          title="Open the squad generator with this setup applied"
+        >
+          Open in the generator
         </a>
         <Link className={styles.linkBtn} href="/squad" prefetch={false}>
           Start fresh

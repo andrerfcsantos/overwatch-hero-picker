@@ -9,15 +9,6 @@
   text-align: center;
 }
 
-.eyebrow {
-  font-family: "Config", Arial, Helvetica, sans-serif;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-  margin: 0 0 0.2rem;
-}
-
 .headline {
   font-size: 2rem;
   color: rgb(248, 158, 74);
@@ -62,20 +53,28 @@
   color: #fde047;
 }
 
+/* Widens the shared global .result-card, which is sized for the picker's
+   narrow left column. */
+.resultCard {
+  max-width: 22rem;
+}
+
+/* The call to action stands alone; everything that acts on the result sits
+   inside the card above it, and navigation sits in .secondaryRow below. */
 .actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
   justify-content: center;
-  /* The buttons differ in height, so center them instead of letting the
-     shorter one stretch-align to the top of the row. */
-  align-items: center;
-  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 22rem;
+  /* Auto margins because .actions is also used inside .errorBox, which is a
+     plain block rather than a centring flex container. */
+  margin: 1.25rem auto 0;
 }
 
 .primaryBtn {
   user-select: none;
-  font-size: 1.5rem;
+  width: 100%;
+  font-size: 1.6rem;
   color: white;
   background-color: rgb(240, 100, 20);
   border: none;
@@ -93,23 +92,43 @@
   transform: scale(0.97);
 }
 
+/* Equal-width cells so the row keeps one shared edge whether the labels fit
+   on one line or wrap onto several. */
 .secondaryRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 36rem;
+  margin-top: 0.6rem;
+}
+
+/* Below this the three cells wrap to 2 + 1, orphaning the last button at half
+   width. Stack them instead so they keep one shared edge. */
+@media (max-width: 544px) {
+  .secondaryRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.secondaryRow :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+  margin: 0 auto;
 }
 
 .linkBtn {
   user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   font-size: 1.15rem;
+  line-height: 1.15;
   color: rgba(255, 255, 255, 0.75);
   background: #0f1923;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0.25rem;
-  padding: 0.2rem 0.7rem;
+  padding: 0.3rem 0.7rem;
   cursor: pointer;
   font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
   text-decoration: none;

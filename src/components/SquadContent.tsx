@@ -322,18 +322,19 @@ export default function SquadContent() {
         ))}
       </div>
 
-      <div className={styles.randomizeWrapper}>
-        <button className={styles.randomizeBtn} onClick={randomizeAll}>
-          Randomize Squad
+      <div className={styles.setupRow}>
+        <button
+          className={styles.optionsToggle}
+          onClick={() => setOptionsOpen(!optionsOpen)}
+        >
+          ⚙ Options {optionsOpen ? "▾" : "▸"}
         </button>
+        {hasAnyActiveFilters && (
+          <button className={styles.resetFiltersBtn} onClick={resetAllFilters}>
+            Reset All Filters
+          </button>
+        )}
       </div>
-
-      <button
-        className={styles.optionsToggle}
-        onClick={() => setOptionsOpen(!optionsOpen)}
-      >
-        ⚙ Options {optionsOpen ? "▾" : "▸"}
-      </button>
 
       {optionsOpen && (
         <div className={styles.optionsPanel}>
@@ -382,44 +383,47 @@ export default function SquadContent() {
         </div>
       )}
 
-      <div className={styles.buttonRow}>
-        {hasAnyActiveFilters && (
-          <button className={styles.resetFiltersBtn} onClick={resetAllFilters}>
-            Reset All Filters
-          </button>
-        )}
-        <ShareButton
-          className={styles.copyBtn}
-          buildUrl={buildResultUrl}
-          label="Share squad"
-          copiedLabel="Squad link copied!"
-          title="Copy a link that reveals this squad"
-        />
-        <ShareButton
-          className={styles.copyBtn}
-          buildUrl={buildPresetUrl}
-          label="Share setup"
-          copiedLabel="Setup link copied!"
-          title="Copy a link that sets up these slot filters and options"
-        />
-        <button className={styles.copyBtn} onClick={handleCopy}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginRight: "0.4rem", flexShrink: 0 }}
-          >
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          {copied ? "Copied!" : "Copy as text"}
+      <div className={styles.randomizeWrapper}>
+        <button className={styles.randomizeBtn} onClick={randomizeAll}>
+          Randomize Squad
         </button>
+      </div>
+
+      <div className={styles.buttonRow}>
+        <div className={styles.buttonGrid}>
+          <ShareButton
+            className={styles.copyBtn}
+            buildUrl={buildResultUrl}
+            label="Share squad"
+            copiedLabel="Squad link copied!"
+            title="Copy a link that reveals this squad"
+          />
+          <ShareButton
+            className={styles.copyBtn}
+            buildUrl={buildPresetUrl}
+            label="Share setup"
+            copiedLabel="Setup link copied!"
+            title="Copy a link that sets up these slot filters and options"
+          />
+          <button className={styles.copyBtn} onClick={handleCopy}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ marginRight: "0.4rem", flexShrink: 0 }}
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            {copied ? "Copied!" : "Copy as text"}
+          </button>
+        </div>
       </div>
 
       <div className={styles.slots}>

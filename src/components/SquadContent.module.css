@@ -53,12 +53,15 @@
 .randomizeWrapper {
   display: flex;
   justify-content: center;
+  width: 100%;
   margin-bottom: 0.75rem;
 }
 
 .randomizeBtn {
   user-select: none;
-  font-size: 1.4rem;
+  width: 100%;
+  max-width: 22rem;
+  font-size: 1.6rem;
   color: white;
   background-color: rgb(240, 100, 20);
   border: none;
@@ -88,12 +91,36 @@
   transform: scale(0.97);
 }
 
+/* Full-width so it forms its own line in the wrapping column container, with
+   the cap applied to the grid inside it. */
 .buttonRow {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-  flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+/* Equal-width cells so the export actions share one edge instead of sitting as
+   three centred pills of differing widths. */
+.buttonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 36rem;
+}
+
+/* Below this the three cells wrap to 2 + 1, orphaning the last button at half
+   width. Stack them instead so they keep one shared edge. */
+@media (max-width: 592px) {
+  .buttonGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.buttonGrid :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+  margin: 0 auto;
 }
 
 .copyBtn {
@@ -108,10 +135,11 @@
   font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
   position: relative;
   overflow: hidden;
-  min-width: 13rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  line-height: 1.15;
 }
 
 .copyBtn::after {
@@ -182,13 +210,23 @@
   transform: scale(0.95);
 }
 
+/* Controls that change the setup, kept together and away from the export
+   actions further down. */
+.setupRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.3rem;
+}
+
 .optionsToggle {
   user-select: none;
   font-size: 0.95rem;
   font-family: "Config", Arial, Helvetica, sans-serif;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  margin-bottom: 0.3rem;
 }
 
 .optionsToggle:hover {
@@ -230,6 +268,14 @@
     margin-top: 1.5rem;
     margin-bottom: 0;
     width: 100%;
+  }
+
+  /* Follows the call to action rather than floating above the slots it acts
+     on. */
+  .buttonRow {
+    order: 11;
+    margin-top: 0.6rem;
+    margin-bottom: 0;
   }
 }
 

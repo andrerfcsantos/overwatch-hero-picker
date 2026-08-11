@@ -324,8 +324,9 @@ a:hover {
 }
 
 /* Random hero button */
-/* Picker result: hero, perks and the actions that operate on them, grouped so
-   the single orange call to action below stands on its own. */
+/* Result group: hero, perks and the actions that operate on them, grouped so
+   the single orange call to action below stands on its own. Shared by the
+   picker and the shared-hero page, which widens it via its own module. */
 .result-card {
   width: 100%;
   max-width: 20rem;
@@ -373,7 +374,7 @@ a:hover {
 
 .result-actions .share-fallback-input {
   grid-column: 1 / -1;
-  margin: 0;
+  margin: 0 auto;
 }
 
 .random-hero-button {
