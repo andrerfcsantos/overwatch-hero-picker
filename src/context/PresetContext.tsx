@@ -8,9 +8,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import posthog from "posthog-js";
+import { PresetKind, track } from "@/lib/analytics";
 import { useHeroes } from "@/context/HeroContext";
-import { buildDefaultPresets } from "@/lib/presets/defaults";
+import {
+  DEFAULT_PRESET_ID_PREFIX,
+  buildDefaultPresets,
+} from "@/lib/presets/defaults";
 import { loadPresets, savePresets } from "@/lib/presets/storage";
 import { SavedPreset } from "@/lib/presets/types";
 
@@ -22,7 +25,10 @@ interface PresetContextValue {
   isDirty: boolean;
   /** False until localStorage has been read, so nothing renders from defaults. */
   isHydrated: boolean;
-  applyPreset: (id: string) => void;
+  applyPreset: (
+    id: string,
+    source?: "chip" | "keyboard" | "manage_page",
+  ) => void;
   /** Saves the current filters as a new preset and applies it. */
   savePreset: (name: string) => void;
   /** Points an existing preset at the current filters. */
@@ -50,6 +56,17 @@ function newId(): string {
     return crypto.randomUUID();
   }
   return `p-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function presetKind(id: string): PresetKind {
+  return id.startsWith(DEFAULT_PRESET_ID_PREFIX) ? "builtin" : "custom";
+}
+
+/** Built-in ids are safe to log; custom names are the visitor's own words. */
+function builtinId(id: string): string | undefined {
+  return id.startsWith(DEFAULT_PRESET_ID_PREFIX)
+    ? id.slice(DEFAULT_PRESET_ID_PREFIX.length)
+    : undefined;
 }
 
 function sameHeroes(a: string[], b: string[]): boolean {
@@ -89,16 +106,17 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
   const isDirty = applied ? !sameHeroes(applied.heroes, selectedKeys) : false;
 
   const applyPreset = useCallback(
-    (id: string) => {
+    (id: string, source: "chip" | "keyboard" | "manage_page" = "chip") => {
       const preset = presets.find((p) => p.id === id);
       if (!preset) return;
       setSelected(preset.heroes);
       setAppliedId(id);
-      if (posthog.__loaded) {
-        posthog.capture("preset_applied", {
-          hero_count: preset.heroes.length,
-        });
-      }
+      track("preset_applied", {
+        preset_kind: presetKind(id),
+        builtin_id: builtinId(id),
+        hero_count: preset.heroes.length,
+        source,
+      });
     },
     [presets, setSelected],
   );
@@ -112,9 +130,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       };
       setPresets((current) => [...current, preset]);
       setAppliedId(preset.id);
-      if (posthog.__loaded) {
-        posthog.capture("preset_created", { hero_count: selectedKeys.length });
-      }
+      track("preset_created", { hero_count: selectedKeys.length });
     },
     [selectedKeys],
   );
@@ -127,9 +143,10 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
         ),
       );
       setAppliedId(id);
-      if (posthog.__loaded) {
-        posthog.capture("preset_updated", { hero_count: selectedKeys.length });
-      }
+      track("preset_updated", {
+        preset_kind: presetKind(id),
+        hero_count: selectedKeys.length,
+      });
     },
     [selectedKeys],
   );
@@ -142,9 +159,11 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
         preset.id === id ? { ...preset, name: trimmed } : preset,
       ),
     );
+    track("preset_managed", { action: "renamed" });
   }, []);
 
   const duplicatePreset = useCallback((id: string) => {
+    track("preset_managed", { action: "duplicated" });
     setPresets((current) => {
       const index = current.findIndex((preset) => preset.id === id);
       if (index < 0) return current;
@@ -163,14 +182,13 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
     (id: string) => {
       setPresets((current) => current.filter((preset) => preset.id !== id));
       if (id === appliedId) setAppliedId(null);
-      if (posthog.__loaded) {
-        posthog.capture("preset_deleted");
-      }
+      track("preset_deleted", { preset_kind: presetKind(id) });
     },
     [appliedId],
   );
 
   const movePreset = useCallback((id: string, offset: number) => {
+    track("preset_managed", { action: "moved" });
     setPresets((current) => {
       const index = current.findIndex((preset) => preset.id === id);
       const target = index + offset;
@@ -183,12 +201,18 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const revert = useCallback(() => {
-    if (applied) setSelected(applied.heroes);
+    if (!applied) return;
+    setSelected(applied.heroes);
+    track("preset_managed", { action: "reverted" });
   }, [applied, setSelected]);
 
-  const clearApplied = useCallback(() => setAppliedId(null), []);
+  const clearApplied = useCallback(() => {
+    setAppliedId(null);
+    track("preset_managed", { action: "unselected" });
+  }, []);
 
   const restoreDefaults = useCallback(() => {
+    track("preset_managed", { action: "restored_defaults" });
     setPresets((current) => {
       const present = new Set(current.map((preset) => preset.id));
       const missing = buildDefaultPresets().filter(

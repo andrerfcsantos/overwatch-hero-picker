@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import posthog from "posthog-js";
+import { track } from "@/lib/analytics";
 import Link from "next/link";
 import { PerkPick } from "@/types/hero";
 import { getAllHeroes } from "@/data/heroes";
@@ -63,9 +63,15 @@ export default function SharedSquadContent() {
 
     if (!decoded.ok) {
       setView({ status: "invalid", reason: decoded.reason });
+      track("shared_link_opened", {
+        share_type: "unknown",
+        valid: false,
+        invalid_reason: decoded.reason,
+      });
       return;
     }
 
+    // A link of another kind redirects; the destination reports the open.
     if (decoded.payload.kind !== "squad-result") {
       window.location.replace(
         `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
@@ -80,6 +86,7 @@ export default function SharedSquadContent() {
       perks: decoded.payload.result.perks,
       ownRoll: false,
     });
+    track("shared_link_opened", { share_type: "squad_result", valid: true });
   }, []);
 
   const publish = useCallback(
@@ -116,15 +123,16 @@ export default function SharedSquadContent() {
         squad.randomizePerks && hero ? randomPerkIndices(hero.key) : null,
       ),
     );
-    if (posthog.__loaded) {
-      posthog.capture("squad_randomized", {
-        squad_size: squad.size,
-        force_122: squad.force122,
-        force_222: squad.force222,
-        perks_enabled: squad.randomizePerks,
-        source: "shared_result",
-      });
-    }
+    track("squad_randomized", {
+      source: "shared_result",
+      squad_size: squad.size,
+      force_122: squad.force122,
+      force_222: squad.force222,
+      perks_enabled: squad.randomizePerks,
+      filtered_slot_count: squad.slots
+        .slice(0, squad.size)
+        .filter((slot) => slot !== null).length,
+    });
   }, [view, publish]);
 
   const handleRerollSlot = useCallback(
@@ -144,13 +152,12 @@ export default function SharedSquadContent() {
       nextPerks[index] =
         squad.randomizePerks && hero ? randomPerkIndices(hero.key) : null;
       publish(squad, nextHeroes, nextPerks);
-      if (posthog.__loaded) {
-        posthog.capture("squad_slot_rerolled", {
-          squad_size: squad.size,
-          perks_enabled: squad.randomizePerks,
-          source: "shared_result",
-        });
-      }
+      track("squad_slot_rerolled", {
+        source: "shared_result",
+        squad_size: squad.size,
+        slot_index: index,
+        perks_enabled: squad.randomizePerks,
+      });
     },
     [view, publish],
   );
@@ -266,6 +273,8 @@ export default function SharedSquadContent() {
               result: { heroes: view.heroes, perks: view.perks },
             })
           }
+          shareType="squad_result"
+          shareSource="shared_squad"
           label="Share this squad"
         />
         {/* Full page load so the squad generator reads the preset on mount. */}

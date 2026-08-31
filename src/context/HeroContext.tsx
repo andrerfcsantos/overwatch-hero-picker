@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { track } from "@/lib/analytics";
 import { Hero, HeroRole } from "@/types/hero";
 import { getInitialHeroes } from "@/data/heroes";
 import { getJsonFromLS, setJsonToLS } from "@/lib/localStorage";
@@ -152,7 +153,8 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved =
       getJsonFromLS<{ key: string; selected: boolean }[]>("selectedHeroes");
-    const shared = tryDecodeShare(readShareParam(window.location.search));
+    const raw = readShareParam(window.location.search);
+    const shared = tryDecodeShare(raw);
 
     if (shared.ok && shared.payload.kind === "picker-preset") {
       replacedSelections.current = Array.isArray(saved) ? saved : [];
@@ -163,8 +165,20 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       setSharedPreset(shared.payload.picker);
       setNoticeOpen(true);
       stripShareParam();
-    } else if (saved && Array.isArray(saved)) {
-      dispatch({ type: "RESTORE_SELECTIONS", selections: saved });
+      track("shared_link_opened", { share_type: "picker_preset", valid: true });
+    } else {
+      if (raw && !shared.ok && window.location.pathname === "/") {
+        // Broken links elsewhere are reported by the page that renders the
+        // error; this provider mounts everywhere, so it only speaks for "/".
+        track("shared_link_opened", {
+          share_type: "unknown",
+          valid: false,
+          invalid_reason: shared.reason,
+        });
+      }
+      if (saved && Array.isArray(saved)) {
+        dispatch({ type: "RESTORE_SELECTIONS", selections: saved });
+      }
     }
 
     isHydrated.current = true;

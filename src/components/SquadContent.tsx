@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import posthog from "posthog-js";
+import { track } from "@/lib/analytics";
 import { Hero, PerkPick, SlotConfig } from "@/types/hero";
 import { perksFromIndices, randomPerkIndices } from "@/lib/heroService";
 import {
@@ -88,7 +88,8 @@ export default function SquadContent() {
       randomizePerks: getBoolFromLS("squadRandomizePerks", false),
     };
 
-    const shared = tryDecodeShare(readShareParam(window.location.search));
+    const raw = readShareParam(window.location.search);
+    const shared = tryDecodeShare(raw);
     if (shared.ok && shared.payload.kind === "squad-preset") {
       const preset = shared.payload.squad;
       setupBeforeShare.current = saved;
@@ -101,7 +102,15 @@ export default function SquadContent() {
       });
       setSharedPresetApplied(true);
       stripShareParam();
+      track("shared_link_opened", { share_type: "squad_preset", valid: true });
     } else {
+      if (raw && !shared.ok) {
+        track("shared_link_opened", {
+          share_type: "unknown",
+          valid: false,
+          invalid_reason: shared.reason,
+        });
+      }
       applySetup(saved);
     }
 
@@ -117,15 +126,16 @@ export default function SquadContent() {
     const newHeroes = computeSquad(configs, squadSize, force122, force222);
     setHeroes(newHeroes);
     if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
-    if (posthog.__loaded) {
-      posthog.capture("squad_randomized", {
-        squad_size: squadSize,
-        force_122: force122,
-        force_222: force222,
-        perks_enabled: randomizePerks,
-        source: "generator",
-      });
-    }
+    track("squad_randomized", {
+      source: "generator",
+      squad_size: squadSize,
+      force_122: force122,
+      force_222: force222,
+      perks_enabled: randomizePerks,
+      filtered_slot_count: configs
+        .slice(0, squadSize)
+        .filter((cfg) => cfg.disabledHeroes.size > 0).length,
+    });
   }, [configs, force122, force222, squadSize, randomizePerks]);
 
   const randomizeSingle = useCallback(
@@ -145,13 +155,12 @@ export default function SquadContent() {
           setPerkAssignments((prev) => ({ ...prev, [hero.key]: pick }));
         }
       }
-      if (posthog.__loaded) {
-        posthog.capture("squad_slot_rerolled", {
-          squad_size: squadSize,
-          perks_enabled: randomizePerks,
-          source: "generator",
-        });
-      }
+      track("squad_slot_rerolled", {
+        source: "generator",
+        squad_size: squadSize,
+        slot_index: index,
+        perks_enabled: randomizePerks,
+      });
     },
     [heroes, configs, randomizePerks, squadSize],
   );
@@ -176,6 +185,10 @@ export default function SquadContent() {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
+      track("squad_copied_as_text", {
+        squad_size: squadSize,
+        perks_enabled: randomizePerks,
+      });
     } catch {
       /* ignore */
     }
@@ -190,9 +203,7 @@ export default function SquadContent() {
       const newHeroes = computeSquad(configs, size, force122, force222);
       setHeroes(newHeroes);
       if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
-      if (posthog.__loaded) {
-        posthog.capture("squad_size_changed", { squad_size: size });
-      }
+      track("squad_size_changed", { squad_size: size });
     },
     [configs, force122, force222, randomizePerks],
   );
@@ -206,11 +217,40 @@ export default function SquadContent() {
     [configs],
   );
 
+  // Slot filters change one checkbox at a time, so edits are debounced into a
+  // single event carrying the final count instead of one event per click.
+  const filterEditTimers = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
+
+  useEffect(() => {
+    const timers = filterEditTimers.current;
+    return () => {
+      for (const timer of timers.values()) clearTimeout(timer);
+      timers.clear();
+    };
+  }, []);
+
   const handleDisabledChange = useCallback(
     (index: number, disabled: Set<string>) => {
       const next = ensureConfigs([...configs]);
       next[index] = { ...next[index], disabledHeroes: disabled };
       setConfigs(next);
+
+      const timers = filterEditTimers.current;
+      const existing = timers.get(index);
+      if (existing) clearTimeout(existing);
+      timers.set(
+        index,
+        setTimeout(() => {
+          timers.delete(index);
+          track("squad_slot_filters_changed", {
+            action: "edit",
+            slot_index: index,
+            disabled_count: disabled.size,
+          });
+        }, 2000),
+      );
     },
     [configs],
   );
@@ -220,6 +260,11 @@ export default function SquadContent() {
       const next = ensureConfigs([...configs]);
       next[index] = { ...next[index], disabledHeroes: new Set<string>() };
       setConfigs(next);
+      track("squad_slot_filters_changed", {
+        action: "reset",
+        slot_index: index,
+        disabled_count: 0,
+      });
     },
     [configs],
   );
@@ -228,16 +273,23 @@ export default function SquadContent() {
     setConfigs((prev) =>
       prev.map((cfg) => ({ ...cfg, disabledHeroes: new Set<string>() })),
     );
+    track("squad_slot_filters_changed", {
+      action: "reset_all",
+      slot_index: null,
+      disabled_count: 0,
+    });
   }, []);
 
   const handleForce122Change = useCallback((checked: boolean) => {
     setForce122(checked);
     setBoolToLS("squadForce122", checked);
+    track("squad_option_changed", { option: "force_122", enabled: checked });
   }, []);
 
   const handleForce222Change = useCallback((checked: boolean) => {
     setForce222(checked);
     saveSquadForce222(checked);
+    track("squad_option_changed", { option: "force_222", enabled: checked });
   }, []);
 
   const handlePerksChange = useCallback(
@@ -247,6 +299,10 @@ export default function SquadContent() {
       if (checked) {
         setPerkAssignments(assignPerks(heroes));
       }
+      track("squad_option_changed", {
+        option: "randomize_perks",
+        enabled: checked,
+      });
     },
     [heroes],
   );
@@ -292,7 +348,13 @@ export default function SquadContent() {
     const previous = setupBeforeShare.current;
     if (previous) applySetup(previous);
     setSharedPresetApplied(false);
+    track("shared_preset_undone", { share_type: "squad_preset" });
   }, [applySetup]);
+
+  const handleDismissShared = useCallback(() => {
+    setSharedPresetApplied(false);
+    track("shared_preset_dismissed", { share_type: "squad_preset" });
+  }, []);
 
   useKeyboardShortcuts({
     r: randomizeAll,
@@ -311,7 +373,7 @@ export default function SquadContent() {
         <SharedPresetNotice
           message="A shared squad setup has been applied, replacing your own filters and options."
           onUndo={handleUndoShared}
-          onDismiss={() => setSharedPresetApplied(false)}
+          onDismiss={handleDismissShared}
         />
       )}
 
@@ -414,6 +476,8 @@ export default function SquadContent() {
           <ShareButton
             className={styles.copyBtn}
             buildUrl={buildResultUrl}
+            shareType="squad_result"
+            shareSource="squad"
             label="Share squad"
             copiedLabel="Squad link copied!"
             title="Copy a link that reveals this squad"
@@ -421,6 +485,8 @@ export default function SquadContent() {
           <ShareButton
             className={styles.copyBtn}
             buildUrl={buildPresetUrl}
+            shareType="squad_preset"
+            shareSource="squad"
             label="Share setup"
             copiedLabel="Setup link copied!"
             title="Copy a link that sets up these slot filters and options"

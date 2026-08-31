@@ -1,6 +1,6 @@
 "use client";
 
-import posthog from "posthog-js";
+import { track } from "@/lib/analytics";
 import { useHeroes } from "@/context/HeroContext";
 import PresetBar from "./PresetBar";
 import RoleSection from "./RoleSection";
@@ -50,9 +50,7 @@ export default function HeroFilterPanel({
           className="action-button"
           onClick={() => {
             selectAll();
-            if (posthog.__loaded) {
-              posthog.capture("hero_filters_changed", { action: "select_all" });
-            }
+            track("hero_filters_changed", { action: "select_all" });
           }}
         >
           Select All
@@ -61,11 +59,7 @@ export default function HeroFilterPanel({
           className="action-button"
           onClick={() => {
             unselectAll();
-            if (posthog.__loaded) {
-              posthog.capture("hero_filters_changed", {
-                action: "unselect_all",
-              });
-            }
+            track("hero_filters_changed", { action: "unselect_all" });
           }}
         >
           Unselect All
@@ -73,6 +67,8 @@ export default function HeroFilterPanel({
         {buildPresetUrl && (
           <ShareButton
             buildUrl={buildPresetUrl}
+            shareType="picker_preset"
+            shareSource="picker"
             label="Share these filters"
             copiedLabel="Filter link copied!"
             title="Copy a link that sets up these filters and options"

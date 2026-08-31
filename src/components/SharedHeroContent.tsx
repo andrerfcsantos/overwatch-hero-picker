@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import posthog from "posthog-js";
+import { heroPoolProps, track } from "@/lib/analytics";
 import Link from "next/link";
 import { PerkPick } from "@/types/hero";
 import { getAllHeroes } from "@/data/heroes";
@@ -63,11 +63,16 @@ export default function SharedHeroContent() {
 
     if (!decoded.ok) {
       setView({ status: "invalid", reason: decoded.reason });
+      track("shared_link_opened", {
+        share_type: "unknown",
+        valid: false,
+        invalid_reason: decoded.reason,
+      });
       return;
     }
 
     // The kind travels inside the payload, so a link opened on the wrong page
-    // can send itself where it belongs.
+    // can send itself where it belongs. The destination reports the open.
     if (decoded.payload.kind !== "hero-result") {
       window.location.replace(
         `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
@@ -82,6 +87,7 @@ export default function SharedHeroContent() {
       perks: decoded.payload.result.perks,
       ownRoll: false,
     });
+    track("shared_link_opened", { share_type: "hero_result", valid: true });
   }, []);
 
   const pool = useMemo(() => {
@@ -133,22 +139,26 @@ export default function SharedHeroContent() {
       view.picker.showPerks ? randomPerkIndices(hero.key) : null,
       true,
     );
-    if (posthog.__loaded) {
-      posthog.capture("hero_randomized", {
-        hero_role: hero.role,
-        pool_size: pool.length,
-        non_repeating: view.picker.nonRepeating,
-        perks_enabled: view.picker.showPerks,
-        source: "shared_result",
-      });
-    }
+    track("hero_randomized", {
+      source: "shared_result",
+      hero_key: hero.key,
+      hero_role: hero.role,
+      non_repeating: view.picker.nonRepeating,
+      perks_enabled: view.picker.showPerks,
+      ...heroPoolProps(pool),
+    });
   }, [view, pool, publish]);
 
   const handleRerollPerks = useCallback(() => {
     if (view.status !== "ready" || !view.heroKey) return;
     publish(view.picker, view.heroKey, randomPerkIndices(view.heroKey), false);
-    if (posthog.__loaded) {
-      posthog.capture("perks_randomized", { source: "shared_result" });
+    const hero = heroByKey.get(view.heroKey);
+    if (hero) {
+      track("perks_randomized", {
+        source: "shared_result",
+        hero_key: hero.key,
+        hero_role: hero.role,
+      });
     }
   }, [view, publish]);
 
@@ -258,6 +268,8 @@ export default function SharedHeroContent() {
               result: { heroKey: view.heroKey, perks: view.perks },
             })
           }
+          shareType="hero_result"
+          shareSource="shared_hero"
           label="Share this roll"
         />
         {/*

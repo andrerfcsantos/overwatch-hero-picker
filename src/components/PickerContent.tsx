@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import posthog from "posthog-js";
+import { heroPoolProps, track } from "@/lib/analytics";
 import { Hero, PerkPick } from "@/types/hero";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
@@ -100,15 +100,14 @@ export default function PickerContent() {
     setPerks(randomPerkIndices(hero.key));
     setHeroCount((c) => c + 1);
     setPerksCount((c) => c + 1);
-    if (posthog.__loaded) {
-      posthog.capture("hero_randomized", {
-        hero_role: hero.role,
-        pool_size: pool.length,
-        non_repeating: nonRepeatingMode,
-        perks_enabled: showPerks,
-        source: "picker",
-      });
-    }
+    track("hero_randomized", {
+      source: "picker",
+      hero_key: hero.key,
+      hero_role: hero.role,
+      non_repeating: nonRepeatingMode,
+      perks_enabled: showPerks,
+      ...heroPoolProps(pool),
+    });
 
     // Re-trigger portrait animation without remounting
     if (portraitRef.current) {
@@ -122,46 +121,53 @@ export default function PickerContent() {
     if (selectedHero) {
       setPerks(randomPerkIndices(selectedHero.key));
       setPerksCount((c) => c + 1);
-      if (posthog.__loaded) {
-        posthog.capture("perks_randomized", {
-          hero_role: selectedHero.role,
-          source: "picker",
-        });
-      }
+      track("perks_randomized", {
+        source: "picker",
+        hero_key: selectedHero.key,
+        hero_role: selectedHero.role,
+      });
     }
   }, [selectedHero]);
 
-  const handleShowPortrait = (checked: boolean) => {
+  // Setting an option and the visitor choosing it are different things: the
+  // undo path below also restores options, and that must not look like clicks.
+  const applyShowPortrait = (checked: boolean) => {
     setShowPortrait(checked);
     setBoolToLS("showPortrait", checked);
-    if (posthog.__loaded) {
-      posthog.capture("picker_option_changed", {
-        option: "show_portrait",
-        enabled: checked,
-      });
-    }
+  };
+
+  const applyShowPerks = (checked: boolean) => {
+    setShowPerks(checked);
+    setBoolToLS("showPerks", checked);
+  };
+
+  const applyNonRepeating = (checked: boolean) => {
+    setNonRepeatingMode(checked);
+    setBoolToLS("nonRepeatingMode", checked);
+  };
+
+  const handleShowPortrait = (checked: boolean) => {
+    applyShowPortrait(checked);
+    track("picker_option_changed", {
+      option: "show_portrait",
+      enabled: checked,
+    });
   };
 
   const handleShowPerks = (checked: boolean) => {
-    setShowPerks(checked);
-    setBoolToLS("showPerks", checked);
-    if (posthog.__loaded) {
-      posthog.capture("picker_option_changed", {
-        option: "randomize_perks",
-        enabled: checked,
-      });
-    }
+    applyShowPerks(checked);
+    track("picker_option_changed", {
+      option: "randomize_perks",
+      enabled: checked,
+    });
   };
 
   const handleNonRepeating = (checked: boolean) => {
-    setNonRepeatingMode(checked);
-    setBoolToLS("nonRepeatingMode", checked);
-    if (posthog.__loaded) {
-      posthog.capture("picker_option_changed", {
-        option: "non_repeating",
-        enabled: checked,
-      });
-    }
+    applyNonRepeating(checked);
+    track("picker_option_changed", {
+      option: "non_repeating",
+      enabled: checked,
+    });
   };
 
   const currentPreset = useCallback(
@@ -195,12 +201,18 @@ export default function PickerContent() {
   const handleUndoShared = useCallback(() => {
     const previous = optionsBeforeShare.current;
     if (previous) {
-      handleShowPortrait(previous.showPortrait);
-      handleShowPerks(previous.showPerks);
-      handleNonRepeating(previous.nonRepeating);
+      applyShowPortrait(previous.showPortrait);
+      applyShowPerks(previous.showPerks);
+      applyNonRepeating(previous.nonRepeating);
     }
     undoSharedPreset();
+    track("shared_preset_undone", { share_type: "picker_preset" });
   }, [undoSharedPreset]);
+
+  const handleDismissShared = useCallback(() => {
+    dismissSharedPreset();
+    track("shared_preset_dismissed", { share_type: "picker_preset" });
+  }, [dismissSharedPreset]);
 
   const toggleRole = useCallback(
     (role: HeroRole) => {
@@ -221,7 +233,7 @@ export default function PickerContent() {
     const map: Record<string, () => void> = {};
     presets.slice(0, SHORTCUT_COUNT).forEach((preset, index) => {
       const key = shortcutForIndex(index);
-      if (key) map[key] = () => applyPreset(preset.id);
+      if (key) map[key] = () => applyPreset(preset.id, "keyboard");
     });
     return map;
   }, [presets, applyPreset]);
@@ -249,7 +261,7 @@ export default function PickerContent() {
           <SharedPresetNotice
             message="Filters and options from a shared link have been applied, replacing your own."
             onUndo={handleUndoShared}
-            onDismiss={dismissSharedPreset}
+            onDismiss={handleDismissShared}
           />
         </div>
       )}
@@ -369,6 +381,8 @@ export default function PickerContent() {
                 <ShareButton
                   className="action-button btn-share"
                   buildUrl={buildResultUrl}
+                  shareType="hero_result"
+                  shareSource="picker"
                   label="Share this roll"
                   title="Copy a link that reveals this hero"
                 />

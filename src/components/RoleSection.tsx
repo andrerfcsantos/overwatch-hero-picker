@@ -1,6 +1,6 @@
 "use client";
 
-import posthog from "posthog-js";
+import { track } from "@/lib/analytics";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import HeroCard from "./HeroCard";
@@ -32,12 +32,7 @@ export default function RoleSection({
           className="action-button"
           onClick={() => {
             selectByRole(role);
-            if (posthog.__loaded) {
-              posthog.capture("hero_filters_changed", {
-                action: "select_role",
-                role,
-              });
-            }
+            track("hero_filters_changed", { action: "select_role", role });
           }}
         >
           Select All
@@ -46,12 +41,7 @@ export default function RoleSection({
           className="action-button"
           onClick={() => {
             unselectByRole(role);
-            if (posthog.__loaded) {
-              posthog.capture("hero_filters_changed", {
-                action: "unselect_role",
-                role,
-              });
-            }
+            track("hero_filters_changed", { action: "unselect_role", role });
           }}
         >
           Unselect All
@@ -60,12 +50,7 @@ export default function RoleSection({
           className="action-button"
           onClick={() => {
             selectJustRole(role);
-            if (posthog.__loaded) {
-              posthog.capture("hero_filters_changed", {
-                action: "select_only_role",
-                role,
-              });
-            }
+            track("hero_filters_changed", { action: "select_only_role", role });
           }}
         >
           Just this role

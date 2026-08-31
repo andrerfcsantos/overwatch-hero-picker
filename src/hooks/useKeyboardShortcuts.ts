@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { track } from "@/lib/analytics";
 
 type ShortcutMap = Record<string, () => void>;
 
@@ -21,6 +22,7 @@ export function useKeyboardShortcuts(shortcuts: ShortcutMap) {
         if (handler) {
           e.preventDefault();
           handler();
+          track("keyboard_shortcut_used", { key: combo });
           return;
         }
       }
@@ -29,10 +31,12 @@ export function useKeyboardShortcuts(shortcuts: ShortcutMap) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (isInput || isEditable) return;
 
-      const handler = shortcutsRef.current[e.key.toLowerCase()];
+      const key = e.key.toLowerCase();
+      const handler = shortcutsRef.current[key];
       if (handler) {
         e.preventDefault();
         handler();
+        track("keyboard_shortcut_used", { key });
       }
     }
 
