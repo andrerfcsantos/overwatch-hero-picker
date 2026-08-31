@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import posthog from "posthog-js";
 
 interface ShareButtonProps {
   /** Built lazily so the link always reflects the current state. */
@@ -35,6 +36,9 @@ export default function ShareButton({
       await navigator.clipboard.writeText(url);
       setFallbackUrl(null);
       setCopied(true);
+      if (posthog.__loaded) {
+        posthog.capture("share_link_copied");
+      }
       if (resetTimer.current) clearTimeout(resetTimer.current);
       resetTimer.current = setTimeout(() => setCopied(false), 1800);
     } catch {

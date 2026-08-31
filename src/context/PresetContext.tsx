@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import posthog from "posthog-js";
 import { useHeroes } from "@/context/HeroContext";
 import { buildDefaultPresets } from "@/lib/presets/defaults";
 import { loadPresets, savePresets } from "@/lib/presets/storage";
@@ -93,6 +94,11 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       if (!preset) return;
       setSelected(preset.heroes);
       setAppliedId(id);
+      if (posthog.__loaded) {
+        posthog.capture("preset_applied", {
+          hero_count: preset.heroes.length,
+        });
+      }
     },
     [presets, setSelected],
   );
@@ -106,6 +112,9 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       };
       setPresets((current) => [...current, preset]);
       setAppliedId(preset.id);
+      if (posthog.__loaded) {
+        posthog.capture("preset_created", { hero_count: selectedKeys.length });
+      }
     },
     [selectedKeys],
   );
@@ -118,6 +127,9 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
         ),
       );
       setAppliedId(id);
+      if (posthog.__loaded) {
+        posthog.capture("preset_updated", { hero_count: selectedKeys.length });
+      }
     },
     [selectedKeys],
   );
@@ -151,6 +163,9 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
     (id: string) => {
       setPresets((current) => current.filter((preset) => preset.id !== id));
       if (id === appliedId) setAppliedId(null);
+      if (posthog.__loaded) {
+        posthog.capture("preset_deleted");
+      }
     },
     [appliedId],
   );

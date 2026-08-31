@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import HeroCard from "./HeroCard";
@@ -27,13 +28,46 @@ export default function RoleSection({
           alt={`${roleName} role icon`}
         />
         <h2 className="m-[0.5em] ml-0">{roleName}</h2>
-        <button className="action-button" onClick={() => selectByRole(role)}>
+        <button
+          className="action-button"
+          onClick={() => {
+            selectByRole(role);
+            if (posthog.__loaded) {
+              posthog.capture("hero_filters_changed", {
+                action: "select_role",
+                role,
+              });
+            }
+          }}
+        >
           Select All
         </button>
-        <button className="action-button" onClick={() => unselectByRole(role)}>
+        <button
+          className="action-button"
+          onClick={() => {
+            unselectByRole(role);
+            if (posthog.__loaded) {
+              posthog.capture("hero_filters_changed", {
+                action: "unselect_role",
+                role,
+              });
+            }
+          }}
+        >
           Unselect All
         </button>
-        <button className="action-button" onClick={() => selectJustRole(role)}>
+        <button
+          className="action-button"
+          onClick={() => {
+            selectJustRole(role);
+            if (posthog.__loaded) {
+              posthog.capture("hero_filters_changed", {
+                action: "select_only_role",
+                role,
+              });
+            }
+          }}
+        >
           Just this role
         </button>
       </div>

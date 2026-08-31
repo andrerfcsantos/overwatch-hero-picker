@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import posthog from "posthog-js";
 import Link from "next/link";
 import { PerkPick } from "@/types/hero";
 import { getAllHeroes } from "@/data/heroes";
@@ -115,6 +116,15 @@ export default function SharedSquadContent() {
         squad.randomizePerks && hero ? randomPerkIndices(hero.key) : null,
       ),
     );
+    if (posthog.__loaded) {
+      posthog.capture("squad_randomized", {
+        squad_size: squad.size,
+        force_122: squad.force122,
+        force_222: squad.force222,
+        perks_enabled: squad.randomizePerks,
+        source: "shared_result",
+      });
+    }
   }, [view, publish]);
 
   const handleRerollSlot = useCallback(
@@ -134,6 +144,13 @@ export default function SharedSquadContent() {
       nextPerks[index] =
         squad.randomizePerks && hero ? randomPerkIndices(hero.key) : null;
       publish(squad, nextHeroes, nextPerks);
+      if (posthog.__loaded) {
+        posthog.capture("squad_slot_rerolled", {
+          squad_size: squad.size,
+          perks_enabled: squad.randomizePerks,
+          source: "shared_result",
+        });
+      }
     },
     [view, publish],
   );

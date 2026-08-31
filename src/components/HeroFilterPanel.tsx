@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useHeroes } from "@/context/HeroContext";
 import PresetBar from "./PresetBar";
 import RoleSection from "./RoleSection";
@@ -45,10 +46,28 @@ export default function HeroFilterPanel({
       </div>
 
       <div className="flex flex-row flex-wrap gap-1 mt-2 mb-1">
-        <button className="action-button" onClick={selectAll}>
+        <button
+          className="action-button"
+          onClick={() => {
+            selectAll();
+            if (posthog.__loaded) {
+              posthog.capture("hero_filters_changed", { action: "select_all" });
+            }
+          }}
+        >
           Select All
         </button>
-        <button className="action-button" onClick={unselectAll}>
+        <button
+          className="action-button"
+          onClick={() => {
+            unselectAll();
+            if (posthog.__loaded) {
+              posthog.capture("hero_filters_changed", {
+                action: "unselect_all",
+              });
+            }
+          }}
+        >
           Unselect All
         </button>
         {buildPresetUrl && (

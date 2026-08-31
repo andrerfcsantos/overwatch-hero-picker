@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import posthog from "posthog-js";
 import Link from "next/link";
 import { PerkPick } from "@/types/hero";
 import { getAllHeroes } from "@/data/heroes";
@@ -132,11 +133,23 @@ export default function SharedHeroContent() {
       view.picker.showPerks ? randomPerkIndices(hero.key) : null,
       true,
     );
+    if (posthog.__loaded) {
+      posthog.capture("hero_randomized", {
+        hero_role: hero.role,
+        pool_size: pool.length,
+        non_repeating: view.picker.nonRepeating,
+        perks_enabled: view.picker.showPerks,
+        source: "shared_result",
+      });
+    }
   }, [view, pool, publish]);
 
   const handleRerollPerks = useCallback(() => {
     if (view.status !== "ready" || !view.heroKey) return;
     publish(view.picker, view.heroKey, randomPerkIndices(view.heroKey), false);
+    if (posthog.__loaded) {
+      posthog.capture("perks_randomized", { source: "shared_result" });
+    }
   }, [view, publish]);
 
   if (view.status === "loading") {

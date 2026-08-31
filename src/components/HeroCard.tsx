@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { Hero } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
 import SpriteIcon from "@/components/SpriteIcon";
@@ -15,7 +16,16 @@ export default function HeroCard({ hero }: HeroCardProps) {
   return (
     <button
       className={`hero-card ${selected ? "selected" : ""}`}
-      onClick={() => toggleHero(hero.key)}
+      onClick={() => {
+        toggleHero(hero.key);
+        if (posthog.__loaded) {
+          posthog.capture("hero_filter_toggled", {
+            hero_key: hero.key,
+            hero_role: hero.role,
+            selected: !selected,
+          });
+        }
+      }}
     >
       <SpriteIcon
         className="hero-card-image"

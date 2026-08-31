@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import posthog from "posthog-js";
 import { Hero, PerkPick } from "@/types/hero";
 import { HeroRole } from "@/types/hero";
 import { useHeroes } from "@/context/HeroContext";
@@ -99,6 +100,15 @@ export default function PickerContent() {
     setPerks(randomPerkIndices(hero.key));
     setHeroCount((c) => c + 1);
     setPerksCount((c) => c + 1);
+    if (posthog.__loaded) {
+      posthog.capture("hero_randomized", {
+        hero_role: hero.role,
+        pool_size: pool.length,
+        non_repeating: nonRepeatingMode,
+        perks_enabled: showPerks,
+        source: "picker",
+      });
+    }
 
     // Re-trigger portrait animation without remounting
     if (portraitRef.current) {
@@ -106,28 +116,52 @@ export default function PickerContent() {
       void portraitRef.current.offsetWidth;
       portraitRef.current.classList.add("hero-portrait-animate");
     }
-  }, [heroes, getSelected, nonRepeatingMode, selectedHero]);
+  }, [heroes, getSelected, nonRepeatingMode, selectedHero, showPerks]);
 
   const handleNewPerks = useCallback(() => {
     if (selectedHero) {
       setPerks(randomPerkIndices(selectedHero.key));
       setPerksCount((c) => c + 1);
+      if (posthog.__loaded) {
+        posthog.capture("perks_randomized", {
+          hero_role: selectedHero.role,
+          source: "picker",
+        });
+      }
     }
   }, [selectedHero]);
 
   const handleShowPortrait = (checked: boolean) => {
     setShowPortrait(checked);
     setBoolToLS("showPortrait", checked);
+    if (posthog.__loaded) {
+      posthog.capture("picker_option_changed", {
+        option: "show_portrait",
+        enabled: checked,
+      });
+    }
   };
 
   const handleShowPerks = (checked: boolean) => {
     setShowPerks(checked);
     setBoolToLS("showPerks", checked);
+    if (posthog.__loaded) {
+      posthog.capture("picker_option_changed", {
+        option: "randomize_perks",
+        enabled: checked,
+      });
+    }
   };
 
   const handleNonRepeating = (checked: boolean) => {
     setNonRepeatingMode(checked);
     setBoolToLS("nonRepeatingMode", checked);
+    if (posthog.__loaded) {
+      posthog.capture("picker_option_changed", {
+        option: "non_repeating",
+        enabled: checked,
+      });
+    }
   };
 
   const currentPreset = useCallback(

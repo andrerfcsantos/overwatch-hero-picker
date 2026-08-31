@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import posthog from "posthog-js";
 import { Hero, PerkPick, SlotConfig } from "@/types/hero";
 import { perksFromIndices, randomPerkIndices } from "@/lib/heroService";
 import {
@@ -116,6 +117,15 @@ export default function SquadContent() {
     const newHeroes = computeSquad(configs, squadSize, force122, force222);
     setHeroes(newHeroes);
     if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
+    if (posthog.__loaded) {
+      posthog.capture("squad_randomized", {
+        squad_size: squadSize,
+        force_122: force122,
+        force_222: force222,
+        perks_enabled: randomizePerks,
+        source: "generator",
+      });
+    }
   }, [configs, force122, force222, squadSize, randomizePerks]);
 
   const randomizeSingle = useCallback(
@@ -135,8 +145,15 @@ export default function SquadContent() {
           setPerkAssignments((prev) => ({ ...prev, [hero.key]: pick }));
         }
       }
+      if (posthog.__loaded) {
+        posthog.capture("squad_slot_rerolled", {
+          squad_size: squadSize,
+          perks_enabled: randomizePerks,
+          source: "generator",
+        });
+      }
     },
-    [heroes, configs, randomizePerks],
+    [heroes, configs, randomizePerks, squadSize],
   );
 
   const handleCopy = useCallback(async () => {
@@ -173,6 +190,9 @@ export default function SquadContent() {
       const newHeroes = computeSquad(configs, size, force122, force222);
       setHeroes(newHeroes);
       if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
+      if (posthog.__loaded) {
+        posthog.capture("squad_size_changed", { squad_size: size });
+      }
     },
     [configs, force122, force222, randomizePerks],
   );
