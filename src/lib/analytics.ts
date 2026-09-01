@@ -164,7 +164,11 @@ function scrubUrls(container: unknown): void {
 
 export function initAnalytics(projectToken: string, host: string): void {
   posthog.init(projectToken, {
+    // `host` is the first-party proxy (r.owheropicker.com), which ad blockers
+    // do not recognize; `ui_host` still has to name the real PostHog app so the
+    // toolbar and its links resolve.
     api_host: host,
+    ui_host: "https://us.posthog.com",
     defaults: "2026-08-30",
     capture_exceptions: true,
     debug: process.env.NODE_ENV === "development",
