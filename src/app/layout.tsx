@@ -59,6 +59,7 @@ export default function RootLayout({
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-JLMCGX0Z78"
           strategy="afterInteractive"
+          crossOrigin="anonymous"
         />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
