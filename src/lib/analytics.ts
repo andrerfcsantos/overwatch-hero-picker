@@ -5,10 +5,17 @@
  * whole schema lives here and a typo or a stray property is a compile error.
  * Before init (or when the env vars are absent) every call is a silent no-op.
  *
- * The slim build halves the SDK's share of first-load JS; autocapture, session
- * recording and surveys still work, lazily loaded from the PostHog host.
+ * The slim build halves the SDK's share of first-load JS, but it ships an empty
+ * extension registry — anything not listed in `__extensionClasses` below is
+ * simply never constructed, silently. Each bundle here is a loader stub; the
+ * heavy payload (rrweb and friends) still arrives lazily from `api_host`.
  */
 import posthog from "posthog-js/dist/module.slim";
+import {
+  AnalyticsExtensions,
+  ErrorTrackingExtensions,
+  SessionReplayExtensions,
+} from "posthog-js/dist/extension-bundles";
 import { HeroRole } from "@/types/hero";
 
 /** One value per share surface, so the funnel can tell them apart. */
@@ -164,6 +171,14 @@ function scrubUrls(container: unknown): void {
 
 export function initAnalytics(projectToken: string, host: string): void {
   posthog.init(projectToken, {
+    __extensionClasses: {
+      // Session replay, plus the autocapture/web-vitals family. Without these
+      // the slim build captures pageviews and manual `capture` calls only.
+      ...SessionReplayExtensions,
+      ...AnalyticsExtensions,
+      // The pair `capture_exceptions` below needs to have any effect.
+      ...ErrorTrackingExtensions,
+    },
     // `host` is the first-party proxy (r.owheropicker.com), which ad blockers
     // do not recognize; `ui_host` still has to name the real PostHog app so the
     // toolbar and its links resolve.
