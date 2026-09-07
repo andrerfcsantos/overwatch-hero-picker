@@ -10,7 +10,7 @@
  * simply never constructed, silently. Each bundle here is a loader stub; the
  * heavy payload (rrweb and friends) still arrives lazily from `api_host`.
  */
-import posthog from "posthog-js/dist/module.slim";
+import posthog, { type CaptureResult } from "posthog-js/dist/module.slim";
 import {
   AnalyticsExtensions,
   ErrorTrackingExtensions,
@@ -154,6 +154,33 @@ let initialized = false;
  */
 const SHARE_BLOB = /([?&]d=)[^&#]+/g;
 
+/** One entry of a `$exception` event's `$exception_list`. */
+type CapturedException = {
+  mechanism?: { synthetic?: boolean };
+  stacktrace?: { frames?: unknown[] };
+};
+
+/**
+ * An extension or injected script that throws reaches `window.onerror` as a
+ * bare message string. PostHog wraps it as a synthetic `$exception` with no
+ * stack frames, so there is no source file to symbolicate and nothing that
+ * ties it to our code. A `blob:` URL made in the page still carries our
+ * origin, so the error wears our domain even though we own no worker. Drop
+ * these; real errors keep their frames and pass through.
+ */
+export function isStacklessThirdPartyException(event: CaptureResult): boolean {
+  if (event.event !== "$exception") return false;
+  const list = event.properties?.$exception_list as
+    | CapturedException[]
+    | undefined;
+  if (!Array.isArray(list) || list.length === 0) return false;
+  return list.every(
+    (exception) =>
+      exception?.mechanism?.synthetic === true &&
+      !exception?.stacktrace?.frames?.length,
+  );
+}
+
 function scrubUrls(container: unknown): void {
   if (typeof container !== "object" || container === null) return;
   const record = container as Record<string, unknown>;
@@ -192,6 +219,7 @@ export function initAnalytics(projectToken: string, host: string): void {
     disable_session_recording: process.env.NODE_ENV === "development",
     before_send: (event) => {
       if (!event) return null;
+      if (isStacklessThirdPartyException(event)) return null;
       scrubUrls(event.properties);
       scrubUrls(event.properties?.$set);
       scrubUrls(event.properties?.$set_once);
