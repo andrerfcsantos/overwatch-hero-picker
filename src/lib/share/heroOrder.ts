@@ -68,6 +68,7 @@ export const SHARE_HERO_ORDER: readonly string[] = [
   "mizuki",
   "wuyang",
   "dmon",
+  "doctrine",
 ];
 
 /** Marker byte for "no hero in this slot". */

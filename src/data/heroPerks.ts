@@ -14,8 +14,9 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Shield Slam", "Ignited Fury"],
   },
   roadhog: {
-    minor: ["Scrap Hook", "Shrapnel Launcher"],
-    major: ["Hogdrogen Exposure", "Pulled Pork"],
+    minor: ["Scrap Hook", "Shrapnel Launcher", "Here, Piggy Piggy"],
+    major: ["Hogdrogen Exposure", "Pulled Pork", "Toxic Exhaust"],
+    retired: ["Shrapnel Launcher", "Pulled Pork"],
   },
   winston: {
     minor: ["Heavy Landing", "Electric Charge"],
@@ -66,8 +67,9 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Shadow Blink", "Trigger Finger"],
   },
   shion: {
-    minor: ["Rapid Reload", "X Machina"],
+    minor: ["Rapid Reload", "X Machina", "Survival Instinct"],
     major: ["Refuel", "Faces of Death"],
+    retired: ["Rapid Reload"],
   },
   sierra: {
     minor: ["Full Flight", "Tight Grip"],
@@ -78,8 +80,14 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Stim Pack", "Full Stride"],
   },
   sombra: {
-    minor: ["CTRL ALT ESC", "Encrypted Upload"],
-    major: ["High-Speed Bandwidth", "Viral Replication"],
+    minor: ["CTRL ALT ESC", "Encrypted Upload", "Life Hack"],
+    major: [
+      "High-Speed Bandwidth",
+      "Viral Replication",
+      "Data Packet",
+      "Cybersecurity",
+    ],
+    retired: ["Encrypted Upload", "High-Speed Bandwidth", "Viral Replication"],
   },
   symmetra: {
     minor: ["Perfect Alignment", "Sentry Capacity"],
@@ -98,8 +106,9 @@ export const heroPerks: Record<string, HeroPerk> = {
     major: ["Widow's Bite", "Seeker Mine"],
   },
   ana: {
-    minor: ["Speed Serum", "Groggy"],
+    minor: ["Speed Serum", "Groggy", "Local Anesthetic"],
     major: ["Headhunter", "Biotic Bounce"],
+    retired: ["Groggy"],
   },
   brigitte: {
     minor: ["Combat Medic", "Morale Boost"],
@@ -212,5 +221,9 @@ export const heroPerks: Record<string, HeroPerk> = {
   dmon: {
     minor: ["Beast Within", "MEKA Mobility"],
     major: ["Overstrike", "Focused Fusion"],
+  },
+  doctrine: {
+    minor: ["Saving Grace", "Sanguine Siphon"],
+    major: ["Transfusion", "Cost of Life"],
   },
 };
