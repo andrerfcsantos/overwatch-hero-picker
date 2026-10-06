@@ -5,6 +5,17 @@ function randomIndex(length: number): number {
   return Math.floor(Math.random() * length);
 }
 
+/** Index of a random perk in `options`, skipping any that are retired. */
+function randomActivePerkIndex(
+  options: readonly string[],
+  retired: readonly string[] = [],
+): number {
+  const active = options
+    .map((_, index) => index)
+    .filter((index) => !retired.includes(options[index]));
+  return active[randomIndex(active.length)];
+}
+
 export function randomHero(
   heroPool: Hero[],
   options: { preventRepeat?: boolean; previousHeroKey?: string } = {},
@@ -24,14 +35,15 @@ export function randomHero(
 
 /**
  * Picks perks as indices rather than strings so a roll can be put in a share
- * link. Returns null for heroes with no perk data.
+ * link. Retired perks are never picked. Returns null for heroes with no perk
+ * data.
  */
 export function randomPerkIndices(heroKey: string): PerkPick | null {
   const perks = heroPerks[heroKey];
   if (!perks) return null;
   return {
-    minor: randomIndex(perks.minor.length),
-    major: randomIndex(perks.major.length),
+    minor: randomActivePerkIndex(perks.minor, perks.retired),
+    major: randomActivePerkIndex(perks.major, perks.retired),
   };
 }
 

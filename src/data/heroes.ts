@@ -280,13 +280,6 @@ const heroDefinitions: Record<string, Hero> = {
     selected: true,
     key: "soldier76",
   },
-  sombra: {
-    name: "Sombra",
-    role: "DAMAGE",
-    subRole: "RECON",
-    selected: true,
-    key: "sombra",
-  },
   symmetra: {
     name: "Symmetra",
     role: "DAMAGE",
@@ -469,6 +462,20 @@ const heroDefinitions: Record<string, Hero> = {
     subRole: "SURVIVOR",
     selected: true,
     key: "wuyang",
+  },
+  sombra: {
+    name: "Sombra",
+    role: "SUPPORT",
+    subRole: "TACTICIAN",
+    selected: true,
+    key: "sombra",
+  },
+  doctrine: {
+    name: "Doctrine",
+    role: "SUPPORT",
+    subRole: "SURVIVOR",
+    selected: true,
+    key: "doctrine",
   },
 };
 

@@ -42,6 +42,11 @@ export interface Hero {
 export interface HeroPerk {
   minor: readonly string[];
   major: readonly string[];
+  /**
+   * Perks a patch has removed from the game. They stay in `minor`/`major` so
+   * old share links still show what was rolled, but are never rolled again.
+   */
+  retired?: readonly string[];
 }
 
 /** A chosen perk pair, stored as indices into the hero's `HeroPerk` lists. */

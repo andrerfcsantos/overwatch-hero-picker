@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { describe, expect, test } from "vite-plus/test";
 
+import { randomPerkIndices } from "@/lib/heroService";
 import { SHARE_HERO_ORDER } from "@/lib/share/heroOrder";
 import {
   SUB_ROLES,
@@ -99,6 +100,28 @@ describe("hero data", () => {
     );
   });
 
+  test("includes Doctrine as a selectable Support hero", () => {
+    expect(getAllHeroes()).toContainEqual(
+      expect.objectContaining({
+        key: "doctrine",
+        name: "Doctrine",
+        role: "SUPPORT",
+        subRole: "SURVIVOR",
+        selected: true,
+      }),
+    );
+  });
+
+  test("lists Sombra as a Support Tactician", () => {
+    expect(getAllHeroes()).toContainEqual(
+      expect.objectContaining({
+        key: "sombra",
+        role: "SUPPORT",
+        subRole: "TACTICIAN",
+      }),
+    );
+  });
+
   test("has perk data for every hero", () => {
     for (const key of heroKeys) {
       expect(heroPerks[key]).toBeDefined();
@@ -107,6 +130,26 @@ describe("hero data", () => {
       expect(heroPerks[key].minor.length).toBeLessThanOrEqual(16);
       expect(heroPerks[key].major.length).toBeGreaterThan(0);
       expect(heroPerks[key].major.length).toBeLessThanOrEqual(16);
+    }
+  });
+
+  test("retires only listed perks and leaves every hero one per tier", () => {
+    for (const key of heroKeys) {
+      const { minor, major, retired = [] } = heroPerks[key];
+      for (const perk of retired) {
+        expect([...minor, ...major]).toContain(perk);
+      }
+      expect(minor.some((perk) => !retired.includes(perk))).toBe(true);
+      expect(major.some((perk) => !retired.includes(perk))).toBe(true);
+    }
+  });
+
+  test("never rolls a retired perk", () => {
+    const { minor, major, retired = [] } = heroPerks.sombra;
+    for (let i = 0; i < 200; i++) {
+      const pick = randomPerkIndices("sombra");
+      expect(retired).not.toContain(minor[pick!.minor]);
+      expect(retired).not.toContain(major[pick!.major]);
     }
   });
 
