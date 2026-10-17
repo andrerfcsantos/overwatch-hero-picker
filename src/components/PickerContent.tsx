@@ -200,7 +200,8 @@ export default function PickerContent() {
   );
 
   const buildOverlayUrl = useCallback(
-    (size: OverlaySize) => overlayUrl(currentPreset(), size),
+    (size: OverlaySize, room: string | null) =>
+      overlayUrl(currentPreset(), size, room),
     [currentPreset],
   );
 

@@ -1,0 +1,40 @@
+{
+  // Live relay for the stream overlay's companion view. Deployed separately
+  // from the site (which stays a static-assets-only Worker) because Cloudflare
+  // does not generate preview URLs for Workers that implement a Durable
+  // Object, and the site relies on those for testing pull requests.
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "overwatch-hero-picker-rooms",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-08",
+  "routes": [
+    {
+      "pattern": "rooms.owheropicker.com",
+      "custom_domain": true,
+    },
+  ],
+  "workers_dev": false,
+  "observability": {
+    "enabled": true,
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "ROOMS",
+        "class_name": "Room",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      // SQLite-backed, which is what the Workers Free plan supports.
+      "new_sqlite_classes": ["Room"],
+    },
+  ],
+  "vars": {
+    // Pages allowed to open a room socket: exact origins, or ".suffix" to
+    // allow every subdomain (used for the site's Workers preview URLs).
+    "ALLOWED_ORIGINS": "https://owheropicker.com,https://www.owheropicker.com,https://beta.owheropicker.com,.main-4a3.workers.dev",
+  },
+}

@@ -152,14 +152,26 @@ type EventMap = {
     method: "clipboard" | "fallback";
     hero_count: number;
     size: OverlaySize;
+    /** Whether the copied link publishes to a companion room. */
+    companion: boolean;
   };
   overlay_link_opened: { hero_count: number; size: OverlaySize };
+  overlay_companion_toggled: { enabled: boolean };
+  companion_link_copied: { method: "clipboard" | "fallback" };
+  companion_link_opened: Record<string, never>;
+  companion_link_reset: Record<string, never>;
+  companion_opened: {
+    /** False when the link's view id is missing or malformed. */
+    valid: boolean;
+  };
   overlay_opened: {
     /** False when the link's filters could not be decoded. */
     valid: boolean;
     /** Whether the page is running inside an OBS browser source. */
     in_obs: boolean;
     has_key: boolean;
+    /** Whether the link publishes to a companion room. */
+    has_room: boolean;
     /** A preset id, or "custom" for a numeric `size` param. */
     size: OverlaySize | "custom";
   };
@@ -171,8 +183,17 @@ let initialized = false;
  * Share payloads travel in the `d` query param as unique blobs. Left alone
  * they would make every share link its own URL in PostHog, fragmenting the
  * pages you most want to compare — so the blob never leaves the browser.
+ *
+ * The overlay's companion room travels the same way and is worse to leak:
+ * `room` is the secret that lets a page post rolls to a streamer's companion
+ * view, and `view` lets anyone watch it.
  */
-const SHARE_BLOB = /([?&]d=)[^&#]+/g;
+const URL_SECRETS = /([?&](?:d|room|view)=)[^&#]+/g;
+
+/** A URL with share payloads and room keys replaced by a placeholder. */
+export function redactUrl(value: string): string {
+  return value.replace(URL_SECRETS, "$1REDACTED");
+}
 
 /** One entry of a `$exception` event's `$exception_list`. */
 type CapturedException = {
@@ -211,7 +232,7 @@ function scrubUrls(container: unknown): void {
       typeof value === "string" &&
       (lower.includes("url") || lower.includes("referrer"))
     ) {
-      record[key] = value.replace(SHARE_BLOB, "$1REDACTED");
+      record[key] = redactUrl(value);
     }
   }
 }
