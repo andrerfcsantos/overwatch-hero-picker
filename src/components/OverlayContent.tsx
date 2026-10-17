@@ -3,18 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { heroPoolProps, track } from "@/lib/analytics";
 import { getAllHeroes } from "@/data/heroes";
-import {
-  perksFromIndices,
-  randomHero,
-  randomPerkIndices,
-} from "@/lib/heroService";
+import { perksFromIndices, randomPerkIndices } from "@/lib/heroService";
 import {
   OVERLAY_SIZES,
   OverlayConfig,
   matchesShortcut,
-  readLastOverlayHero,
+  nextOverlayHero,
   readOverlayConfig,
-  rememberOverlayHero,
 } from "@/lib/overlay";
 import { PickerPreset } from "@/lib/share/types";
 import { Hero, PerkPick } from "@/types/hero";
@@ -92,13 +87,11 @@ export default function OverlayContent() {
   const reroll = useCallback(
     (trigger?: Trigger) => {
       if (!picker || pool.length === 0) return;
-      currentHeroKey.current ??= readLastOverlayHero();
-      const hero = randomHero(pool, {
-        preventRepeat: picker.nonRepeating,
+      const hero = nextOverlayHero(pool, {
+        nonRepeating: picker.nonRepeating,
         previousHeroKey: currentHeroKey.current,
       });
       currentHeroKey.current = hero.key;
-      rememberOverlayHero(hero.key);
       setRoll((previous) => ({
         hero,
         perks: randomPerkIndices(hero.key),
