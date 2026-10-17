@@ -102,10 +102,31 @@ export type OverlayConfig =
   | { ok: true; picker: PickerPreset; shortcut: KeyShortcut | null }
   | { ok: false; reason: ShareErrorReason };
 
+/**
+ * Reads one query parameter without the form-encoding rule that turns "+" into
+ * a space. Shortcuts use "+" as their separator, and a streamer typing
+ * `?key=ctrl+shift+h` into OBS means exactly that.
+ */
+function readRawParam(search: string, name: string): string | null {
+  for (const pair of search.replace(/^\?/, "").split("&")) {
+    const separator = pair.indexOf("=");
+    const key = separator === -1 ? pair : pair.slice(0, separator);
+    if (key !== name) continue;
+    try {
+      return decodeURIComponent(
+        separator === -1 ? "" : pair.slice(separator + 1),
+      );
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 /** Reads the overlay's filters and optional test key from its query string. */
 export function readOverlayConfig(search: string): OverlayConfig {
   const params = new URLSearchParams(search);
-  const shortcut = parseShortcut(params.get(OVERLAY_KEY_PARAM));
+  const shortcut = parseShortcut(readRawParam(search, OVERLAY_KEY_PARAM));
   const raw = params.get(SHARE_PARAM);
 
   if (!raw) return { ok: true, picker: DEFAULT_OVERLAY_PICKER, shortcut };

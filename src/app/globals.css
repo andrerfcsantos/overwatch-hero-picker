@@ -121,6 +121,12 @@ a:hover {
   color: white;
 }
 
+/* The base rule drops the browser outline, so keyboard focus needs its own. */
+.action-button:focus-visible {
+  outline: 2px solid #f99e1a;
+  outline-offset: 2px;
+}
+
 .action-button::after {
   content: "";
   position: absolute;

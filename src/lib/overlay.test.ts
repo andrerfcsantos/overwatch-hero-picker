@@ -137,6 +137,33 @@ describe("readOverlayConfig", () => {
     expect(config.ok && config.shortcut?.key).toBe("f8");
   });
 
+  test("keeps a literal + in the key as a separator, as typed in a URL", () => {
+    // URLSearchParams would decode "+" to a space and lose the separators.
+    const typed = readOverlayConfig("?key=ctrl+shift+h");
+    expect(typed.ok && typed.shortcut).toMatchObject({
+      key: "h",
+      ctrl: true,
+      shift: true,
+    });
+    const encoded = readOverlayConfig("?key=ctrl%2Bshift%2Bh");
+    expect(encoded.ok && encoded.shortcut).toMatchObject({
+      key: "h",
+      ctrl: true,
+    });
+    const plusKey = readOverlayConfig("?key=ctrl%2B%2B");
+    expect(plusKey.ok && plusKey.shortcut).toMatchObject({
+      key: "+",
+      ctrl: true,
+    });
+  });
+
+  test("ignores a key param that is not valid percent-encoding", () => {
+    expect(readOverlayConfig("?key=%E0%A4%A")).toMatchObject({
+      ok: true,
+      shortcut: null,
+    });
+  });
+
   test("accepts the filters inside a hero-result link", () => {
     const encoded = encodeShare({
       kind: "hero-result",
