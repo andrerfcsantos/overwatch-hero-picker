@@ -179,6 +179,15 @@ describe("readOverlayConfig", () => {
     expect(overlayUrl(picker)).not.toContain("room=");
   });
 
+  test("only honours the room key under its literal name", () => {
+    const room = generateRoomSecret();
+    expect(readOverlayConfig(`?room=${room}`)).toMatchObject({ room });
+    // URLSearchParams would decode these names to "room", but analytics
+    // redaction would not recognise them, so they must not enable publishing.
+    expect(readOverlayConfig(`?%72oom=${room}`)).toMatchObject({ room: null });
+    expect(readOverlayConfig(`?ROOM=${room}`)).toMatchObject({ room: null });
+  });
+
   test("ignores a malformed room instead of failing the overlay", () => {
     expect(readOverlayConfig("?room=short")).toMatchObject({
       ok: true,

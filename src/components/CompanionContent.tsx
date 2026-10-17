@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
 import { getAllHeroes } from "@/data/heroes";
 import { perksFromIndices } from "@/lib/heroService";
+import { readRawParam } from "@/lib/overlay";
 import { RoomConnectionStatus, openRoomSocket } from "@/lib/rooms/client";
 import {
   ROOM_VIEW_PARAM,
@@ -87,9 +88,8 @@ export default function CompanionContent() {
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    const viewId = new URLSearchParams(window.location.search).get(
-      ROOM_VIEW_PARAM,
-    );
+    // Literal name only, so the id is always one analytics knows to redact.
+    const viewId = readRawParam(window.location.search, ROOM_VIEW_PARAM);
     if (!isViewId(viewId)) {
       setView({ status: "invalid" });
       track("companion_opened", { valid: false });

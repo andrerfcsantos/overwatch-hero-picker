@@ -246,11 +246,16 @@ export type OverlayConfig =
   | { ok: false; reason: ShareErrorReason; scale: number };
 
 /**
- * Reads one query parameter without the form-encoding rule that turns "+" into
- * a space. Shortcuts use "+" as their separator, and a streamer typing
- * `?key=ctrl+shift+h` into OBS means exactly that.
+ * Reads one query parameter by its literal name, without the form-encoding
+ * rule that turns "+" into a space.
+ *
+ * - Shortcuts use "+" as their separator, and a streamer typing
+ *   `?key=ctrl+shift+h` into OBS means exactly that.
+ * - Room keys are only honoured under the exact names the site generates.
+ *   URLSearchParams would also accept `?%72oom=`, which the analytics
+ *   redaction (and PostHog's own masking) would not recognise as `room`.
  */
-function readRawParam(search: string, name: string): string | null {
+export function readRawParam(search: string, name: string): string | null {
   for (const pair of search.replace(/^\?/, "").split("&")) {
     const separator = pair.indexOf("=");
     const key = separator === -1 ? pair : pair.slice(0, separator);
@@ -275,7 +280,7 @@ export function readOverlayConfig(search: string): OverlayConfig {
   const scale = parseOverlayScale(params.get(OVERLAY_SIZE_PARAM));
   // A malformed room is ignored rather than fatal: the overlay still works,
   // only the companion view stays empty.
-  const roomParam = params.get(ROOM_PUBLISH_PARAM);
+  const roomParam = readRawParam(search, ROOM_PUBLISH_PARAM);
   const room = isRoomSecret(roomParam) ? roomParam : null;
   const raw = params.get(SHARE_PARAM);
 
