@@ -9,6 +9,7 @@ import {
 } from "../../../workers/rooms/src/rateLimit";
 import {
   MAX_MESSAGE_BYTES,
+  generateRollId,
   generateRoomSecret,
   isRoomSecret,
   isViewId,
@@ -62,15 +63,21 @@ describe("room ids", () => {
 
 describe("publisher messages", () => {
   test("round-trips a roll", () => {
-    const raw = publisherRollMessage("ana", { minor: 1, major: 0 });
+    const raw = publisherRollMessage("roll-id-1", "ana", {
+      minor: 1,
+      major: 0,
+    });
     expect(parsePublisherMessage(raw)).toEqual({
       type: "roll",
-      roll: { heroKey: "ana", perks: { minor: 1, major: 0 } },
+      roll: { id: "roll-id-1", heroKey: "ana", perks: { minor: 1, major: 0 } },
     });
-    expect(parsePublisherMessage(publisherRollMessage("ana", null))).toEqual({
+    expect(
+      parsePublisherMessage(publisherRollMessage("roll-id-1", "ana", null)),
+    ).toEqual({
       type: "roll",
-      roll: { heroKey: "ana", perks: null },
+      roll: { id: "roll-id-1", heroKey: "ana", perks: null },
     });
+    expect(generateRollId()).toMatch(/^[A-Za-z0-9_-]{12}$/);
   });
 
   test("every hero key and perk index the site can roll is accepted", () => {
@@ -78,7 +85,10 @@ describe("publisher messages", () => {
       const perks = heroPerks[hero.key];
       const minor = perks ? perks.minor.length - 1 : 0;
       const major = perks ? perks.major.length - 1 : 0;
-      const raw = publisherRollMessage(hero.key, { minor, major });
+      const raw = publisherRollMessage(generateRollId(), hero.key, {
+        minor,
+        major,
+      });
       expect(parsePublisherMessage(raw), hero.key).not.toBeNull();
     }
   });
@@ -86,12 +96,18 @@ describe("publisher messages", () => {
   test("drops the client's own timestamp and extra fields", () => {
     const raw = JSON.stringify({
       type: "roll",
-      roll: { heroKey: "ana", perks: null, rolledAt: 1, extra: "<b>x</b>" },
+      roll: {
+        id: "roll-id-1",
+        heroKey: "ana",
+        perks: null,
+        rolledAt: 1,
+        extra: "<b>x</b>",
+      },
       more: true,
     });
     expect(parsePublisherMessage(raw)).toEqual({
       type: "roll",
-      roll: { heroKey: "ana", perks: null },
+      roll: { id: "roll-id-1", heroKey: "ana", perks: null },
     });
   });
 
@@ -102,32 +118,59 @@ describe("publisher messages", () => {
       "null",
       "[]",
       JSON.stringify({ type: "state" }),
+      JSON.stringify({ type: "roll", roll: { heroKey: "ana", perks: null } }),
+      JSON.stringify({
+        type: "roll",
+        roll: { id: "short", heroKey: "ana", perks: null },
+      }),
+      JSON.stringify({
+        type: "roll",
+        roll: { id: "has spaces in it", heroKey: "ana", perks: null },
+      }),
       JSON.stringify({ type: "roll" }),
-      JSON.stringify({ type: "roll", roll: { heroKey: "Ana", perks: null } }),
       JSON.stringify({
         type: "roll",
-        roll: { heroKey: "<script>", perks: null },
-      }),
-      JSON.stringify({ type: "roll", roll: { heroKey: "ana" } }),
-      JSON.stringify({
-        type: "roll",
-        roll: { heroKey: "ana", perks: { minor: -1, major: 0 } },
+        roll: { id: "roll-id-1", heroKey: "Ana", perks: null },
       }),
       JSON.stringify({
         type: "roll",
-        roll: { heroKey: "ana", perks: { minor: 1.5, major: 0 } },
+        roll: { id: "roll-id-1", heroKey: "<script>", perks: null },
       }),
       JSON.stringify({
         type: "roll",
-        roll: { heroKey: "ana", perks: { minor: 0, major: 99 } },
+        roll: { id: "roll-id-1", heroKey: "ana" },
       }),
       JSON.stringify({
         type: "roll",
-        roll: { heroKey: "a".repeat(33), perks: null },
+        roll: {
+          id: "roll-id-1",
+          heroKey: "ana",
+          perks: { minor: -1, major: 0 },
+        },
       }),
       JSON.stringify({
         type: "roll",
-        roll: { heroKey: "ana", perks: null },
+        roll: {
+          id: "roll-id-1",
+          heroKey: "ana",
+          perks: { minor: 1.5, major: 0 },
+        },
+      }),
+      JSON.stringify({
+        type: "roll",
+        roll: {
+          id: "roll-id-1",
+          heroKey: "ana",
+          perks: { minor: 0, major: 99 },
+        },
+      }),
+      JSON.stringify({
+        type: "roll",
+        roll: { id: "roll-id-1", heroKey: "a".repeat(33), perks: null },
+      }),
+      JSON.stringify({
+        type: "roll",
+        roll: { id: "roll-id-1", heroKey: "ana", perks: null },
         pad: "x".repeat(MAX_MESSAGE_BYTES),
       }),
     ];
@@ -136,7 +179,12 @@ describe("publisher messages", () => {
 });
 
 describe("viewer messages", () => {
-  const roll = { heroKey: "ana", perks: null, rolledAt: 1_700_000_000_000 };
+  const roll = {
+    id: "roll-id-1",
+    heroKey: "ana",
+    perks: null,
+    rolledAt: 1_700_000_000_000,
+  };
 
   test("parses every message the room sends", () => {
     expect(

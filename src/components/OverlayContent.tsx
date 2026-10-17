@@ -12,7 +12,7 @@ import {
   readOverlayConfig,
 } from "@/lib/overlay";
 import { openRoomSocket, RoomSocket } from "@/lib/rooms/client";
-import { publisherRollMessage } from "@/lib/rooms/protocol";
+import { generateRollId, publisherRollMessage } from "@/lib/rooms/protocol";
 import { PickerPreset } from "@/lib/share/types";
 import { Hero, PerkPick } from "@/types/hero";
 import RoleSpriteIcon from "./RoleSpriteIcon";
@@ -33,6 +33,8 @@ function poolFor(picker: PickerPreset): Hero[] {
 type Trigger = "obs_load" | "obs_hidden" | "keyboard";
 
 interface Roll {
+  /** Identifies this roll to the companion room across reconnects. */
+  id: string;
   hero: Hero;
   perks: PerkPick | null;
   count: number;
@@ -97,6 +99,7 @@ export default function OverlayContent() {
       });
       currentHeroKey.current = hero.key;
       setRoll((previous) => ({
+        id: generateRollId(),
         hero,
         perks: randomPerkIndices(hero.key),
         count: (previous?.count ?? 0) + 1,
@@ -145,6 +148,7 @@ export default function OverlayContent() {
     if (!roll || !picker) return;
     // Perks stay off the companion when they are off on stream.
     const message = publisherRollMessage(
+      roll.id,
       roll.hero.key,
       picker.showPerks ? roll.perks : null,
     );

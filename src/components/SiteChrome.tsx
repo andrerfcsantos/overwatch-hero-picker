@@ -11,6 +11,8 @@ interface SiteChromeProps {
   navbar: React.ReactNode;
   footer: React.ReactNode;
   extras?: React.ReactNode;
+  /** Third-party analytics, kept off the overlay pages (see GoogleAnalytics). */
+  analytics?: React.ReactNode;
 }
 
 /**
@@ -28,6 +30,7 @@ export default function SiteChrome({
   navbar,
   footer,
   extras,
+  analytics,
 }: SiteChromeProps) {
   const pathname = usePathname();
   if (pathname === OVERLAY_PATH || pathname.startsWith(`${OVERLAY_PATH}/`)) {
@@ -41,6 +44,7 @@ export default function SiteChrome({
         {children}
         {footer}
         {extras}
+        {analytics}
       </PresetProvider>
     </HeroProvider>
   );

@@ -16,7 +16,22 @@
   "workers_dev": false,
   "observability": {
     "enabled": true,
+    "logs": {
+      // Invocation logs record each request URL, and the overlay's handshake
+      // URL carries its publish secret. Errors and console output are still
+      // logged.
+      "invocation_logs": false,
+    },
   },
+  "ratelimits": [
+    {
+      // WebSocket handshakes per client IP. Generous for an overlay plus a
+      // few screens reconnecting; it stops connect loops and scripts.
+      "name": "HANDSHAKES",
+      "namespace_id": "4280",
+      "simple": { "limit": 30, "period": 60 },
+    },
+  ],
   "durable_objects": {
     "bindings": [
       {

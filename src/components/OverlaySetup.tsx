@@ -132,6 +132,9 @@ export default function OverlaySetup({
 
   const room = companionOn ? roomSecret : null;
   const url = open ? buildUrl(size, room) : "";
+  // The preview never joins the companion room: it rolls its own hero, which
+  // would otherwise replace the one OBS is showing on the streamer's phone.
+  const previewUrl = open ? buildUrl(size, null) : "";
   const companionLink = companionOn && viewId ? companionUrl(viewId) : "";
 
   const overlayCopy = useCopy(
@@ -198,7 +201,9 @@ export default function OverlaySetup({
       </button>
 
       {open && (
-        <div id={panelId} className="overlay-setup">
+        // ph-no-capture keeps PostHog autocapture and session replay away
+        // from the links and QR code, which carry the companion room keys.
+        <div id={panelId} className="overlay-setup ph-no-capture">
           <p className="overlay-setup-intro">
             Show your random hero on stream. The link carries the filters and
             options you have now — copy it again after changing them.
@@ -236,7 +241,7 @@ export default function OverlaySetup({
             </button>
             <a
               className="action-button"
-              href={url}
+              href={previewUrl}
               target="_blank"
               rel="noopener noreferrer"
               title="Preview the overlay in a new tab"

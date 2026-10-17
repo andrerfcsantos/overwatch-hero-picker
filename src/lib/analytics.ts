@@ -222,18 +222,17 @@ export function isStacklessThirdPartyException(event: CaptureResult): boolean {
   );
 }
 
-function scrubUrls(container: unknown): void {
+/**
+ * Redacts share payloads and room keys from every string property, not only
+ * the URL-named ones: autocapture puts a clicked link's href in
+ * `$elements_chain`, and any property could end up holding a link.
+ */
+export function scrubSecrets(container: unknown): void {
   if (typeof container !== "object" || container === null) return;
   const record = container as Record<string, unknown>;
   for (const key of Object.keys(record)) {
     const value = record[key];
-    const lower = key.toLowerCase();
-    if (
-      typeof value === "string" &&
-      (lower.includes("url") || lower.includes("referrer"))
-    ) {
-      record[key] = redactUrl(value);
-    }
+    if (typeof value === "string") record[key] = redactUrl(value);
   }
 }
 
@@ -265,11 +264,11 @@ export function initAnalytics(projectToken: string, host: string): void {
     before_send: (event) => {
       if (!event) return null;
       if (isStacklessThirdPartyException(event)) return null;
-      scrubUrls(event.properties);
-      scrubUrls(event.properties?.$set);
-      scrubUrls(event.properties?.$set_once);
-      scrubUrls(event.$set);
-      scrubUrls(event.$set_once);
+      scrubSecrets(event.properties);
+      scrubSecrets(event.properties?.$set);
+      scrubSecrets(event.properties?.$set_once);
+      scrubSecrets(event.$set);
+      scrubSecrets(event.$set_once);
       return event;
     },
   });

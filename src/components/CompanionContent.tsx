@@ -122,9 +122,7 @@ export default function CompanionContent() {
         update((current) => {
           switch (message.type) {
             case "state": {
-              const changed =
-                message.roll?.rolledAt !== current.roll?.rolledAt ||
-                message.roll?.heroKey !== current.roll?.heroKey;
+              const changed = message.roll?.id !== current.roll?.id;
               return {
                 ...current,
                 roll: message.roll,
@@ -138,7 +136,10 @@ export default function CompanionContent() {
                 roll: message.roll,
                 // Only the overlay posts rolls, so it is evidently online.
                 overlayOnline: true,
-                rolls: current.rolls + 1,
+                rolls:
+                  message.roll.id === current.roll?.id
+                    ? current.rolls
+                    : current.rolls + 1,
               };
             case "presence":
               return { ...current, overlayOnline: message.overlayOnline };

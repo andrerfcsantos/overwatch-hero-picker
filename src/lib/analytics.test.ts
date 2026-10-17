@@ -1,7 +1,11 @@
 import { describe, expect, test } from "vite-plus/test";
 import type { CaptureResult } from "posthog-js/dist/module.slim";
 
-import { isStacklessThirdPartyException, redactUrl } from "./analytics";
+import {
+  isStacklessThirdPartyException,
+  redactUrl,
+  scrubSecrets,
+} from "./analytics";
 
 function exceptionEvent(list: unknown): CaptureResult {
   return {
@@ -89,5 +93,24 @@ describe("redactUrl", () => {
   test("leaves look-alike params alone", () => {
     const url = "https://owheropicker.com/?id=1&preview=2&roomy=3";
     expect(redactUrl(url)).toBe(url);
+  });
+});
+
+describe("scrubSecrets", () => {
+  test("redacts links in any string property, including autocapture's", () => {
+    const properties = {
+      $current_url: "https://owheropicker.com/overlay?d=abc&room=SECRET",
+      $elements_chain:
+        'a.action-button:attr__href="https://owheropicker.com/overlay?d=abc&room=SECRET"nth-child="3"',
+      label: "Open in new tab",
+      count: 3,
+    };
+    scrubSecrets(properties);
+    expect(properties.$current_url).toBe(
+      "https://owheropicker.com/overlay?d=REDACTED&room=REDACTED",
+    );
+    expect(properties.$elements_chain).not.toContain("SECRET");
+    expect(properties.label).toBe("Open in new tab");
+    expect(properties.count).toBe(3);
   });
 });

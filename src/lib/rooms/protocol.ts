@@ -22,6 +22,10 @@ const SECRET_PATTERN = /^[A-Za-z0-9_-]{32,64}$/;
 /** A SHA-256 digest in unpadded base64url is always 43 characters. */
 const VIEW_ID_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
+/** Random per roll, so a re-sent roll is recognised as the same one. */
+const ROLL_ID_BYTES = 9;
+const ROLL_ID_PATTERN = /^[A-Za-z0-9_-]{8,32}$/;
+
 /** Hero keys are short lowercase slugs ("ana", "soldier76", "junker-queen"). */
 const HERO_KEY_PATTERN = /^[a-z0-9_-]{1,32}$/;
 /** Perk indices index short lists; anything past this is garbage. */
@@ -40,6 +44,12 @@ export interface RoomPerks {
 }
 
 export interface RoomRoll {
+  /**
+   * Chosen by the overlay for each roll. The overlay re-sends its current roll
+   * whenever it reconnects; the room uses the id to tell that apart from a new
+   * roll, so the roll keeps its time and companions do not replay it.
+   */
+  id: string;
   heroKey: string;
   /** Null when the overlay does not show perks. */
   perks: RoomPerks | null;
@@ -50,7 +60,7 @@ export interface RoomRoll {
 /** Overlay → room. */
 export type PublisherMessage = {
   type: "roll";
-  roll: Pick<RoomRoll, "heroKey" | "perks">;
+  roll: Pick<RoomRoll, "id" | "heroKey" | "perks">;
 };
 
 /** Room → companion. */
@@ -70,6 +80,12 @@ function base64Url(bytes: Uint8Array): string {
 
 export function generateRoomSecret(): string {
   const bytes = new Uint8Array(SECRET_BYTES);
+  crypto.getRandomValues(bytes);
+  return base64Url(bytes);
+}
+
+export function generateRollId(): string {
+  const bytes = new Uint8Array(ROLL_ID_BYTES);
   crypto.getRandomValues(bytes);
   return base64Url(bytes);
 }
@@ -114,11 +130,14 @@ function readPerks(value: unknown): RoomPerks | null | undefined {
 /** The hero and perks of a roll, or undefined when malformed. */
 function readRollBody(value: unknown): PublisherMessage["roll"] | undefined {
   if (!isRecord(value)) return undefined;
+  if (typeof value.id !== "string" || !ROLL_ID_PATTERN.test(value.id)) {
+    return undefined;
+  }
   if (typeof value.heroKey !== "string") return undefined;
   if (!HERO_KEY_PATTERN.test(value.heroKey)) return undefined;
   const perks = readPerks(value.perks);
   if (perks === undefined) return undefined;
-  return { heroKey: value.heroKey, perks };
+  return { id: value.id, heroKey: value.heroKey, perks };
 }
 
 function readRoll(value: unknown): RoomRoll | undefined {
@@ -181,9 +200,13 @@ export function parseViewerMessage(raw: string): ViewerMessage | null {
 }
 
 export function publisherRollMessage(
+  id: string,
   heroKey: string,
   perks: RoomPerks | null,
 ): string {
-  const message: PublisherMessage = { type: "roll", roll: { heroKey, perks } };
+  const message: PublisherMessage = {
+    type: "roll",
+    roll: { id, heroKey, perks },
+  };
   return JSON.stringify(message);
 }

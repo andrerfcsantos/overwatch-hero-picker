@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Script from "next/script";
 import SiteChrome from "@/components/SiteChrome";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
@@ -53,28 +53,13 @@ export default function RootLayout({
         <link rel="preload" as="image" href={ICON_SPRITE.src} />
         <link rel="preload" as="image" href={PORTRAIT_SPRITE.src} />
         <link rel="preload" as="image" href={ROLE_SPRITE.src} />
-
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-JLMCGX0Z78"
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-JLMCGX0Z78');
-          `}
-        </Script>
       </head>
       <body>
         <SiteChrome
           navbar={<Navbar />}
           footer={<Footer />}
           extras={<KeyboardShortcutHint />}
+          analytics={<GoogleAnalytics />}
         >
           {children}
         </SiteChrome>

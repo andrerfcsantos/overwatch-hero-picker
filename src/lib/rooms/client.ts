@@ -1,4 +1,9 @@
-import { PING_MESSAGE, ROOM_PUBLISH_PARAM, ROOM_VIEW_PARAM } from "./protocol";
+import {
+  PING_MESSAGE,
+  PONG_MESSAGE,
+  ROOM_PUBLISH_PARAM,
+  ROOM_VIEW_PARAM,
+} from "./protocol";
 
 /**
  * Where the rooms Worker (workers/rooms) listens. Overridable for local
@@ -20,6 +25,8 @@ export interface RoomSocketOptions {
   onStatus?: (status: RoomConnectionStatus) => void;
   /** Called on every successful (re)connect, before onStatus("open"). */
   onOpen?: (send: (data: string) => boolean) => void;
+  /** For tests: how to open the socket. */
+  createSocket?: (url: string) => WebSocket;
 }
 
 export interface RoomSocket {
@@ -29,7 +36,15 @@ export interface RoomSocket {
 }
 
 const PING_INTERVAL_MS = 25_000;
+/**
+ * A socket can stay "open" on a connection that silently stopped carrying
+ * traffic (a phone switching networks, a sleeping laptop). If nothing — not
+ * even the pong — arrives this long after a ping, the socket is replaced.
+ */
+const PONG_TIMEOUT_MS = 10_000;
 const MIN_RETRY_MS = 1_000;
+/** WebSocket.OPEN, spelled out so tests need no WebSocket global. */
+const OPEN = 1;
 const MAX_RETRY_MS = 30_000;
 
 export function roomSocketUrl(target: RoomTarget, base = ROOMS_URL): string {
@@ -60,14 +75,17 @@ export function retryDelay(attempt: number, random = Math.random): number {
  */
 export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
   const url = roomSocketUrl(options.target);
+  const createSocket =
+    options.createSocket ?? ((target) => new WebSocket(target));
   let socket: WebSocket | null = null;
   let closed = false;
   let attempt = 0;
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
   let pingTimer: ReturnType<typeof setInterval> | null = null;
+  let pongTimer: ReturnType<typeof setTimeout> | null = null;
 
   const send = (data: string): boolean => {
-    if (socket?.readyState !== WebSocket.OPEN) return false;
+    if (socket?.readyState !== OPEN) return false;
     try {
       socket.send(data);
       return true;
@@ -76,9 +94,24 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
     }
   };
 
-  const stopPing = () => {
+  const stopHeartbeat = () => {
     if (pingTimer) clearInterval(pingTimer);
+    if (pongTimer) clearTimeout(pongTimer);
     pingTimer = null;
+    pongTimer = null;
+  };
+
+  /** Drops the current socket without waiting for its close handshake. */
+  const abandon = (current: WebSocket) => {
+    if (socket !== current) return;
+    stopHeartbeat();
+    socket = null;
+    try {
+      current.close(4000, "No response.");
+    } catch {
+      // Already closing.
+    }
+    scheduleRetry();
   };
 
   const connect = () => {
@@ -86,7 +119,7 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
     options.onStatus?.(attempt === 0 ? "connecting" : "reconnecting");
     let current: WebSocket;
     try {
-      current = new WebSocket(url);
+      current = createSocket(url);
     } catch {
       scheduleRetry();
       return;
@@ -96,18 +129,25 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
     current.addEventListener("open", () => {
       if (closed || socket !== current) return;
       attempt = 0;
-      stopPing();
-      pingTimer = setInterval(() => send(PING_MESSAGE), PING_INTERVAL_MS);
+      stopHeartbeat();
+      pingTimer = setInterval(() => {
+        if (!send(PING_MESSAGE) || pongTimer) return;
+        pongTimer = setTimeout(() => abandon(current), PONG_TIMEOUT_MS);
+      }, PING_INTERVAL_MS);
       options.onOpen?.(send);
       options.onStatus?.("open");
     });
     current.addEventListener("message", (event) => {
-      if (socket !== current || typeof event.data !== "string") return;
+      if (socket !== current) return;
+      // Any traffic proves the connection is alive.
+      if (pongTimer) clearTimeout(pongTimer);
+      pongTimer = null;
+      if (typeof event.data !== "string" || event.data === PONG_MESSAGE) return;
       options.onMessage?.(event.data);
     });
     current.addEventListener("close", () => {
       if (socket !== current) return;
-      stopPing();
+      stopHeartbeat();
       socket = null;
       scheduleRetry();
     });
@@ -128,7 +168,7 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
     close() {
       closed = true;
       if (retryTimer) clearTimeout(retryTimer);
-      stopPing();
+      stopHeartbeat();
       const current = socket;
       socket = null;
       try {

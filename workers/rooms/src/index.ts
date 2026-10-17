@@ -27,6 +27,9 @@ const IDLE_CLEANUP_MS = 7 * 24 * 60 * 60 * 1000;
 
 const ROLL_KEY = "roll";
 
+/** URL of the request the entry Worker forwards to a room. Never public. */
+const ROOM_URL = "https://room.internal/connect";
+
 interface Attachment extends RollAllowance {
   role: Role;
 }
@@ -53,6 +56,11 @@ export default {
     if (!isOriginAllowed(request.headers.get("Origin"), env.ALLOWED_ORIGINS)) {
       return text("Origin not allowed.", 403);
     }
+    // Every handshake is a billed request and can create a room, so a client
+    // stuck in a connect loop (or a script) is cut off per IP.
+    const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+    const { success } = await env.HANDSHAKES.limit({ key: ip });
+    if (!success) return text("Too many connections.", 429);
 
     // Exactly one of the two: the publish secret (overlay) or the view id
     // (companion). The overlay's room is named by the hash of its secret, so
@@ -71,10 +79,14 @@ export default {
       return text("Invalid room.", 400);
     }
 
+    // The room only needs the handshake headers and the role. Its request URL
+    // is a fixed internal one, so the publish secret in the public URL goes
+    // no further than this Worker (whose invocation logs are off, see
+    // wrangler.jsonc).
     const stub = env.ROOMS.get(env.ROOMS.idFromName(roomName));
     const headers = new Headers(request.headers);
     headers.set(ROLE_HEADER, role);
-    return stub.fetch(new Request(request.url, { headers }));
+    return stub.fetch(new Request(ROOM_URL, { headers }));
   },
 } satisfies ExportedHandler<Env>;
 
@@ -132,8 +144,23 @@ export class Room extends DurableObject<Env> {
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer) {
     const attachment = ws.deserializeAttachment() as Attachment | null;
-    // Companions only listen; anything they send besides pings is ignored.
-    if (attachment?.role !== "publisher") return;
+    // Companions only listen. Their pings are answered by the runtime without
+    // reaching this handler, so anything that does arrive is a misbehaving
+    // client waking the room for nothing.
+    if (attachment?.role !== "publisher") {
+      ws.close(1008, "Companions cannot send messages.");
+      return;
+    }
+
+    // Every message spends a token, valid or not, so neither rolls nor junk
+    // can keep the room awake.
+    const now = Date.now();
+    const { allowed, next } = takeRollToken(attachment, now);
+    if (!allowed) {
+      ws.close(1008, "Too many messages.");
+      return;
+    }
+    ws.serializeAttachment({ ...attachment, ...next });
 
     if (typeof message !== "string") {
       ws.close(1003, "Text messages only.");
@@ -144,15 +171,15 @@ export class Room extends DurableObject<Env> {
       return;
     }
     const parsed = parsePublisherMessage(message);
-    if (!parsed) return;
-
-    const now = Date.now();
-    const { allowed, next } = takeRollToken(attachment, now);
-    if (!allowed) {
-      ws.close(1008, "Too many rolls.");
+    if (!parsed) {
+      ws.close(1008, "Invalid message.");
       return;
     }
-    ws.serializeAttachment({ ...attachment, ...next });
+
+    // The overlay re-sends its current roll on every reconnect. The same id
+    // means the same roll: keep its original time and do not replay it.
+    const stored = await this.ctx.storage.get<RoomRoll>(ROLL_KEY);
+    if (stored?.id === parsed.roll.id) return;
 
     const roll: RoomRoll = { ...parsed.roll, rolledAt: now };
     await this.ctx.storage.put(ROLL_KEY, roll);
