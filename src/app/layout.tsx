@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
-import { HeroProvider } from "@/context/HeroContext";
-import { PresetProvider } from "@/context/PresetContext";
+import SiteChrome from "@/components/SiteChrome";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
@@ -72,14 +71,13 @@ export default function RootLayout({
         </Script>
       </head>
       <body>
-        <HeroProvider>
-          <PresetProvider>
-            <Navbar />
-            {children}
-            <Footer />
-            <KeyboardShortcutHint />
-          </PresetProvider>
-        </HeroProvider>
+        <SiteChrome
+          navbar={<Navbar />}
+          footer={<Footer />}
+          extras={<KeyboardShortcutHint />}
+        >
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

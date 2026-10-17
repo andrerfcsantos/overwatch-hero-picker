@@ -5,14 +5,18 @@ import { useHeroes } from "@/context/HeroContext";
 import PresetBar from "./PresetBar";
 import RoleSection from "./RoleSection";
 import ShareButton from "./ShareButton";
+import OverlaySetup from "./OverlaySetup";
 
 interface HeroFilterPanelProps {
   /** Supplied by the picker, which owns the options the preset also carries. */
   buildPresetUrl?: () => string;
+  /** Supplied by the picker, for the same reason. */
+  buildOverlayUrl?: () => string;
 }
 
 export default function HeroFilterPanel({
   buildPresetUrl,
+  buildOverlayUrl,
 }: HeroFilterPanelProps) {
   const { getSelected, selectAll, unselectAll } = useHeroes();
   const numberOfSelected = getSelected().length;
@@ -72,6 +76,12 @@ export default function HeroFilterPanel({
             label="Share these filters"
             copiedLabel="Filter link copied!"
             title="Copy a link that sets up these filters and options"
+          />
+        )}
+        {buildOverlayUrl && (
+          <OverlaySetup
+            buildUrl={buildOverlayUrl}
+            heroCount={numberOfSelected}
           />
         )}
       </div>

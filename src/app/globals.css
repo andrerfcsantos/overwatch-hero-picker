@@ -179,6 +179,67 @@ a:hover {
   font-size: 0.8rem;
 }
 
+/* Stream overlay setup panel (picker) */
+.overlay-setup {
+  flex-basis: 100%;
+  margin-top: 0.4rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid #f99e1a;
+  border-radius: 0.4rem;
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.95rem;
+  text-align: start;
+  animation: popoverFadeIn 0.15s ease-out;
+}
+
+.overlay-setup-intro,
+.overlay-setup-note {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.overlay-setup-note {
+  margin-top: 0.5rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
+}
+
+.overlay-setup-link {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.6rem 0;
+}
+
+.overlay-setup-link input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem 0.4rem;
+  background: #0f1923;
+  border: 1px solid rgba(240, 100, 20, 0.5);
+  border-radius: 0.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+}
+
+.overlay-setup-link .action-button {
+  flex-shrink: 0;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+}
+
+.overlay-setup-steps {
+  margin: 0;
+  padding-left: 1.3rem;
+  list-style: decimal;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.overlay-setup-steps li + li {
+  margin-top: 0.3rem;
+}
+
 /* Shared preset notice */
 .shared-preset-notice {
   display: flex;
