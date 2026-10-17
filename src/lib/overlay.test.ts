@@ -1,5 +1,6 @@
-import { describe, expect, test } from "vite-plus/test";
+import { afterEach, describe, expect, test, vi } from "vite-plus/test";
 
+import { getAllHeroes } from "@/data/heroes";
 import { encodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
 import {
@@ -7,10 +8,22 @@ import {
   matchesShortcut,
   overlayUrl,
   OVERLAY_SIZES,
+  LAST_HERO_STORAGE_KEY,
+  nextOverlayHero,
   parseOverlayScale,
   parseShortcut,
+  readLastOverlayHero,
   readOverlayConfig,
+  rememberOverlayHero,
 } from "./overlay";
+
+function memoryStorage() {
+  const values = new Map<string, string>();
+  return {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => void values.set(key, value),
+  };
+}
 
 function keyEvent(
   key: string,
@@ -243,5 +256,113 @@ describe("parseOverlayScale", () => {
     ]) {
       expect(parseOverlayScale(value)).toBe(1);
     }
+  });
+});
+
+describe("last overlay hero", () => {
+  test("remembers the last hero across reads", () => {
+    const storage = memoryStorage();
+    expect(readLastOverlayHero(storage)).toBe("");
+    rememberOverlayHero("ana", storage);
+    expect(readLastOverlayHero(storage)).toBe("ana");
+    expect(storage.getItem(LAST_HERO_STORAGE_KEY)).toBe("ana");
+  });
+
+  test("never throws when storage is missing or blocked", () => {
+    const blocked = {
+      getItem: () => {
+        throw new Error("blocked");
+      },
+      setItem: () => {
+        throw new Error("blocked");
+      },
+    };
+    expect(readLastOverlayHero(blocked)).toBe("");
+    expect(() => rememberOverlayHero("ana", blocked)).not.toThrow();
+    expect(readLastOverlayHero(undefined)).toBe("");
+  });
+});
+
+describe("nextOverlayHero", () => {
+  const heroes = getAllHeroes();
+  const byKey = (key: string) => heroes.find((hero) => hero.key === key)!;
+  const anaAndMercy = [byKey("ana"), byKey("mercy")];
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("non-repeating holds across page loads through storage", () => {
+    // Each call with previousHeroKey null is a fresh load, as with OBS's
+    // "Shutdown source when not visible": only storage links the loads.
+    const storage = memoryStorage();
+    const shown: string[] = [];
+    for (let load = 0; load < 20; load++) {
+      const hero = nextOverlayHero(
+        anaAndMercy,
+        { nonRepeating: true, previousHeroKey: null },
+        storage,
+      );
+      shown.push(hero.key);
+    }
+    for (let i = 1; i < shown.length; i++) {
+      expect(shown[i]).not.toBe(shown[i - 1]);
+    }
+    expect(readLastOverlayHero(storage)).toBe(shown.at(-1));
+  });
+
+  test("the hero shown in this load wins over the remembered one", () => {
+    const storage = memoryStorage();
+    rememberOverlayHero("ana", storage);
+    const hero = nextOverlayHero(
+      anaAndMercy,
+      { nonRepeating: true, previousHeroKey: "mercy" },
+      storage,
+    );
+    expect(hero.key).toBe("ana");
+  });
+
+  test("repeats are allowed when non-repeating mode is off", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const storage = memoryStorage();
+    rememberOverlayHero("ana", storage);
+    const hero = nextOverlayHero(
+      anaAndMercy,
+      { nonRepeating: false, previousHeroKey: null },
+      storage,
+    );
+    expect(hero.key).toBe("ana");
+  });
+
+  test("a one-hero pool keeps returning its hero", () => {
+    const storage = memoryStorage();
+    for (let load = 0; load < 3; load++) {
+      const hero = nextOverlayHero(
+        [byKey("ana")],
+        { nonRepeating: true, previousHeroKey: null },
+        storage,
+      );
+      expect(hero.key).toBe("ana");
+    }
+  });
+
+  test("a remembered hero outside the pool is ignored", () => {
+    const storage = memoryStorage();
+    rememberOverlayHero("reinhardt", storage);
+    const hero = nextOverlayHero(
+      anaAndMercy,
+      { nonRepeating: true, previousHeroKey: null },
+      storage,
+    );
+    expect(["ana", "mercy"]).toContain(hero.key);
+  });
+
+  test("works without storage", () => {
+    const hero = nextOverlayHero(
+      anaAndMercy,
+      { nonRepeating: true, previousHeroKey: null },
+      undefined,
+    );
+    expect(["ana", "mercy"]).toContain(hero.key);
   });
 });

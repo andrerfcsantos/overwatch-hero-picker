@@ -14,15 +14,16 @@ import {
 const SIZE_STORAGE_KEY = "overlaySize";
 
 /**
- * Browser source dimensions that always fit the card at each size: its widest
- * (perks wrap at 30 units) and tallest (the portrait) plus the 16px margin,
- * rounded up. A unit is 8px times the size's scale; see OverlayContent.module.css.
+ * Browser source dimensions that always fit the card at each size, with some
+ * headroom: its widest (perks wrap at 30 units) and tallest (long perks
+ * wrapping to three lines) plus the 16px margin. Measured over many rolls of
+ * every hero; a unit is 8px times the size's scale, see OverlayContent.module.css.
  */
 const SOURCE_SIZES: Record<OverlaySize, string> = {
-  small: "220 × 100",
-  medium: "280 × 120",
-  large: "400 × 160",
-  xl: "520 × 200",
+  small: "220 × 110",
+  medium: "280 × 140",
+  large: "400 × 180",
+  xl: "520 × 240",
 };
 
 interface OverlaySetupProps {
@@ -162,13 +163,18 @@ export default function OverlaySetup({
               size; place it anywhere on your scene.
             </li>
             <li>
+              In the same source&apos;s properties, tick{" "}
+              <strong>Shutdown source when not visible</strong>. Without it, the
+              previous hero flashes for a moment when the overlay reappears.
+            </li>
+            <li>
               Open <strong>Settings → Hotkeys</strong>, find{" "}
               <strong>Show</strong> and <strong>Hide</strong> for that source
               under your scene, and give both the <em>same</em> key.
             </li>
             <li>
-              Press the key once to hide the overlay — a new hero is rolled
-              while it is hidden — and again to reveal it.
+              Press the key once to hide the overlay, and again to bring it back
+              with a new hero.
             </li>
           </ol>
 

@@ -1,13 +1,15 @@
+import { randomHero } from "@/lib/heroService";
 import { ShareErrorReason } from "@/lib/share/binary";
 import { encodeShare, tryDecodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
 import { SHARE_PARAM } from "@/lib/share/urls";
+import { Hero } from "@/types/hero";
 
 /**
  * The stream overlay is a page streamers add to OBS as a Browser Source. OBS
  * runs it in its own embedded browser, which shares no storage with the
- * streamer's normal browser — so everything the overlay needs travels in its
- * URL instead of being read from localStorage.
+ * streamer's normal browser — so its filters and options travel in its URL
+ * instead of being read from the picker's saved settings.
  */
 export const OVERLAY_PATH = "/overlay";
 
@@ -80,6 +82,70 @@ export function overlayUrl(
   const path = `${OVERLAY_PATH}?${SHARE_PARAM}=${encoded}${sizeParam}`;
   if (typeof window === "undefined") return path;
   return new URL(path, window.location.origin).toString();
+}
+
+/**
+ * The overlay is meant to run with OBS's "Shutdown source when not visible"
+ * ticked, so every show is a fresh page load. Non-repeating mode therefore
+ * has to remember the last hero across loads, not just in memory.
+ */
+export const LAST_HERO_STORAGE_KEY = "overlayLastHero";
+
+type HeroStorage = Pick<Storage, "getItem" | "setItem">;
+
+function defaultStorage(): HeroStorage | undefined {
+  try {
+    return typeof window === "undefined" ? undefined : window.localStorage;
+  } catch {
+    // Storage can be blocked outright, in which case the getter throws.
+    return undefined;
+  }
+}
+
+/** The hero the overlay showed last, or "" when unknown. Never throws. */
+export function readLastOverlayHero(
+  storage: HeroStorage | undefined = defaultStorage(),
+): string {
+  try {
+    return storage?.getItem(LAST_HERO_STORAGE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/** Best effort: without storage, non-repeating mode only holds within a load. */
+export function rememberOverlayHero(
+  heroKey: string,
+  storage: HeroStorage | undefined = defaultStorage(),
+): void {
+  try {
+    storage?.setItem(LAST_HERO_STORAGE_KEY, heroKey);
+  } catch {
+    // Quota or privacy settings; nothing useful to do.
+  }
+}
+
+/**
+ * Picks the overlay's next hero and remembers it for the next page load.
+ *
+ * `previousHeroKey` is the hero this load already showed, or null on a fresh
+ * load — the normal case with OBS's "Shutdown source when not visible", where
+ * every show is a reload and the remembered hero stands in for it. Non-repeating
+ * mode then avoids that hero. A remembered hero outside the pool is simply
+ * never picked, and a one-hero pool still returns its hero.
+ */
+export function nextOverlayHero(
+  pool: readonly Hero[],
+  options: { nonRepeating: boolean; previousHeroKey: string | null },
+  storage: HeroStorage | undefined = defaultStorage(),
+): Hero {
+  const previous = options.previousHeroKey ?? readLastOverlayHero(storage);
+  const hero = randomHero([...pool], {
+    preventRepeat: options.nonRepeating,
+    previousHeroKey: previous,
+  });
+  rememberOverlayHero(hero.key, storage);
+  return hero;
 }
 
 export interface KeyShortcut {

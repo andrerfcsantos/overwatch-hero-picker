@@ -63,7 +63,7 @@
 }
 
 .label {
-  font-size: calc(1.15 * var(--u));
+  font-size: calc(1.5 * var(--u));
   line-height: 1;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -91,7 +91,7 @@
 .perks {
   margin-top: calc(0.4 * var(--u));
   font-family: "Config", Arial, Helvetica, sans-serif;
-  font-size: calc(1.1 * var(--u));
+  font-size: calc(1.45 * var(--u));
   line-height: 1.3;
 }
 
