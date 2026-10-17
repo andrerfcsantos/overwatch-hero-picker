@@ -15,7 +15,7 @@ import {
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
 import { PickerPreset } from "@/lib/share/types";
 import { shareUrl } from "@/lib/share/urls";
-import { overlayUrl } from "@/lib/overlay";
+import { OverlaySize, overlayUrl } from "@/lib/overlay";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
 import ShareButton from "@/components/ShareButton";
@@ -200,7 +200,7 @@ export default function PickerContent() {
   );
 
   const buildOverlayUrl = useCallback(
-    () => overlayUrl(currentPreset()),
+    (size: OverlaySize) => overlayUrl(currentPreset(), size),
     [currentPreset],
   );
 

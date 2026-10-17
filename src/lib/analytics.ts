@@ -17,6 +17,7 @@ import {
   SessionReplayExtensions,
 } from "posthog-js/dist/extension-bundles";
 import { HeroRole } from "@/types/hero";
+import type { OverlaySize } from "@/lib/overlay";
 
 /** One value per share surface, so the funnel can tell them apart. */
 export type ShareType =
@@ -150,13 +151,17 @@ type EventMap = {
     /** "fallback" means the clipboard failed and the link was selected instead. */
     method: "clipboard" | "fallback";
     hero_count: number;
+    size: OverlaySize;
   };
+  overlay_link_opened: { hero_count: number; size: OverlaySize };
   overlay_opened: {
     /** False when the link's filters could not be decoded. */
     valid: boolean;
     /** Whether the page is running inside an OBS browser source. */
     in_obs: boolean;
     has_key: boolean;
+    /** A preset id, or "custom" for a numeric `size` param. */
+    size: OverlaySize | "custom";
   };
 };
 

@@ -9,6 +9,7 @@ import {
   randomPerkIndices,
 } from "@/lib/heroService";
 import {
+  OVERLAY_SIZES,
   OverlayConfig,
   matchesShortcut,
   readOverlayConfig,
@@ -68,6 +69,8 @@ export default function OverlayContent() {
       valid: read.ok,
       in_obs: "obsstudio" in window,
       has_key: read.ok && read.shortcut !== null,
+      size:
+        OVERLAY_SIZES.find((size) => size.scale === read.scale)?.id ?? "custom",
     });
   }, []);
 
@@ -144,7 +147,10 @@ export default function OverlayContent() {
           transparent. */}
       <style>{`html, body { background: transparent !important; overflow: hidden; }`}</style>
 
-      <main className={styles.root}>
+      <main
+        className={styles.root}
+        style={{ "--overlay-scale": config?.scale ?? 1 } as React.CSSProperties}
+      >
         {config && !config.ok && (
           <div className={`${styles.card} ${styles.error}`} role="alert">
             <span className={styles.label}>Hero picker overlay</span>

@@ -212,6 +212,28 @@ a:hover {
   font-size: 0.85rem;
 }
 
+.overlay-setup-size {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.overlay-setup-size select {
+  padding: 0.15rem 0.3rem;
+  background: #0f1923;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.25rem;
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.overlay-setup-size select:focus-visible {
+  outline: 2px solid #f99e1a;
+  outline-offset: 2px;
+}
+
 .overlay-setup-link {
   display: flex;
   gap: 0.4rem;
@@ -233,6 +255,19 @@ a:hover {
 .overlay-setup-link .action-button {
   flex-shrink: 0;
   font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+}
+
+/* The open link is styled as a button; the global link colours would win. */
+.overlay-setup-link a.action-button,
+.overlay-setup-link a.action-button:visited {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+}
+
+.overlay-setup-link a.action-button:hover {
+  color: white;
 }
 
 .overlay-setup-steps {

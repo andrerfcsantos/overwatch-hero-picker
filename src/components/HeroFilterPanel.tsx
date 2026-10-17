@@ -6,12 +6,13 @@ import PresetBar from "./PresetBar";
 import RoleSection from "./RoleSection";
 import ShareButton from "./ShareButton";
 import OverlaySetup from "./OverlaySetup";
+import { OverlaySize } from "@/lib/overlay";
 
 interface HeroFilterPanelProps {
   /** Supplied by the picker, which owns the options the preset also carries. */
   buildPresetUrl?: () => string;
   /** Supplied by the picker, for the same reason. */
-  buildOverlayUrl?: () => string;
+  buildOverlayUrl?: (size: OverlaySize) => string;
 }
 
 export default function HeroFilterPanel({

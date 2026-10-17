@@ -6,6 +6,8 @@ import {
   DEFAULT_OVERLAY_PICKER,
   matchesShortcut,
   overlayUrl,
+  OVERLAY_SIZES,
+  parseOverlayScale,
   parseShortcut,
   readOverlayConfig,
 } from "./overlay";
@@ -120,6 +122,7 @@ describe("readOverlayConfig", () => {
       ok: true,
       picker: DEFAULT_OVERLAY_PICKER,
       shortcut: null,
+      scale: 1,
     });
   });
 
@@ -127,7 +130,23 @@ describe("readOverlayConfig", () => {
     const url = new URL(overlayUrl(picker), "https://example.com");
     expect(url.pathname).toBe("/overlay");
     const config = readOverlayConfig(url.search);
-    expect(config).toEqual({ ok: true, picker, shortcut: null });
+    expect(config).toEqual({ ok: true, picker, shortcut: null, scale: 1 });
+  });
+
+  test("leaves the default size out of the link and carries the others", () => {
+    expect(overlayUrl(picker, "medium")).not.toContain("size=");
+    for (const size of OVERLAY_SIZES) {
+      const url = new URL(overlayUrl(picker, size.id), "https://example.com");
+      const config = readOverlayConfig(url.search);
+      expect(config).toMatchObject({ ok: true, picker, scale: size.scale });
+    }
+  });
+
+  test("sizes the error card for a broken link too", () => {
+    expect(readOverlayConfig("?d=garbage&size=large")).toMatchObject({
+      ok: false,
+      scale: 1.5,
+    });
   });
 
   test("reads the optional test key alongside the filters", () => {
@@ -190,5 +209,39 @@ describe("readOverlayConfig", () => {
     });
     expect(readOverlayConfig(`?d=${squad}`).ok).toBe(false);
     expect(readOverlayConfig("?d=not-a-payload").ok).toBe(false);
+  });
+});
+
+describe("parseOverlayScale", () => {
+  test("reads presets, case-insensitively", () => {
+    expect(parseOverlayScale("small")).toBe(0.75);
+    expect(parseOverlayScale("Medium")).toBe(1);
+    expect(parseOverlayScale("LARGE")).toBe(1.5);
+    expect(parseOverlayScale("xl")).toBe(2);
+  });
+
+  test("reads a multiple of the default size", () => {
+    expect(parseOverlayScale("1.25")).toBe(1.25);
+    expect(parseOverlayScale(".5")).toBe(0.5);
+  });
+
+  test("clamps numbers to the supported range", () => {
+    expect(parseOverlayScale("0.01")).toBe(0.25);
+    expect(parseOverlayScale("100")).toBe(4);
+  });
+
+  test("falls back to the default for anything else", () => {
+    for (const value of [
+      null,
+      "",
+      "huge",
+      "0",
+      "-2",
+      "1e3",
+      "Infinity",
+      "2px",
+    ]) {
+      expect(parseOverlayScale(value)).toBe(1);
+    }
   });
 });
