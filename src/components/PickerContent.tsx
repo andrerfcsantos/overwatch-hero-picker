@@ -15,6 +15,7 @@ import {
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
 import { PickerPreset } from "@/lib/share/types";
 import { shareUrl } from "@/lib/share/urls";
+import { OverlaySize, overlayUrl } from "@/lib/overlay";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import HeroFilterPanel from "@/components/HeroFilterPanel";
 import ShareButton from "@/components/ShareButton";
@@ -195,6 +196,11 @@ export default function PickerContent() {
 
   const buildPresetUrl = useCallback(
     () => shareUrl({ kind: "picker-preset", picker: currentPreset() }),
+    [currentPreset],
+  );
+
+  const buildOverlayUrl = useCallback(
+    (size: OverlaySize) => overlayUrl(currentPreset(), size),
     [currentPreset],
   );
 
@@ -400,7 +406,10 @@ export default function PickerContent() {
 
         {/* Right panel */}
         <div className="w-full lg:w-3/4">
-          <HeroFilterPanel buildPresetUrl={buildPresetUrl} />
+          <HeroFilterPanel
+            buildPresetUrl={buildPresetUrl}
+            buildOverlayUrl={buildOverlayUrl}
+          />
         </div>
       </div>
     </div>

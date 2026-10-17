@@ -17,6 +17,7 @@ import {
   SessionReplayExtensions,
 } from "posthog-js/dist/extension-bundles";
 import { HeroRole } from "@/types/hero";
+import type { OverlaySize } from "@/lib/overlay";
 
 /** One value per share surface, so the funnel can tell them apart. */
 export type ShareType =
@@ -60,7 +61,9 @@ export function heroPoolProps(
 
 type EventMap = {
   hero_randomized: {
-    source: "picker" | "shared_result";
+    source: "picker" | "shared_result" | "overlay";
+    /** Overlay only: what asked for the roll. */
+    trigger?: "obs_hidden" | "keyboard";
     hero_key: string;
     hero_role: HeroRole;
     non_repeating: boolean;
@@ -143,6 +146,23 @@ type EventMap = {
       | "restored_defaults";
   };
   keyboard_shortcut_used: { key: string };
+  overlay_setup_opened: Record<string, never>;
+  overlay_link_copied: {
+    /** "fallback" means the clipboard failed and the link was selected instead. */
+    method: "clipboard" | "fallback";
+    hero_count: number;
+    size: OverlaySize;
+  };
+  overlay_link_opened: { hero_count: number; size: OverlaySize };
+  overlay_opened: {
+    /** False when the link's filters could not be decoded. */
+    valid: boolean;
+    /** Whether the page is running inside an OBS browser source. */
+    in_obs: boolean;
+    has_key: boolean;
+    /** A preset id, or "custom" for a numeric `size` param. */
+    size: OverlaySize | "custom";
+  };
 };
 
 let initialized = false;
@@ -216,7 +236,11 @@ export function initAnalytics(projectToken: string, host: string): void {
     debug: process.env.NODE_ENV === "development",
     // Dev events are flagged as internal traffic, but recordings would still
     // count against the replay quota — so don't record localhost sessions.
-    disable_session_recording: process.env.NODE_ENV === "development",
+    // The stream overlay sits open in OBS for hours at a time, so recording it
+    // would spend the replay quota on footage of a hero card.
+    disable_session_recording:
+      process.env.NODE_ENV === "development" ||
+      window.location.pathname.startsWith("/overlay"),
     before_send: (event) => {
       if (!event) return null;
       if (isStacklessThirdPartyException(event)) return null;
