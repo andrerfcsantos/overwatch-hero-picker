@@ -188,7 +188,11 @@ let initialized = false;
  * `room` is the secret that lets a page post rolls to a streamer's companion
  * view, and `view` lets anyone watch it.
  */
-const URL_SECRETS = /([?&](?:d|room|view)=)[^&#]+/g;
+const SECRET_PARAMS = ["d", "room", "view"];
+const URL_SECRETS = new RegExp(
+  `([?&](?:${SECRET_PARAMS.join("|")})=)[^&#]+`,
+  "g",
+);
 
 /** A URL with share payloads and room keys replaced by a placeholder. */
 export function redactUrl(value: string): string {
@@ -248,7 +252,20 @@ export function scrubSecrets(
 }
 
 export function initAnalytics(projectToken: string, host: string): void {
+  // The overlay and companion pages are the only ones whose own URL carries a
+  // room key. before_send redacts events, but the SDK also keeps the page URL
+  // in its own state (initial person info, session props). There, it masks
+  // these params before storing anything, and that state stays in
+  // localStorage rather than a cookie sent to every owheropicker.com
+  // subdomain. Elsewhere the defaults are unchanged: masking also hides
+  // ad-click ids such as gclid.
+  const onOverlayPage = window.location.pathname.startsWith("/overlay");
   posthog.init(projectToken, {
+    ...(onOverlayPage && {
+      persistence: "localStorage",
+      mask_personal_data_properties: true,
+      custom_personal_data_properties: SECRET_PARAMS,
+    }),
     __extensionClasses: {
       // Session replay, plus the autocapture/web-vitals family. Without these
       // the slim build captures pageviews and manual `capture` calls only.
@@ -270,8 +287,7 @@ export function initAnalytics(projectToken: string, host: string): void {
     // The stream overlay sits open in OBS for hours at a time, so recording it
     // would spend the replay quota on footage of a hero card.
     disable_session_recording:
-      process.env.NODE_ENV === "development" ||
-      window.location.pathname.startsWith("/overlay"),
+      process.env.NODE_ENV === "development" || onOverlayPage,
     before_send: (event) => {
       if (!event) return null;
       if (isStacklessThirdPartyException(event)) return null;

@@ -233,6 +233,15 @@ export default function CompanionContent() {
           )}
           <p className={styles.when}>Rolled {timeAgo(roll.rolledAt, now)}</p>
         </div>
+      ) : roll ? (
+        // A hero this page does not know: it was loaded before a site update
+        // that added one, while the overlay already runs the new version.
+        <div className={styles.message} role="alert">
+          <p>
+            The overlay rolled a hero this page doesn&apos;t know yet. Refresh
+            the page to see it.
+          </p>
+        </div>
       ) : (
         view.roll === null && (
           <div className={styles.message}>
