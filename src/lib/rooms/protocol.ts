@@ -34,6 +34,13 @@ const MAX_PERK_INDEX = 31;
 /** Messages are tiny; anything larger is a bug or abuse. */
 export const MAX_MESSAGE_BYTES = 1024;
 
+/**
+ * Close code the room uses when a newer overlay takes this one's place. The
+ * replaced overlay must not reconnect, or two overlays would keep replacing
+ * each other.
+ */
+export const REPLACED_CLOSE_CODE = 4001;
+
 /** Sent by clients to keep the socket alive; answered without waking the room. */
 export const PING_MESSAGE = '{"type":"ping"}';
 export const PONG_MESSAGE = '{"type":"pong"}';

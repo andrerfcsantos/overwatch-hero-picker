@@ -32,9 +32,10 @@
       "simple": { "limit": 30, "period": 60 },
     },
     {
-      // New rolls per client IP across all sockets and rooms. Each is a
-      // storage write against the account's daily allowance; a streamer
-      // rerolls a few times a minute at most.
+      // Overlay messages per client IP across all sockets and rooms. Each
+      // wakes a room and a new roll is a storage write, both against the
+      // account's daily allowances; a streamer rerolls a few times a minute
+      // at most.
       "name": "ROLLS",
       "namespace_id": "4281",
       "simple": { "limit": 30, "period": 60 },

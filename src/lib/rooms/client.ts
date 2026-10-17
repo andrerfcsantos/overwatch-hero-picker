@@ -1,6 +1,7 @@
 import {
   PING_MESSAGE,
   PONG_MESSAGE,
+  REPLACED_CLOSE_CODE,
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
 } from "./protocol";
@@ -13,7 +14,15 @@ import {
 export const ROOMS_URL =
   process.env.NEXT_PUBLIC_ROOMS_URL || "wss://rooms.owheropicker.com";
 
-export type RoomConnectionStatus = "connecting" | "open" | "reconnecting";
+/**
+ * "replaced" is final: a newer overlay took this one's place in the room, so
+ * this socket stays closed.
+ */
+export type RoomConnectionStatus =
+  | "connecting"
+  | "open"
+  | "reconnecting"
+  | "replaced";
 
 export type RoomTarget =
   | { role: "publisher"; secret: string }
@@ -145,10 +154,15 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
       if (typeof event.data !== "string" || event.data === PONG_MESSAGE) return;
       options.onMessage?.(event.data);
     });
-    current.addEventListener("close", () => {
+    current.addEventListener("close", (event) => {
       if (socket !== current) return;
       stopHeartbeat();
       socket = null;
+      if (event.code === REPLACED_CLOSE_CODE) {
+        closed = true;
+        options.onStatus?.("replaced");
+        return;
+      }
       scheduleRetry();
     });
     // An error is always followed by close, which handles the retry.

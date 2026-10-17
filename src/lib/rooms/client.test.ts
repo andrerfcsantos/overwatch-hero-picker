@@ -8,7 +8,7 @@ import {
 } from "vite-plus/test";
 
 import { openRoomSocket, retryDelay, roomSocketUrl } from "./client";
-import { PING_MESSAGE, PONG_MESSAGE } from "./protocol";
+import { PING_MESSAGE, PONG_MESSAGE, REPLACED_CLOSE_CODE } from "./protocol";
 
 /** Just enough of a WebSocket for the client: listeners, send, close. */
 class FakeSocket {
@@ -49,11 +49,11 @@ class FakeSocket {
   receive(data: string) {
     this.emit("message", { data });
   }
-  drop() {
+  drop(code = 1006) {
     this.readyState = 3;
-    this.emit("close");
+    this.emit("close", { code });
   }
-  private emit(type: string, event: { data?: unknown } = {}) {
+  private emit(type: string, event: { data?: unknown; code?: number } = {}) {
     for (const listener of this.listeners.get(type) ?? []) listener(event);
   }
 }
@@ -172,6 +172,30 @@ describe("openRoomSocket", () => {
     latest().open();
     expect(opened).toEqual([1, 2]);
     expect(latest().sent).toEqual(["hello"]);
+    room.close();
+  });
+
+  test("a replaced overlay stays closed instead of reconnecting", () => {
+    const statuses: string[] = [];
+    const room = openRoomSocket({
+      target: { role: "publisher", secret: "s".repeat(32) },
+      createSocket,
+      onStatus: (s) => statuses.push(s),
+    });
+    latest().open();
+    latest().drop(REPLACED_CLOSE_CODE);
+    vi.advanceTimersByTime(120_000);
+    expect(FakeSocket.instances).toHaveLength(1);
+    expect(statuses.at(-1)).toBe("replaced");
+    room.close();
+  });
+
+  test("other closes from the room, like rate limits, still reconnect", () => {
+    const room = openRoomSocket({ target, createSocket });
+    latest().open();
+    latest().drop(1008);
+    vi.advanceTimersByTime(2_000);
+    expect(FakeSocket.instances).toHaveLength(2);
     room.close();
   });
 

@@ -3,6 +3,7 @@ import {
   MAX_MESSAGE_BYTES,
   PING_MESSAGE,
   PONG_MESSAGE,
+  REPLACED_CLOSE_CODE,
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
   isRoomSecret,
@@ -128,7 +129,11 @@ export class Room extends DurableObject<Env> {
       const oldest = this.publishers().sort(
         (a, b) => connectedAt(a) - connectedAt(b),
       )[0];
-      this.closeQuietly(oldest, 4001, "Replaced by a newer overlay.");
+      this.closeQuietly(
+        oldest,
+        REPLACED_CLOSE_CODE,
+        "Replaced by a newer overlay.",
+      );
     }
 
     const pair = new WebSocketPair();
@@ -178,6 +183,17 @@ export class Room extends DurableObject<Env> {
     }
     ws.serializeAttachment({ ...attachment, ...next });
 
+    // Every overlay message wakes a room and may cost a storage write, and the
+    // account's daily allowances are shared by every room. The per-socket
+    // bucket allows bursts; this caps one address across all its sockets and
+    // rooms — before any parsing or deduplication, so re-sent or junk
+    // messages count too.
+    const { success } = await this.env.ROLLS.limit({ key: attachment.ip });
+    if (!success) {
+      ws.close(1008, "Too many messages from this address.");
+      return;
+    }
+
     if (typeof message !== "string") {
       ws.close(1003, "Text messages only.");
       return;
@@ -196,15 +212,6 @@ export class Room extends DurableObject<Env> {
     // means the same roll: keep its original time and do not replay it.
     const stored = await this.ctx.storage.get<RoomRoll>(ROLL_KEY);
     if (stored?.id === parsed.roll.id) return;
-
-    // Each new roll is a storage write, and the account's daily write
-    // allowance is shared by every room. The per-socket bucket allows bursts;
-    // this caps what one address can write across all its sockets and rooms.
-    const { success } = await this.env.ROLLS.limit({ key: attachment.ip });
-    if (!success) {
-      ws.close(1008, "Too many rolls.");
-      return;
-    }
 
     const roll: RoomRoll = { ...parsed.roll, rolledAt: now };
     await this.ctx.storage.put(ROLL_KEY, roll);
