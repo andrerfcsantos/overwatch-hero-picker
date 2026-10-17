@@ -7,9 +7,12 @@ import {
   matchesShortcut,
   overlayUrl,
   OVERLAY_SIZES,
+  LAST_HERO_STORAGE_KEY,
   parseOverlayScale,
   parseShortcut,
+  readLastOverlayHero,
   readOverlayConfig,
+  rememberOverlayHero,
 } from "./overlay";
 
 function keyEvent(
@@ -243,5 +246,37 @@ describe("parseOverlayScale", () => {
     ]) {
       expect(parseOverlayScale(value)).toBe(1);
     }
+  });
+});
+
+describe("last overlay hero", () => {
+  function memoryStorage() {
+    const values = new Map<string, string>();
+    return {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => void values.set(key, value),
+    };
+  }
+
+  test("remembers the last hero across reads", () => {
+    const storage = memoryStorage();
+    expect(readLastOverlayHero(storage)).toBe("");
+    rememberOverlayHero("ana", storage);
+    expect(readLastOverlayHero(storage)).toBe("ana");
+    expect(storage.getItem(LAST_HERO_STORAGE_KEY)).toBe("ana");
+  });
+
+  test("never throws when storage is missing or blocked", () => {
+    const blocked = {
+      getItem: () => {
+        throw new Error("blocked");
+      },
+      setItem: () => {
+        throw new Error("blocked");
+      },
+    };
+    expect(readLastOverlayHero(blocked)).toBe("");
+    expect(() => rememberOverlayHero("ana", blocked)).not.toThrow();
+    expect(readLastOverlayHero(undefined)).toBe("");
   });
 });

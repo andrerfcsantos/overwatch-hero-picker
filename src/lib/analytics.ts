@@ -63,7 +63,7 @@ type EventMap = {
   hero_randomized: {
     source: "picker" | "shared_result" | "overlay";
     /** Overlay only: what asked for the roll. */
-    trigger?: "obs_hidden" | "keyboard";
+    trigger?: "obs_load" | "obs_hidden" | "keyboard";
     hero_key: string;
     hero_role: HeroRole;
     non_repeating: boolean;

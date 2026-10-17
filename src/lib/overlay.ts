@@ -82,6 +82,47 @@ export function overlayUrl(
   return new URL(path, window.location.origin).toString();
 }
 
+/**
+ * The overlay is meant to run with OBS's "Shutdown source when not visible"
+ * ticked, so every show is a fresh page load. Non-repeating mode therefore
+ * has to remember the last hero across loads, not just in memory.
+ */
+export const LAST_HERO_STORAGE_KEY = "overlayLastHero";
+
+type HeroStorage = Pick<Storage, "getItem" | "setItem">;
+
+function defaultStorage(): HeroStorage | undefined {
+  try {
+    return typeof window === "undefined" ? undefined : window.localStorage;
+  } catch {
+    // Storage can be blocked outright, in which case the getter throws.
+    return undefined;
+  }
+}
+
+/** The hero the overlay showed last, or "" when unknown. Never throws. */
+export function readLastOverlayHero(
+  storage: HeroStorage | undefined = defaultStorage(),
+): string {
+  try {
+    return storage?.getItem(LAST_HERO_STORAGE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/** Best effort: without storage, non-repeating mode only holds within a load. */
+export function rememberOverlayHero(
+  heroKey: string,
+  storage: HeroStorage | undefined = defaultStorage(),
+): void {
+  try {
+    storage?.setItem(LAST_HERO_STORAGE_KEY, heroKey);
+  } catch {
+    // Quota or privacy settings; nothing useful to do.
+  }
+}
+
 export interface KeyShortcut {
   /** Lowercased `KeyboardEvent.key`, with " " spelled "space". */
   key: string;

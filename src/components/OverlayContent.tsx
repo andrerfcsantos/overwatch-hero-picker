@@ -12,7 +12,9 @@ import {
   OVERLAY_SIZES,
   OverlayConfig,
   matchesShortcut,
+  readLastOverlayHero,
   readOverlayConfig,
+  rememberOverlayHero,
 } from "@/lib/overlay";
 import { PickerPreset } from "@/lib/share/types";
 import { Hero, PerkPick } from "@/types/hero";
@@ -31,7 +33,7 @@ function poolFor(picker: PickerPreset): Hero[] {
   return selected.length > 0 ? selected : allHeroes;
 }
 
-type Trigger = "obs_hidden" | "keyboard";
+type Trigger = "obs_load" | "obs_hidden" | "keyboard";
 
 interface Roll {
   hero: Hero;
@@ -49,8 +51,15 @@ const OBS_VISIBLE_EVENT = "obsSourceVisibleChanged";
 /**
  * Overwatch has keyboard focus while the streamer plays, so the page cannot
  * hear key presses. Instead the streamer binds one OBS hotkey to both Show and
- * Hide for this source: the overlay rolls a new hero as it is hidden, and the
- * new hero animates in when it is shown again.
+ * Hide for this source.
+ *
+ * The setup steps ask for "Shutdown source when not visible", so each show is
+ * a fresh page load: the card fades in with a new hero, from an empty source.
+ * Without that option OBS keeps the hidden page's last frame and draws it for
+ * a moment when the source comes back, showing the previous hero before the
+ * new one — nothing the page does can repaint while it is hidden. For that
+ * setup the visibility event below still rolls on hide and replays the
+ * entrance on show, so rerolling works, just less smoothly.
  */
 export default function OverlayContent() {
   const [config, setConfig] = useState<OverlayConfig | null>(null);
@@ -58,7 +67,9 @@ export default function OverlayContent() {
   // Bumped when OBS shows the source, to replay the entrance animation: it
   // already played, unseen, when the hero was rolled while hidden.
   const [reveals, setReveals] = useState(0);
-  const currentHeroKey = useRef("");
+  // Seeded from storage: with the recommended OBS setting, each show is a new
+  // load, and non-repeating mode must still see the previous hero.
+  const currentHeroKey = useRef<string | null>(null);
 
   // Read straight from the URL rather than useSearchParams: the page is
   // client-only, and this keeps the static export free of a Suspense boundary.
@@ -81,17 +92,21 @@ export default function OverlayContent() {
   const reroll = useCallback(
     (trigger?: Trigger) => {
       if (!picker || pool.length === 0) return;
+      currentHeroKey.current ??= readLastOverlayHero();
       const hero = randomHero(pool, {
         preventRepeat: picker.nonRepeating,
         previousHeroKey: currentHeroKey.current,
       });
       currentHeroKey.current = hero.key;
+      rememberOverlayHero(hero.key);
       setRoll((previous) => ({
         hero,
         perks: randomPerkIndices(hero.key),
         count: (previous?.count ?? 0) + 1,
       }));
-      // The first roll on load is not a choice anyone made, as in the picker.
+      // A load outside OBS is someone previewing the link, which is not a roll
+      // anyone asked for — as with the picker's first hero. In OBS, a load is
+      // how the recommended setup rerolls.
       if (trigger) {
         track("hero_randomized", {
           source: "overlay",
@@ -109,7 +124,7 @@ export default function OverlayContent() {
 
   // First hero, once the filters are known.
   useEffect(() => {
-    reroll();
+    reroll("obsstudio" in window ? "obs_load" : undefined);
   }, [reroll]);
 
   useEffect(() => {
