@@ -114,3 +114,24 @@ describe("scrubSecrets", () => {
     expect(properties.count).toBe(3);
   });
 });
+
+describe("scrubSecrets in nested payloads", () => {
+  test("redacts URLs inside Web Vitals metrics and exception lists", () => {
+    const url = "https://owheropicker.com/overlay?d=abc&room=SECRET";
+    const properties: Record<string, unknown> = {
+      $web_vitals_FCP_event: { name: "FCP", value: 120, $current_url: url },
+      $exception_list: [
+        {
+          value: `Failed at ${url}`,
+          stacktrace: { frames: [{ filename: url }] },
+        },
+      ],
+    };
+    // Cycles must not hang the scrubber.
+    properties.self = properties;
+    scrubSecrets(properties);
+    expect(JSON.stringify({ ...properties, self: undefined })).not.toContain(
+      "SECRET",
+    );
+  });
+});

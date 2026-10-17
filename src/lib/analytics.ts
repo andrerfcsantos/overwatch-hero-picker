@@ -222,17 +222,28 @@ export function isStacklessThirdPartyException(event: CaptureResult): boolean {
   );
 }
 
+/** Event payloads are shallow; anything deeper than this is left as is. */
+const MAX_SCRUB_DEPTH = 8;
+
 /**
- * Redacts share payloads and room keys from every string property, not only
- * the URL-named ones: autocapture puts a clicked link's href in
- * `$elements_chain`, and any property could end up holding a link.
+ * Redacts share payloads and room keys from every string in an event's
+ * properties, at any depth and inside arrays: autocapture puts a clicked
+ * link's href in `$elements_chain`, Web Vitals nest the page URL inside each
+ * metric, and any property could end up holding a link.
  */
-export function scrubSecrets(container: unknown): void {
+export function scrubSecrets(
+  container: unknown,
+  depth = 0,
+  seen: WeakSet<object> = new WeakSet(),
+): void {
   if (typeof container !== "object" || container === null) return;
+  if (depth > MAX_SCRUB_DEPTH || seen.has(container)) return;
+  seen.add(container);
   const record = container as Record<string, unknown>;
   for (const key of Object.keys(record)) {
     const value = record[key];
     if (typeof value === "string") record[key] = redactUrl(value);
+    else scrubSecrets(value, depth + 1, seen);
   }
 }
 

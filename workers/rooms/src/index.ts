@@ -13,15 +13,18 @@ import {
   type ViewerMessage,
 } from "../../../src/lib/rooms/protocol";
 import { isOriginAllowed } from "./origins";
-import { ROLL_BURST, takeRollToken, type RollAllowance } from "./rateLimit";
+import {
+  ROLL_BURST,
+  admitSocket,
+  takeRollToken,
+  type RollAllowance,
+} from "./rateLimit";
 
 type Role = "publisher" | "viewer";
 
 /** Header the entry Worker uses to tell the room who is connecting. */
 const ROLE_HEADER = "X-Room-Role";
 
-/** One overlay plus a handful of screens; more than this is abuse. */
-const MAX_SOCKETS_PER_ROOM = 16;
 /** A room nobody has used for this long forgets its last roll. */
 const IDLE_CLEANUP_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -32,6 +35,9 @@ const ROOM_URL = "https://room.internal/connect";
 
 interface Attachment extends RollAllowance {
   role: Role;
+  connectedAt: number;
+  /** Client IP, for the per-address roll limit shared by all rooms. */
+  ip: string;
 }
 
 function text(body: string, status: number): Response {
@@ -113,17 +119,28 @@ export class Room extends DurableObject<Env> {
     if (role !== "publisher" && role !== "viewer") {
       return text("Invalid role.", 400);
     }
-    if (this.ctx.getWebSockets().length >= MAX_SOCKETS_PER_ROOM) {
-      return text("Room is full.", 429);
+    const admission = admitSocket(role, {
+      publishers: this.publishers().length,
+      viewers: this.viewers().length,
+    });
+    if (admission === "reject") return text("Room is full.", 429);
+    if (admission === "replace-oldest-publisher") {
+      const oldest = this.publishers().sort(
+        (a, b) => connectedAt(a) - connectedAt(b),
+      )[0];
+      this.closeQuietly(oldest, 4001, "Replaced by a newer overlay.");
     }
 
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair) as [WebSocket, WebSocket];
     this.ctx.acceptWebSocket(server, [role]);
+    const now = Date.now();
     const attachment: Attachment = {
       role,
       tokens: ROLL_BURST,
-      refilledAt: Date.now(),
+      refilledAt: now,
+      connectedAt: now,
+      ip: request.headers.get("CF-Connecting-IP") ?? "unknown",
     };
     server.serializeAttachment(attachment);
 
@@ -137,7 +154,6 @@ export class Room extends DurableObject<Env> {
     } else {
       this.broadcastPresence();
     }
-    await this.scheduleCleanup();
 
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -181,35 +197,59 @@ export class Room extends DurableObject<Env> {
     const stored = await this.ctx.storage.get<RoomRoll>(ROLL_KEY);
     if (stored?.id === parsed.roll.id) return;
 
+    // Each new roll is a storage write, and the account's daily write
+    // allowance is shared by every room. The per-socket bucket allows bursts;
+    // this caps what one address can write across all its sockets and rooms.
+    const { success } = await this.env.ROLLS.limit({ key: attachment.ip });
+    if (!success) {
+      ws.close(1008, "Too many rolls.");
+      return;
+    }
+
     const roll: RoomRoll = { ...parsed.roll, rolledAt: now };
     await this.ctx.storage.put(ROLL_KEY, roll);
     for (const viewer of this.viewers()) {
       this.send(viewer, { type: "roll", roll });
     }
-    await this.scheduleCleanup();
+    // A backstop in case close events never arrive (the runtime restarting);
+    // normally the idle clock starts when the last socket leaves.
+    if ((await this.ctx.storage.getAlarm()) === null) {
+      await this.ctx.storage.setAlarm(now + IDLE_CLEANUP_MS);
+    }
   }
 
   async webSocketClose(ws: WebSocket, code: number, reason: string) {
     this.closeQuietly(ws, code, reason);
-    this.onSocketGone(ws);
+    await this.onSocketGone(ws);
   }
 
   async webSocketError(ws: WebSocket) {
     this.closeQuietly(ws, 1011, "Socket error.");
-    this.onSocketGone(ws);
+    await this.onSocketGone(ws);
   }
 
+  /** Forgets the room once it has been idle for IDLE_CLEANUP_MS. */
   async alarm() {
-    if (this.ctx.getWebSockets().length > 0) {
-      await this.scheduleCleanup();
-      return;
-    }
+    // Someone came back; the last of them to leave restarts the idle clock.
+    if (this.openSockets().length > 0) return;
     await this.ctx.storage.deleteAll();
   }
 
-  private onSocketGone(ws: WebSocket) {
+  private async onSocketGone(ws: WebSocket) {
     const attachment = ws.deserializeAttachment() as Attachment | null;
     if (attachment?.role === "publisher") this.broadcastPresence(ws);
+    // The room is idle from the moment its last socket leaves.
+    if (this.openSockets(ws).length === 0) {
+      await this.ctx.storage.setAlarm(Date.now() + IDLE_CLEANUP_MS);
+    }
+  }
+
+  private openSockets(except?: WebSocket): WebSocket[] {
+    return this.ctx
+      .getWebSockets()
+      .filter(
+        (socket) => socket !== except && socket.readyState === WebSocket.OPEN,
+      );
   }
 
   /** Open sockets with the given role, optionally leaving one out. */
@@ -253,8 +293,9 @@ export class Room extends DurableObject<Env> {
       // Already closed.
     }
   }
+}
 
-  private async scheduleCleanup() {
-    await this.ctx.storage.setAlarm(Date.now() + IDLE_CLEANUP_MS);
-  }
+function connectedAt(ws: WebSocket): number {
+  const attachment = ws.deserializeAttachment() as Attachment | null;
+  return attachment?.connectedAt ?? 0;
 }

@@ -4,7 +4,10 @@ import { getAllHeroes } from "@/data/heroes";
 import { heroPerks } from "@/data/heroPerks";
 import { isOriginAllowed } from "../../../workers/rooms/src/origins";
 import {
+  MAX_PUBLISHERS,
+  MAX_VIEWERS,
   ROLL_BURST,
+  admitSocket,
   takeRollToken,
 } from "../../../workers/rooms/src/rateLimit";
 import {
@@ -275,5 +278,22 @@ describe("takeRollToken", () => {
   test("a clock going backwards does not mint tokens", () => {
     const result = takeRollToken({ tokens: 0, refilledAt: 1_000 }, 0);
     expect(result.allowed).toBe(false);
+  });
+});
+
+describe("admitSocket", () => {
+  test("companions cannot lock the overlay out of a full room", () => {
+    const fullOfViewers = { publishers: 0, viewers: MAX_VIEWERS };
+    expect(admitSocket("viewer", fullOfViewers)).toBe("reject");
+    expect(admitSocket("publisher", fullOfViewers)).toBe("accept");
+  });
+
+  test("a new overlay replaces the oldest one instead of being refused", () => {
+    expect(
+      admitSocket("publisher", { publishers: MAX_PUBLISHERS, viewers: 0 }),
+    ).toBe("replace-oldest-publisher");
+    expect(admitSocket("publisher", { publishers: 1, viewers: 3 })).toBe(
+      "accept",
+    );
   });
 });
