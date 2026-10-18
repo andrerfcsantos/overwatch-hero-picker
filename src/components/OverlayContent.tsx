@@ -11,6 +11,8 @@ import {
   nextOverlayHero,
   readOverlayConfig,
 } from "@/lib/overlay";
+import { openRoomSocket, RoomSocket } from "@/lib/rooms/client";
+import { generateRollId, publisherRollMessage } from "@/lib/rooms/protocol";
 import { PickerPreset } from "@/lib/share/types";
 import { Hero, PerkPick } from "@/types/hero";
 import RoleSpriteIcon from "./RoleSpriteIcon";
@@ -31,6 +33,8 @@ function poolFor(picker: PickerPreset): Hero[] {
 type Trigger = "obs_load" | "obs_hidden" | "keyboard";
 
 interface Roll {
+  /** Identifies this roll to the companion room across reconnects. */
+  id: string;
   hero: Hero;
   perks: PerkPick | null;
   count: number;
@@ -75,6 +79,7 @@ export default function OverlayContent() {
       valid: read.ok,
       in_obs: "obsstudio" in window,
       has_key: read.ok && read.shortcut !== null,
+      has_room: read.ok && read.room !== null,
       size:
         OVERLAY_SIZES.find((size) => size.scale === read.scale)?.id ?? "custom",
     });
@@ -82,6 +87,7 @@ export default function OverlayContent() {
 
   const picker = config?.ok ? config.picker : null;
   const shortcut = config?.ok ? config.shortcut : null;
+  const room = config?.ok ? config.room : null;
   const pool = useMemo(() => (picker ? poolFor(picker) : []), [picker]);
 
   const reroll = useCallback(
@@ -93,6 +99,7 @@ export default function OverlayContent() {
       });
       currentHeroKey.current = hero.key;
       setRoll((previous) => ({
+        id: generateRollId(),
         hero,
         perks: randomPerkIndices(hero.key),
         count: (previous?.count ?? 0) + 1,
@@ -114,6 +121,40 @@ export default function OverlayContent() {
     },
     [picker, pool],
   );
+
+  // Companion view: when the link carries a room, every roll is published to
+  // it so the streamer can see the hero on another screen. The latest roll is
+  // re-sent on each (re)connect, so a dropped connection catches up. Nothing
+  // here can break the overlay itself: the socket swallows its own failures.
+  const latestRollMessage = useRef<string | null>(null);
+  const roomSocket = useRef<RoomSocket | null>(null);
+
+  useEffect(() => {
+    if (!room) return;
+    const socket = openRoomSocket({
+      target: { role: "publisher", secret: room },
+      onOpen: (send) => {
+        if (latestRollMessage.current) send(latestRollMessage.current);
+      },
+    });
+    roomSocket.current = socket;
+    return () => {
+      socket.close();
+      roomSocket.current = null;
+    };
+  }, [room]);
+
+  useEffect(() => {
+    if (!roll || !picker) return;
+    // Perks stay off the companion when they are off on stream.
+    const message = publisherRollMessage(
+      roll.id,
+      roll.hero.key,
+      picker.showPerks ? roll.perks : null,
+    );
+    latestRollMessage.current = message;
+    roomSocket.current?.send(message);
+  }, [roll, picker]);
 
   // First hero, once the filters are known.
   useEffect(() => {

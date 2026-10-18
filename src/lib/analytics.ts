@@ -152,14 +152,26 @@ type EventMap = {
     method: "clipboard" | "fallback";
     hero_count: number;
     size: OverlaySize;
+    /** Whether the copied link publishes to a companion room. */
+    companion: boolean;
   };
   overlay_link_opened: { hero_count: number; size: OverlaySize };
+  overlay_companion_toggled: { enabled: boolean };
+  companion_link_copied: { method: "clipboard" | "fallback" };
+  companion_link_opened: Record<string, never>;
+  companion_link_reset: Record<string, never>;
+  companion_opened: {
+    /** False when the link's view id is missing or malformed. */
+    valid: boolean;
+  };
   overlay_opened: {
     /** False when the link's filters could not be decoded. */
     valid: boolean;
     /** Whether the page is running inside an OBS browser source. */
     in_obs: boolean;
     has_key: boolean;
+    /** Whether the link publishes to a companion room. */
+    has_room: boolean;
     /** A preset id, or "custom" for a numeric `size` param. */
     size: OverlaySize | "custom";
   };
@@ -171,8 +183,21 @@ let initialized = false;
  * Share payloads travel in the `d` query param as unique blobs. Left alone
  * they would make every share link its own URL in PostHog, fragmenting the
  * pages you most want to compare — so the blob never leaves the browser.
+ *
+ * The overlay's companion room travels the same way and is worse to leak:
+ * `room` is the secret that lets a page post rolls to a streamer's companion
+ * view, and `view` lets anyone watch it.
  */
-const SHARE_BLOB = /([?&]d=)[^&#]+/g;
+const SECRET_PARAMS = ["d", "room", "view"];
+const URL_SECRETS = new RegExp(
+  `([?&](?:${SECRET_PARAMS.join("|")})=)[^&#]+`,
+  "g",
+);
+
+/** A URL with share payloads and room keys replaced by a placeholder. */
+export function redactUrl(value: string): string {
+  return value.replace(URL_SECRETS, "$1REDACTED");
+}
 
 /** One entry of a `$exception` event's `$exception_list`. */
 type CapturedException = {
@@ -201,23 +226,46 @@ export function isStacklessThirdPartyException(event: CaptureResult): boolean {
   );
 }
 
-function scrubUrls(container: unknown): void {
+/** Event payloads are shallow; anything deeper than this is left as is. */
+const MAX_SCRUB_DEPTH = 8;
+
+/**
+ * Redacts share payloads and room keys from every string in an event's
+ * properties, at any depth and inside arrays: autocapture puts a clicked
+ * link's href in `$elements_chain`, Web Vitals nest the page URL inside each
+ * metric, and any property could end up holding a link.
+ */
+export function scrubSecrets(
+  container: unknown,
+  depth = 0,
+  seen: WeakSet<object> = new WeakSet(),
+): void {
   if (typeof container !== "object" || container === null) return;
+  if (depth > MAX_SCRUB_DEPTH || seen.has(container)) return;
+  seen.add(container);
   const record = container as Record<string, unknown>;
   for (const key of Object.keys(record)) {
     const value = record[key];
-    const lower = key.toLowerCase();
-    if (
-      typeof value === "string" &&
-      (lower.includes("url") || lower.includes("referrer"))
-    ) {
-      record[key] = value.replace(SHARE_BLOB, "$1REDACTED");
-    }
+    if (typeof value === "string") record[key] = redactUrl(value);
+    else scrubSecrets(value, depth + 1, seen);
   }
 }
 
 export function initAnalytics(projectToken: string, host: string): void {
+  // The overlay and companion pages are the only ones whose own URL carries a
+  // room key. before_send redacts events, but the SDK also keeps the page URL
+  // in its own state (initial person info, session props). There, it masks
+  // these params before storing anything, and that state stays in
+  // localStorage rather than a cookie sent to every owheropicker.com
+  // subdomain. Elsewhere the defaults are unchanged: masking also hides
+  // ad-click ids such as gclid.
+  const onOverlayPage = window.location.pathname.startsWith("/overlay");
   posthog.init(projectToken, {
+    ...(onOverlayPage && {
+      persistence: "localStorage",
+      mask_personal_data_properties: true,
+      custom_personal_data_properties: SECRET_PARAMS,
+    }),
     __extensionClasses: {
       // Session replay, plus the autocapture/web-vitals family. Without these
       // the slim build captures pageviews and manual `capture` calls only.
@@ -239,16 +287,15 @@ export function initAnalytics(projectToken: string, host: string): void {
     // The stream overlay sits open in OBS for hours at a time, so recording it
     // would spend the replay quota on footage of a hero card.
     disable_session_recording:
-      process.env.NODE_ENV === "development" ||
-      window.location.pathname.startsWith("/overlay"),
+      process.env.NODE_ENV === "development" || onOverlayPage,
     before_send: (event) => {
       if (!event) return null;
       if (isStacklessThirdPartyException(event)) return null;
-      scrubUrls(event.properties);
-      scrubUrls(event.properties?.$set);
-      scrubUrls(event.properties?.$set_once);
-      scrubUrls(event.$set);
-      scrubUrls(event.$set_once);
+      scrubSecrets(event.properties);
+      scrubSecrets(event.properties?.$set);
+      scrubSecrets(event.properties?.$set_once);
+      scrubSecrets(event.$set);
+      scrubSecrets(event.$set_once);
       return event;
     },
   });

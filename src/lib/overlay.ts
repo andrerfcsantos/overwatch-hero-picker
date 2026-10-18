@@ -3,6 +3,11 @@ import { ShareErrorReason } from "@/lib/share/binary";
 import { encodeShare, tryDecodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
 import { SHARE_PARAM } from "@/lib/share/urls";
+import {
+  ROOM_PUBLISH_PARAM,
+  ROOM_VIEW_PARAM,
+  isRoomSecret,
+} from "@/lib/rooms/protocol";
 import { Hero } from "@/types/hero";
 
 /**
@@ -12,6 +17,9 @@ import { Hero } from "@/types/hero";
  * instead of being read from the picker's saved settings.
  */
 export const OVERLAY_PATH = "/overlay";
+
+/** Page that shows the overlay's hero on another screen, live. */
+export const COMPANION_PATH = "/overlay/companion";
 
 /** Optional key that rerolls while the overlay page itself has focus. */
 export const OVERLAY_KEY_PARAM = "key";
@@ -74,12 +82,25 @@ export const DEFAULT_OVERLAY_PICKER: PickerPreset = {
 export function overlayUrl(
   picker: PickerPreset,
   size: OverlaySize = DEFAULT_OVERLAY_SIZE,
+  /** Publish secret of the companion room, when the companion is on. */
+  room: string | null = null,
 ): string {
   const encoded = encodeShare({ kind: "picker-preset", picker });
   // The default size stays out of the link, so it can change in one place.
   const sizeParam =
     size === DEFAULT_OVERLAY_SIZE ? "" : `&${OVERLAY_SIZE_PARAM}=${size}`;
-  const path = `${OVERLAY_PATH}?${SHARE_PARAM}=${encoded}${sizeParam}`;
+  const roomParam = room ? `&${ROOM_PUBLISH_PARAM}=${room}` : "";
+  const path = `${OVERLAY_PATH}?${SHARE_PARAM}=${encoded}${sizeParam}${roomParam}`;
+  return absolute(path);
+}
+
+/** Link to the companion page for a room's view id. */
+export function companionUrl(viewId: string): string {
+  return absolute(`${COMPANION_PATH}?${ROOM_VIEW_PARAM}=${viewId}`);
+}
+
+/** Absolute link for copying. Client-only; falls back to a relative path. */
+function absolute(path: string): string {
   if (typeof window === "undefined") return path;
   return new URL(path, window.location.origin).toString();
 }
@@ -219,15 +240,22 @@ export type OverlayConfig =
       shortcut: KeyShortcut | null;
       /** Multiple of the default card size. */
       scale: number;
+      /** Publish secret for the companion room, or null when off. */
+      room: string | null;
     }
   | { ok: false; reason: ShareErrorReason; scale: number };
 
 /**
- * Reads one query parameter without the form-encoding rule that turns "+" into
- * a space. Shortcuts use "+" as their separator, and a streamer typing
- * `?key=ctrl+shift+h` into OBS means exactly that.
+ * Reads one query parameter by its literal name, without the form-encoding
+ * rule that turns "+" into a space.
+ *
+ * - Shortcuts use "+" as their separator, and a streamer typing
+ *   `?key=ctrl+shift+h` into OBS means exactly that.
+ * - Room keys are only honoured under the exact names the site generates.
+ *   URLSearchParams would also accept `?%72oom=`, which the analytics
+ *   redaction (and PostHog's own masking) would not recognise as `room`.
  */
-function readRawParam(search: string, name: string): string | null {
+export function readRawParam(search: string, name: string): string | null {
   for (const pair of search.replace(/^\?/, "").split("&")) {
     const separator = pair.indexOf("=");
     const key = separator === -1 ? pair : pair.slice(0, separator);
@@ -250,10 +278,14 @@ export function readOverlayConfig(search: string): OverlayConfig {
   // The error card is sized too, so a broken link looks like the overlay it
   // replaces.
   const scale = parseOverlayScale(params.get(OVERLAY_SIZE_PARAM));
+  // A malformed room is ignored rather than fatal: the overlay still works,
+  // only the companion view stays empty.
+  const roomParam = readRawParam(search, ROOM_PUBLISH_PARAM);
+  const room = isRoomSecret(roomParam) ? roomParam : null;
   const raw = params.get(SHARE_PARAM);
 
   if (!raw) {
-    return { ok: true, picker: DEFAULT_OVERLAY_PICKER, shortcut, scale };
+    return { ok: true, picker: DEFAULT_OVERLAY_PICKER, shortcut, scale, room };
   }
 
   const decoded = tryDecodeShare(raw);
@@ -263,7 +295,7 @@ export function readOverlayConfig(search: string): OverlayConfig {
   // usable here as a preset's.
   const { payload } = decoded;
   if (payload.kind === "picker-preset" || payload.kind === "hero-result") {
-    return { ok: true, picker: payload.picker, shortcut, scale };
+    return { ok: true, picker: payload.picker, shortcut, scale, room };
   }
   return { ok: false, reason: "malformed", scale };
 }

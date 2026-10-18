@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vite-plus/test";
 
 import { getAllHeroes } from "@/data/heroes";
+import { generateRoomSecret, viewIdFor } from "@/lib/rooms/protocol";
 import { encodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
 import {
@@ -9,6 +10,7 @@ import {
   overlayUrl,
   OVERLAY_SIZES,
   LAST_HERO_STORAGE_KEY,
+  companionUrl,
   nextOverlayHero,
   parseOverlayScale,
   parseShortcut,
@@ -136,6 +138,7 @@ describe("readOverlayConfig", () => {
       picker: DEFAULT_OVERLAY_PICKER,
       shortcut: null,
       scale: 1,
+      room: null,
     });
   });
 
@@ -143,7 +146,13 @@ describe("readOverlayConfig", () => {
     const url = new URL(overlayUrl(picker), "https://example.com");
     expect(url.pathname).toBe("/overlay");
     const config = readOverlayConfig(url.search);
-    expect(config).toEqual({ ok: true, picker, shortcut: null, scale: 1 });
+    expect(config).toEqual({
+      ok: true,
+      picker,
+      shortcut: null,
+      scale: 1,
+      room: null,
+    });
   });
 
   test("leaves the default size out of the link and carries the others", () => {
@@ -153,6 +162,48 @@ describe("readOverlayConfig", () => {
       const config = readOverlayConfig(url.search);
       expect(config).toMatchObject({ ok: true, picker, scale: size.scale });
     }
+  });
+
+  test("carries the companion room's publish secret", () => {
+    const room = generateRoomSecret();
+    const url = new URL(
+      overlayUrl(picker, "large", room),
+      "https://example.com",
+    );
+    expect(readOverlayConfig(url.search)).toMatchObject({
+      ok: true,
+      picker,
+      scale: 1.5,
+      room,
+    });
+    expect(overlayUrl(picker)).not.toContain("room=");
+  });
+
+  test("only honours the room key under its literal name", () => {
+    const room = generateRoomSecret();
+    expect(readOverlayConfig(`?room=${room}`)).toMatchObject({ room });
+    // URLSearchParams would decode these names to "room", but analytics
+    // redaction would not recognise them, so they must not enable publishing.
+    expect(readOverlayConfig(`?%72oom=${room}`)).toMatchObject({ room: null });
+    expect(readOverlayConfig(`?ROOM=${room}`)).toMatchObject({ room: null });
+  });
+
+  test("ignores a malformed room instead of failing the overlay", () => {
+    expect(readOverlayConfig("?room=short")).toMatchObject({
+      ok: true,
+      room: null,
+    });
+    expect(readOverlayConfig(`?room=${"x".repeat(80)}`)).toMatchObject({
+      ok: true,
+      room: null,
+    });
+  });
+
+  test("builds the companion link from a view id", async () => {
+    const view = await viewIdFor(generateRoomSecret());
+    const url = new URL(companionUrl(view), "https://example.com");
+    expect(url.pathname).toBe("/overlay/companion");
+    expect(url.searchParams.get("view")).toBe(view);
   });
 
   test("sizes the error card for a broken link too", () => {

@@ -13,6 +13,10 @@
     "deploy": "next build && wrangler deploy",
     "deploy:beta": "next build && wrangler deploy --env beta",
     "upload": "next build && wrangler versions upload",
+    "rooms:types": "wrangler types -c workers/rooms/wrangler.jsonc workers/rooms/worker-configuration.d.ts",
+    "rooms:check": "npm run rooms:types && tsc -p workers/rooms",
+    "rooms:dev": "wrangler dev -c workers/rooms/wrangler.jsonc --port 8787 --var ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000",
+    "rooms:deploy": "wrangler deploy -c workers/rooms/wrangler.jsonc",
     "deps:check": "node scripts/deps.mts",
     "deps:update": "vp update && node scripts/deps.mts",
     "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
@@ -21,7 +25,8 @@
     "next": "^16.2.6",
     "posthog-js": "^1.422.5",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "uqr": "^0.1.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",

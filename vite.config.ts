@@ -18,7 +18,15 @@ export default defineConfig({
     env: {
       builtin: true,
     },
-    ignorePatterns: [".next/**", "out/**", "build/**", "next-env.d.ts"],
+    // The rooms Worker has its own runtime types and is checked with
+    // `npm run rooms:check`.
+    ignorePatterns: [
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+      "workers/**",
+    ],
     rules: {
       "@next/next/no-html-link-for-pages": "error",
       "@next/next/no-sync-scripts": "error",
@@ -156,6 +164,6 @@ export default defineConfig({
     tabWidth: 2,
     printWidth: 80,
     sortPackageJson: false,
-    ignorePatterns: [],
+    ignorePatterns: ["workers/rooms/worker-configuration.d.ts"],
   },
 });

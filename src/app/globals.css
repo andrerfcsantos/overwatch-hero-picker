@@ -281,6 +281,77 @@ a:hover {
   margin-top: 0.3rem;
 }
 
+/* Companion view section of the overlay setup panel */
+.overlay-companion {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.overlay-companion-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.overlay-companion-toggle input {
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.overlay-companion-body {
+  display: flex;
+  gap: 0.9rem;
+  margin-top: 0.6rem;
+}
+
+.overlay-companion-qr {
+  width: 8.5rem;
+  height: 8.5rem;
+  flex-shrink: 0;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.overlay-companion-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.overlay-companion-details > p:first-child {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.overlay-companion-reset {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #f99e1a;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.overlay-companion-reset:focus-visible {
+  outline: 2px solid #f99e1a;
+  outline-offset: 2px;
+}
+
+.overlay-setup-link .action-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (max-width: 30rem) {
+  .overlay-companion-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 /* Shared preset notice */
 .shared-preset-notice {
   display: flex;

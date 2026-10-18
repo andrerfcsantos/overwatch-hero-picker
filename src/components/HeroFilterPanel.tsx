@@ -12,7 +12,7 @@ interface HeroFilterPanelProps {
   /** Supplied by the picker, which owns the options the preset also carries. */
   buildPresetUrl?: () => string;
   /** Supplied by the picker, for the same reason. */
-  buildOverlayUrl?: (size: OverlaySize) => string;
+  buildOverlayUrl?: (size: OverlaySize, room: string | null) => string;
 }
 
 export default function HeroFilterPanel({
