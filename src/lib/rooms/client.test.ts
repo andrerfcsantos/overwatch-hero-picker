@@ -70,6 +70,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 describe("roomSocketUrl", () => {
@@ -196,6 +197,42 @@ describe("openRoomSocket", () => {
     latest().drop(1008);
     vi.advanceTimersByTime(2_000);
     expect(FakeSocket.instances).toHaveLength(2);
+    room.close();
+  });
+
+  test("backs off when the room keeps closing sockets right after opening", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.5);
+    const room = openRoomSocket({ target, createSocket });
+    const delays: number[] = [];
+    for (let cycle = 0; cycle < 5; cycle++) {
+      latest().open();
+      latest().drop(1008);
+      const before = FakeSocket.instances.length;
+      let waited = 0;
+      while (FakeSocket.instances.length === before) {
+        vi.advanceTimersByTime(250);
+        waited += 250;
+      }
+      delays.push(waited);
+    }
+    expect(delays).toEqual([1_000, 2_000, 4_000, 8_000, 16_000]);
+    room.close();
+  });
+
+  test("a connection that stays up resets the backoff", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.5);
+    const room = openRoomSocket({ target, createSocket });
+    for (let cycle = 0; cycle < 3; cycle++) {
+      latest().drop();
+      vi.advanceTimersByTime(30_000);
+    }
+    latest().open();
+    vi.advanceTimersByTime(10_000);
+    latest().receive(PONG_MESSAGE);
+    latest().drop();
+    const before = FakeSocket.instances.length;
+    vi.advanceTimersByTime(1_000);
+    expect(FakeSocket.instances.length).toBe(before + 1);
     room.close();
   });
 

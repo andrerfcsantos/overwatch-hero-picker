@@ -52,6 +52,12 @@ const PING_INTERVAL_MS = 25_000;
  */
 const PONG_TIMEOUT_MS = 10_000;
 const MIN_RETRY_MS = 1_000;
+/**
+ * A connection only counts as healthy, resetting the backoff, after staying
+ * open this long. A room that accepts the socket and closes it straight away
+ * (a rate limit, say) would otherwise be retried every second forever.
+ */
+const STABLE_AFTER_MS = 10_000;
 /** WebSocket.OPEN, spelled out so tests need no WebSocket global. */
 const OPEN = 1;
 const MAX_RETRY_MS = 30_000;
@@ -92,6 +98,7 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
   let pingTimer: ReturnType<typeof setInterval> | null = null;
   let pongTimer: ReturnType<typeof setTimeout> | null = null;
+  let stableTimer: ReturnType<typeof setTimeout> | null = null;
 
   const send = (data: string): boolean => {
     if (socket?.readyState !== OPEN) return false;
@@ -106,8 +113,10 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
   const stopHeartbeat = () => {
     if (pingTimer) clearInterval(pingTimer);
     if (pongTimer) clearTimeout(pongTimer);
+    if (stableTimer) clearTimeout(stableTimer);
     pingTimer = null;
     pongTimer = null;
+    stableTimer = null;
   };
 
   /** Drops the current socket without waiting for its close handshake. */
@@ -137,8 +146,10 @@ export function openRoomSocket(options: RoomSocketOptions): RoomSocket {
 
     current.addEventListener("open", () => {
       if (closed || socket !== current) return;
-      attempt = 0;
       stopHeartbeat();
+      stableTimer = setTimeout(() => {
+        attempt = 0;
+      }, STABLE_AFTER_MS);
       pingTimer = setInterval(() => {
         if (!send(PING_MESSAGE) || pongTimer) return;
         pongTimer = setTimeout(() => abandon(current), PONG_TIMEOUT_MS);
