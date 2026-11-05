@@ -12,6 +12,7 @@
     "preview": "next build && wrangler dev",
     "deploy": "next build && wrangler deploy",
     "deploy:beta": "next build && wrangler deploy --env beta",
+    "deploy:preview": "next build && wrangler preview",
     "upload": "next build && wrangler versions upload",
     "rooms:types": "wrangler types -c workers/rooms/wrangler.jsonc workers/rooms/worker-configuration.d.ts",
     "rooms:check": "npm run rooms:types && tsc -p workers/rooms",
