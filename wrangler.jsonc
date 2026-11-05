@@ -9,6 +9,7 @@
   "observability": {
     "enabled": true,
   },
+  "previews": {},
   "env": {
     "beta": {
       "assets": {
