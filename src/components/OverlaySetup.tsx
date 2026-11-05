@@ -137,7 +137,11 @@ export default function OverlaySetup({
   const previewUrl = open ? buildUrl(size, null) : "";
   const companionLink = companionOn && viewId ? companionUrl(viewId) : "";
 
-  const overlayCopy = useCopy(
+  const {
+    copied: overlayCopied,
+    copy: copyOverlay,
+    inputRef: overlayInputRef,
+  } = useCopy(
     useCallback(
       (method: CopyMethod) =>
         track("overlay_link_copied", {
@@ -149,7 +153,11 @@ export default function OverlaySetup({
       [heroCount, size, room],
     ),
   );
-  const companionCopy = useCopy(
+  const {
+    copied: companionCopied,
+    copy: copyCompanion,
+    inputRef: companionInputRef,
+  } = useCopy(
     useCallback(
       (method: CopyMethod) => track("companion_link_copied", { method }),
       [],
@@ -226,7 +234,7 @@ export default function OverlaySetup({
 
           <div className="overlay-setup-link">
             <input
-              ref={overlayCopy.inputRef}
+              ref={overlayInputRef}
               type="text"
               readOnly
               value={url}
@@ -235,9 +243,9 @@ export default function OverlaySetup({
             />
             <button
               className="action-button btn-share"
-              onClick={() => overlayCopy.copy(url)}
+              onClick={() => copyOverlay(url)}
             >
-              {overlayCopy.copied ? "Copied!" : "Copy link"}
+              {overlayCopied ? "Copied!" : "Copy link"}
             </button>
             <a
               className="action-button"
@@ -311,7 +319,7 @@ export default function OverlaySetup({
                   </p>
                   <div className="overlay-setup-link">
                     <input
-                      ref={companionCopy.inputRef}
+                      ref={companionInputRef}
                       type="text"
                       readOnly
                       value={companionLink}
@@ -320,10 +328,10 @@ export default function OverlaySetup({
                     />
                     <button
                       className="action-button btn-share"
-                      onClick={() => companionCopy.copy(companionLink)}
+                      onClick={() => copyCompanion(companionLink)}
                       disabled={!companionLink}
                     >
-                      {companionCopy.copied ? "Copied!" : "Copy link"}
+                      {companionCopied ? "Copied!" : "Copy link"}
                     </button>
                     <a
                       className="action-button"
