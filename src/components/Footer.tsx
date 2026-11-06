@@ -5,7 +5,15 @@ export default function Footer() {
         <p className="text-[1.25em] mb-1">
           <small>
             This is a fan-site for Overwatch and it is not in any way associated
-            with Blizzard Entertainment
+            with Blizzard Entertainment. Part of{" "}
+            <a
+              href="https://heropickers.com"
+              target="_blank"
+              rel="noopener"
+              className="text-gray-400 hover:text-gray-300"
+            >
+              Hero Pickers
+            </a>
           </small>
         </p>
       </div>

@@ -57,6 +57,7 @@ export default function PickerContent() {
 
   // Restore preferences and pick initial hero
   useEffect(() => {
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved options are in localStorage, read after mount
     setShowPortrait(getBoolFromLS("showPortrait", true));
     setShowPerks(getBoolFromLS("showPerks", true));
     setNonRepeatingMode(getBoolFromLS("nonRepeatingMode", false));
@@ -73,6 +74,7 @@ export default function PickerContent() {
       showPerks: getBoolFromLS("showPerks", true),
       nonRepeating: getBoolFromLS("nonRepeatingMode", false),
     };
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the provider publishes a shared preset after mount
     setShowPortrait(sharedPreset.showPortrait);
     setShowPerks(sharedPreset.showPerks);
     setNonRepeatingMode(sharedPreset.nonRepeating);
@@ -85,6 +87,7 @@ export default function PickerContent() {
   useEffect(() => {
     if (mounted && heroes.length > 0 && !selectedHero) {
       const hero = randomHero(heroes);
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the opening roll is random, so it waits for the client
       setSelectedHero(hero);
       setPerks(randomPerkIndices(hero.key));
     }

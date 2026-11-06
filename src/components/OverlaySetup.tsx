@@ -103,11 +103,17 @@ export default function OverlaySetup({
   const [size, setSize] = useState<OverlaySize>(DEFAULT_OVERLAY_SIZE);
   const [companionOn, setCompanionOn] = useState(false);
   const [roomSecret, setRoomSecret] = useState<string | null>(null);
-  const [viewId, setViewId] = useState<string | null>(null);
+  // Remembers which secret the view id was hashed from, so a stale id is
+  // never shown for a different secret, or after the secret is cleared.
+  const [derivedView, setDerivedView] = useState<{
+    secret: string;
+    id: string | null;
+  } | null>(null);
   const panelId = useId();
 
   useEffect(() => {
     const savedSize = getJsonFromLS<string>(SIZE_STORAGE_KEY);
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved settings are in localStorage, read after mount
     if (isOverlaySize(savedSize)) setSize(savedSize);
     const savedSecret = getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY);
     if (isRoomSecret(savedSecret)) setRoomSecret(savedSecret);
@@ -116,14 +122,11 @@ export default function OverlaySetup({
 
   // The companion link carries the hash of the secret, never the secret.
   useEffect(() => {
-    if (!roomSecret) {
-      setViewId(null);
-      return;
-    }
+    if (!roomSecret) return;
     let current = true;
     viewIdFor(roomSecret).then(
-      (id) => current && setViewId(id),
-      () => current && setViewId(null),
+      (id) => current && setDerivedView({ secret: roomSecret, id }),
+      () => current && setDerivedView({ secret: roomSecret, id: null }),
     );
     return () => {
       current = false;
@@ -135,9 +138,15 @@ export default function OverlaySetup({
   // The preview never joins the companion room: it rolls its own hero, which
   // would otherwise replace the one OBS is showing on the streamer's phone.
   const previewUrl = open ? buildUrl(size, null) : "";
+  const viewId =
+    roomSecret && derivedView?.secret === roomSecret ? derivedView.id : null;
   const companionLink = companionOn && viewId ? companionUrl(viewId) : "";
 
-  const overlayCopy = useCopy(
+  const {
+    copied: overlayCopied,
+    copy: copyOverlay,
+    inputRef: overlayInputRef,
+  } = useCopy(
     useCallback(
       (method: CopyMethod) =>
         track("overlay_link_copied", {
@@ -149,7 +158,11 @@ export default function OverlaySetup({
       [heroCount, size, room],
     ),
   );
-  const companionCopy = useCopy(
+  const {
+    copied: companionCopied,
+    copy: copyCompanion,
+    inputRef: companionInputRef,
+  } = useCopy(
     useCallback(
       (method: CopyMethod) => track("companion_link_copied", { method }),
       [],
@@ -226,7 +239,7 @@ export default function OverlaySetup({
 
           <div className="overlay-setup-link">
             <input
-              ref={overlayCopy.inputRef}
+              ref={overlayInputRef}
               type="text"
               readOnly
               value={url}
@@ -235,9 +248,9 @@ export default function OverlaySetup({
             />
             <button
               className="action-button btn-share"
-              onClick={() => overlayCopy.copy(url)}
+              onClick={() => copyOverlay(url)}
             >
-              {overlayCopy.copied ? "Copied!" : "Copy link"}
+              {overlayCopied ? "Copied!" : "Copy link"}
             </button>
             <a
               className="action-button"
@@ -311,7 +324,7 @@ export default function OverlaySetup({
                   </p>
                   <div className="overlay-setup-link">
                     <input
-                      ref={companionCopy.inputRef}
+                      ref={companionInputRef}
                       type="text"
                       readOnly
                       value={companionLink}
@@ -320,10 +333,10 @@ export default function OverlaySetup({
                     />
                     <button
                       className="action-button btn-share"
-                      onClick={() => companionCopy.copy(companionLink)}
+                      onClick={() => copyCompanion(companionLink)}
                       disabled={!companionLink}
                     >
-                      {companionCopy.copied ? "Copied!" : "Copy link"}
+                      {companionCopied ? "Copied!" : "Copy link"}
                     </button>
                     <a
                       className="action-button"

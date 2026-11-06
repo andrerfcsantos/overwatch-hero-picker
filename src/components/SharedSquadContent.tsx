@@ -62,6 +62,7 @@ export default function SharedSquadContent() {
     const decoded = tryDecodeShare(raw);
 
     if (!decoded.ok) {
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the share link is in the URL, which only exists after mount
       setView({ status: "invalid", reason: decoded.reason });
       track("shared_link_opened", {
         share_type: "unknown",

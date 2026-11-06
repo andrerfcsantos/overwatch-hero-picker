@@ -61,6 +61,20 @@ export default function AboutPage() {
         <a href="https://discord.gg/rwQMrCa">https://discord.gg/rwQMrCa</a>
       </p>
 
+      <h2 className="text-[rgb(248,158,74)] text-start">Other pickers</h2>
+
+      <p>
+        This site is part of{" "}
+        <a href="https://heropickers.com" target="_blank" rel="noopener">
+          Hero Pickers
+        </a>
+        , which is also home to the{" "}
+        <a href="https://www.valorantpicker.com" target="_blank" rel="noopener">
+          Valorant Agent Picker
+        </a>{" "}
+        — the same idea, for Valorant.
+      </p>
+
       <h2 className="text-[rgb(248,158,74)] text-start">
         Overwatch 1 Legacy Site
       </h2>

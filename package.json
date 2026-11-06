@@ -12,6 +12,7 @@
     "preview": "next build && wrangler dev",
     "deploy": "next build && wrangler deploy",
     "deploy:beta": "next build && wrangler deploy --env beta",
+    "deploy:preview": "next build && wrangler preview",
     "upload": "next build && wrangler versions upload",
     "rooms:types": "wrangler types -c workers/rooms/wrangler.jsonc workers/rooms/worker-configuration.d.ts",
     "rooms:check": "npm run rooms:types && tsc -p workers/rooms",
@@ -36,15 +37,15 @@
     "@types/sharp": "^0.31.1",
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.0",
-    "typescript": "^6.0.3",
-    "vite-plus": "latest",
+    "typescript": "^7.0.2",
+    "vite-plus": "^1.5.0",
     "wrangler": "^4.120.0"
   },
   "packageManager": "npm@11.12.0",
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@latest"
+    "vite": "npm:@voidzero-dev/vite-plus-core@^1.5.0"
   },
   "engines": {
     "node": "^24.0.0"

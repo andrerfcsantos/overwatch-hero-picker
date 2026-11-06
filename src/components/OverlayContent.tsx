@@ -74,6 +74,7 @@ export default function OverlayContent() {
   // client-only, and this keeps the static export free of a Suspense boundary.
   useEffect(() => {
     const read = readOverlayConfig(window.location.search);
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the config is in the URL, which only exists after mount
     setConfig(read);
     track("overlay_opened", {
       valid: read.ok,

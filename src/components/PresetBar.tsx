@@ -45,6 +45,7 @@ export default function PresetBar() {
   const applied = presets.find((preset) => preset.id === appliedId) ?? null;
 
   useEffect(() => {
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the saved state is in localStorage, read after mount
     setCollapsed(getBoolFromLS("presetsCollapsed", true));
   }, []);
 

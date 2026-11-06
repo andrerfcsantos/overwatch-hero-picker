@@ -49,7 +49,6 @@ interface HeroContextValue {
   unselectAll: () => void;
   /** Replaces the whole selection at once, as applying a preset does. */
   setSelected: (keys: string[]) => void;
-  isHydrated: boolean;
   /** Options that came with a shared preset on this page load, if any. */
   sharedPreset: PickerPreset | null;
   /** True while the shared-preset notice should be shown. */
@@ -142,7 +141,6 @@ const initialState: HeroState = { heroes: getInitialHeroes() };
 
 export function HeroProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(heroReducer, initialState);
-  const isHydrated = useRef(false);
   const hydrated = useRef(false);
   const [sharedPreset, setSharedPreset] = useState<PickerPreset | null>(null);
   const [noticeOpen, setNoticeOpen] = useState(false);
@@ -162,6 +160,7 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
         type: "SET_SELECTIONS",
         selected: new Set(shared.payload.picker.selected),
       });
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- localStorage and the URL are only read after mount
       setSharedPreset(shared.payload.picker);
       setNoticeOpen(true);
       stripShareParam();
@@ -181,7 +180,6 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    isHydrated.current = true;
     hydrated.current = true;
   }, []);
 
@@ -280,7 +278,6 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
       selectAll,
       unselectAll,
       setSelected,
-      isHydrated: isHydrated.current,
       sharedPreset,
       sharedPresetApplied: noticeOpen,
       undoSharedPreset,
