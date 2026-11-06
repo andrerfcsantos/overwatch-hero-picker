@@ -103,7 +103,12 @@ export default function OverlaySetup({
   const [size, setSize] = useState<OverlaySize>(DEFAULT_OVERLAY_SIZE);
   const [companionOn, setCompanionOn] = useState(false);
   const [roomSecret, setRoomSecret] = useState<string | null>(null);
-  const [viewId, setViewId] = useState<string | null>(null);
+  // Remembers which secret the view id was hashed from, so a stale id is
+  // never shown for a different secret, or after the secret is cleared.
+  const [derivedView, setDerivedView] = useState<{
+    secret: string;
+    id: string | null;
+  } | null>(null);
   const panelId = useId();
 
   useEffect(() => {
@@ -116,14 +121,11 @@ export default function OverlaySetup({
 
   // The companion link carries the hash of the secret, never the secret.
   useEffect(() => {
-    if (!roomSecret) {
-      setViewId(null);
-      return;
-    }
+    if (!roomSecret) return;
     let current = true;
     viewIdFor(roomSecret).then(
-      (id) => current && setViewId(id),
-      () => current && setViewId(null),
+      (id) => current && setDerivedView({ secret: roomSecret, id }),
+      () => current && setDerivedView({ secret: roomSecret, id: null }),
     );
     return () => {
       current = false;
@@ -135,6 +137,8 @@ export default function OverlaySetup({
   // The preview never joins the companion room: it rolls its own hero, which
   // would otherwise replace the one OBS is showing on the streamer's phone.
   const previewUrl = open ? buildUrl(size, null) : "";
+  const viewId =
+    roomSecret && derivedView?.secret === roomSecret ? derivedView.id : null;
   const companionLink = companionOn && viewId ? companionUrl(viewId) : "";
 
   const {
