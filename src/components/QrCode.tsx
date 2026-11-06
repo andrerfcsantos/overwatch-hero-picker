@@ -29,6 +29,7 @@ export default function QrCode({ value, label, className }: QrCodeProps) {
     <svg
       className={className}
       viewBox={`0 0 ${size} ${size}`}
+      // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- an inline SVG drawing; <img> would need a data URL
       role="img"
       aria-label={label}
       shapeRendering="crispEdges"

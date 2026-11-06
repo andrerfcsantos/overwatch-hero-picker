@@ -160,6 +160,7 @@ export function HeroProvider({ children }: { children: React.ReactNode }) {
         type: "SET_SELECTIONS",
         selected: new Set(shared.payload.picker.selected),
       });
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- localStorage and the URL are only read after mount
       setSharedPreset(shared.payload.picker);
       setNoticeOpen(true);
       stripShareParam();

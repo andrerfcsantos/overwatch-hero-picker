@@ -60,6 +60,7 @@ function useWakeLock(active: boolean) {
         }
         lock = sentinel;
         sentinel.addEventListener("release", () => {
+          // oxlint-disable-next-line react-hooks/immutability -- `lock` is local to this effect, not render state
           if (lock === sentinel) lock = null;
         });
       } catch {
@@ -91,6 +92,7 @@ export default function CompanionContent() {
     // Literal name only, so the id is always one analytics knows to redact.
     const viewId = readRawParam(window.location.search, ROOM_VIEW_PARAM);
     if (!isViewId(viewId)) {
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the view id is in the URL, which only exists after mount
       setView({ status: "invalid" });
       track("companion_opened", { valid: false });
       return;
@@ -203,6 +205,7 @@ export default function CompanionContent() {
 
   return (
     <main className={styles.page}>
+      {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a live status line, not the result of a form */}
       <p className={`${styles.status} ${styles[status.tone]}`} role="status">
         <span className={styles.dot} aria-hidden="true" />
         {status.text}

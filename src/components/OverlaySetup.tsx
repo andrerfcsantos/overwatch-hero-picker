@@ -113,6 +113,7 @@ export default function OverlaySetup({
 
   useEffect(() => {
     const savedSize = getJsonFromLS<string>(SIZE_STORAGE_KEY);
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved settings are in localStorage, read after mount
     if (isOverlaySize(savedSize)) setSize(savedSize);
     const savedSecret = getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY);
     if (isRoomSecret(savedSecret)) setRoomSecret(savedSecret);
