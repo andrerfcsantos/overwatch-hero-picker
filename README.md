@@ -47,6 +47,19 @@ same major so the types match what actually runs.
   - `npm run build` to generate a production build
   - `npm run start` to serve the production build on localhost
 
+## Logos
+
+The master artwork lives in [`images/logo/`](images/logo). Every size the site
+uses (navbar logo, favicons, app and home-screen icons, the logo on the social
+cards) is rendered from it and committed:
+
+```bash
+npm run generate-logos
+```
+
+Re-run it only when a master logo changes, and look at the results, especially
+the 16px favicon.
+
 ## Stream overlay companion (rooms Worker)
 
 The site itself is a static export served by Cloudflare Workers static assets.

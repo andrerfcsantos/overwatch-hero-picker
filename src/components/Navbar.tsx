@@ -29,11 +29,11 @@ export default function Navbar() {
             className="flex items-center no-underline text-white"
           >
             <Image
-              className="max-h-[2em] pr-2"
-              src="/assets/imgs/navbar/ow-logo.svg"
-              alt="Overwatch logo"
-              width={32}
-              height={32}
+              className="h-[2em] w-auto pr-2"
+              src="/assets/imgs/logo/hp-logo.webp"
+              alt="Hero Picker logo"
+              width={225}
+              height={96}
             />
             <span className="text-[1.5rem] text-white">
               Overwatch Hero Picker

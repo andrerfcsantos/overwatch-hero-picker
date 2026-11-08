@@ -9,6 +9,7 @@
     "lint": "vp lint",
     "format": "vp fmt \"src/**/*.{ts,tsx,css}\"",
     "generate-sprites": "npx tsx scripts/generate-sprites.ts",
+    "generate-logos": "node scripts/generate-logos.mts",
     "preview": "next build && wrangler dev",
     "deploy": "next build && wrangler deploy",
     "deploy:beta": "next build && wrangler deploy --env beta",
