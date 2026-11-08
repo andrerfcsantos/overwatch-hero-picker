@@ -1,4 +1,4 @@
-![Hero Picker Logo](images/logo/logo_black.png)
+![Hero Picker Logo](images/logo/hero-picker-ow-hp.png)
 
 Repository for the Random Hero Picker for Overwatch.
 This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.
