@@ -21,7 +21,7 @@ Any feedback that is not a bug report or a feature request, please send to owher
 - [React](https://react.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
+- [Oxlint + Oxfmt](https://oxc.rs/), through [Vite+](https://viteplus.dev) (`npm run lint`, `npm run format`)
 
 ## Building the site from source
 
