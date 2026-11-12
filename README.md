@@ -1,4 +1,4 @@
-![Hero Picker Logo](images/logo/logo_black.png)
+![Hero Picker Logo](images/logo/hero-picker-ow-hp.png)
 
 Repository for the Random Hero Picker for Overwatch.
 This website allows Overwatch players to get a random suggestion of which hero to play based on a selection of heroes made by the player.
@@ -46,6 +46,19 @@ same major so the types match what actually runs.
   - `npm run dev` to serve the site on localhost in development mode
   - `npm run build` to generate a production build
   - `npm run start` to serve the production build on localhost
+
+## Logos
+
+The master artwork lives in [`images/logo/`](images/logo). Every size the site
+uses (navbar logo, favicons, app and home-screen icons, the logo on the social
+cards) is rendered from it and committed:
+
+```bash
+npm run generate-logos
+```
+
+Re-run it only when a master logo changes, and look at the results, especially
+the 16px favicon.
 
 ## Stream overlay companion (rooms Worker)
 

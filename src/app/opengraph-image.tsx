@@ -60,6 +60,13 @@ const heroKeys = [
   "zenyatta",
 ];
 
+function getLogoDataUrl(): string {
+  const buf = fs.readFileSync(
+    path.join(process.cwd(), "public/assets/imgs/logo/hp-logo.png"),
+  );
+  return `data:image/png;base64,${buf.toString("base64")}`;
+}
+
 function getHeroIconDataUrls(): string[] {
   const iconsDir = path.join(process.cwd(), "public/assets/imgs/heroes/icons");
   return heroKeys.map((key) => {
@@ -69,6 +76,7 @@ function getHeroIconDataUrls(): string[] {
 }
 
 export default function OGImage() {
+  const logoUrl = getLogoDataUrl();
   const iconUrls = getHeroIconDataUrls();
   const iconSize = 48;
   const iconGap = 4;
@@ -116,6 +124,14 @@ export default function OGImage() {
             gap: "6px",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoUrl}
+            alt=""
+            width={234}
+            height={100}
+            style={{ marginBottom: "14px" }}
+          />
           <div
             style={{
               fontSize: "60px",

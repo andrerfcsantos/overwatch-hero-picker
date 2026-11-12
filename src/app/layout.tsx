@@ -38,7 +38,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Preload critical navbar image */}
-        <link rel="preload" as="image" href="/assets/imgs/navbar/ow-logo.svg" />
+        <link rel="preload" as="image" href="/assets/imgs/logo/hp-logo.webp" />
 
         {/* Preload font */}
         <link
