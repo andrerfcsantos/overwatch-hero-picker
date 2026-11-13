@@ -12,6 +12,17 @@ if (
   );
 }
 
+// Same for Clerk, except a missing key isn't silent: ClerkProvider throws and
+// takes every page down with it.
+if (
+  process.env.NODE_ENV === "production" &&
+  !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+) {
+  throw new Error(
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY must be set for a production build — see .env.example.",
+  );
+}
+
 const nextConfig: NextConfig = {
   output: "export",
   images: {

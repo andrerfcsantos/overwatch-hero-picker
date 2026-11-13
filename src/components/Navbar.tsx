@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -102,6 +103,17 @@ export default function Navbar() {
               height={42}
             />
           </a>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="nav-link cursor-pointer">Sign in</button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="nav-link cursor-pointer">Sign up</button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
         </div>
       </div>
     </nav>

@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { ClerkProvider } from "@clerk/react";
 import { HeroProvider } from "@/context/HeroContext";
 import { PresetProvider } from "@/context/PresetContext";
 import { OVERLAY_PATH } from "@/lib/overlay";
@@ -23,7 +24,11 @@ interface SiteChromeProps {
  * and the overlay's link must not touch it.
  *
  * The overlay is only ever opened directly (in OBS), never reached through
- * client-side navigation, so the tree never switches shape mid-session.
+ * client-side navigation, so the tree never switches shape mid-session. It
+ * also stays out of Clerk, so a stream capture never loads the auth script.
+ *
+ * Clerk runs client-side only (`@clerk/react`, not `@clerk/nextjs`): the site
+ * is a static export, so there is no server for middleware or `auth()`.
  */
 export default function SiteChrome({
   children,
@@ -33,19 +38,26 @@ export default function SiteChrome({
   analytics,
 }: SiteChromeProps) {
   const pathname = usePathname();
+  const router = useRouter();
   if (pathname === OVERLAY_PATH || pathname.startsWith(`${OVERLAY_PATH}/`)) {
     return <>{children}</>;
   }
 
   return (
-    <HeroProvider>
-      <PresetProvider>
-        {navbar}
-        {children}
-        {footer}
-        {extras}
-        {analytics}
-      </PresetProvider>
-    </HeroProvider>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      routerPush={(to) => router.push(to)}
+      routerReplace={(to) => router.replace(to)}
+    >
+      <HeroProvider>
+        <PresetProvider>
+          {navbar}
+          {children}
+          {footer}
+          {extras}
+          {analytics}
+        </PresetProvider>
+      </HeroProvider>
+    </ClerkProvider>
   );
 }

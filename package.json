@@ -24,6 +24,7 @@
     "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
   },
   "dependencies": {
+    "@clerk/react": "^6.18.6",
     "next": "^16.2.6",
     "posthog-js": "^1.422.5",
     "react": "^19.2.6",
