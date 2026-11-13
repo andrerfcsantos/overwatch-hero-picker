@@ -3,15 +3,18 @@ import { initAnalytics } from "@/lib/analytics";
 const projectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 
-// Production builds are guarded in next.config.ts; this catches dev setups.
+// Production builds are guarded in next.config.ts; this only flags dev setups.
+// It must warn, not throw: Next runs this file before hydrating, so a throw
+// here leaves every page unhydrated. The keys live in .env.production, which
+// `next dev` doesn't load, so a plain dev setup has no analytics by design.
 if (!projectToken || !host) {
   if (process.env.NODE_ENV === "development") {
     const missingVariable = !projectToken
       ? "NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN"
       : "NEXT_PUBLIC_POSTHOG_HOST";
 
-    throw new Error(
-      `${missingVariable} variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once ${missingVariable} is configured`,
+    console.warn(
+      `PostHog analytics is off: ${missingVariable} is not set. Add it to .env.local to send dev events (see .env.example).`,
     );
   }
 } else {
