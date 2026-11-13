@@ -2,6 +2,7 @@ import { describe, expect, test } from "vite-plus/test";
 import type { CaptureResult } from "posthog-js/dist/module.slim";
 
 import {
+  createSampler,
   isStacklessThirdPartyException,
   redactUrl,
   scrubSecrets,
@@ -133,5 +134,53 @@ describe("scrubSecrets in nested payloads", () => {
     expect(JSON.stringify({ ...properties, self: undefined })).not.toContain(
       "SECRET",
     );
+  });
+});
+
+describe("createSampler", () => {
+  /** A random source that replays `values`, for deterministic tests. */
+  function replay(values: number[]): () => number {
+    let i = 0;
+    return () => values[i++];
+  }
+
+  test("always sends the first occurrence, with weight 1", () => {
+    const sample = createSampler(10, () => 0.99);
+    expect(sample()).toEqual({ sample_weight: 1, page_occurrence: 1 });
+    expect(sample()).toBeNull();
+  });
+
+  test("keeps later occurrences with probability 1/every, weighted by the interval", () => {
+    // 0.05 * 10 < 1 is kept; 0.1 * 10 = 1 is the first value dropped.
+    const sample = createSampler(10, replay([0.05, 0.1, 0.0999, 0.5]));
+    expect([sample(), sample(), sample(), sample(), sample()]).toEqual([
+      { sample_weight: 1, page_occurrence: 1 },
+      { sample_weight: 10, page_occurrence: 2 },
+      null,
+      { sample_weight: 10, page_occurrence: 4 },
+      null,
+    ]);
+  });
+
+  test("weights sum to about the true count, even for short visits", () => {
+    // Many 8-roll visits, the typical length: a fixed stride would report 1
+    // roll for each.
+    let total = 0;
+    const visits = 20_000;
+    for (let v = 0; v < visits; v++) {
+      const sample = createSampler(10);
+      for (let roll = 0; roll < 8; roll++)
+        total += sample()?.sample_weight ?? 0;
+    }
+    expect(total / visits).toBeGreaterThan(7.6);
+    expect(total / visits).toBeLessThan(8.4);
+  });
+
+  test("an interval of one sends everything", () => {
+    const sample = createSampler(1);
+    expect([sample(), sample()]).toEqual([
+      { sample_weight: 1, page_occurrence: 1 },
+      { sample_weight: 1, page_occurrence: 2 },
+    ]);
   });
 });
