@@ -192,9 +192,10 @@ const SAMPLE_EVERY: Partial<Record<keyof EventMap, number>> = {
 /** Added to every event listed in {@link SAMPLE_EVERY}. */
 export interface SampleProps {
   /**
-   * How many occurrences this event stands for. Sum it, rather than counting
-   * events, to estimate the true total. Occurrences after a page's last sent
-   * event are never reported, so the sum runs slightly low.
+   * How many occurrences this event stands for: 1 for a page's first, which
+   * is always sent, and the sampling interval for the rest. Sum it, rather
+   * than counting events, to estimate the true total; the estimate is
+   * unbiased overall and within any breakdown, such as per hero.
    */
   sample_weight: number;
   /** Which occurrence this is since the page loaded, counting unsent ones. */
@@ -203,19 +204,24 @@ export interface SampleProps {
 
 /**
  * Keeps the first occurrence, so "did this visit roll at all" stays exact,
- * then every `every`-th after it. Deterministic rather than random, so the
- * weights add up to the true count instead of only approximating it.
+ * then each later one independently with probability 1/`every`.
+ *
+ * Random rather than every n-th on purpose. A fixed stride would hand each
+ * kept event the weight of the rolls before it, crediting them to whatever
+ * hero and pool the kept roll happened to have, and would drop the rolls after
+ * a page's last kept one: a visit of 8 rolls, the typical length, would count
+ * as 1. Here every kept event stands only for rolls like itself.
  */
-export function createSampler(every: number): () => SampleProps | null {
+export function createSampler(
+  every: number,
+  random: () => number = Math.random,
+): () => SampleProps | null {
   let occurrences = 0;
-  let unsent = 0;
   return () => {
     occurrences += 1;
-    unsent += 1;
-    if (occurrences > 1 && unsent < every) return null;
-    const sampleWeight = unsent;
-    unsent = 0;
-    return { sample_weight: sampleWeight, page_occurrence: occurrences };
+    if (occurrences === 1) return { sample_weight: 1, page_occurrence: 1 };
+    if (random() * every >= 1) return null;
+    return { sample_weight: every, page_occurrence: occurrences };
   };
 }
 
