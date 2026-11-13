@@ -2,6 +2,7 @@ import { describe, expect, test } from "vite-plus/test";
 import type { CaptureResult } from "posthog-js/dist/module.slim";
 
 import {
+  createSampler,
   isStacklessThirdPartyException,
   redactUrl,
   scrubSecrets,
@@ -133,5 +134,37 @@ describe("scrubSecrets in nested payloads", () => {
     expect(JSON.stringify({ ...properties, self: undefined })).not.toContain(
       "SECRET",
     );
+  });
+});
+
+describe("createSampler", () => {
+  test("sends the first occurrence, then every nth, each weighted by what it stands for", () => {
+    const sample = createSampler(3);
+    const results = Array.from({ length: 8 }, () => sample());
+    expect(results).toEqual([
+      { sample_weight: 1, page_occurrence: 1 },
+      null,
+      null,
+      { sample_weight: 3, page_occurrence: 4 },
+      null,
+      null,
+      { sample_weight: 3, page_occurrence: 7 },
+      null,
+    ]);
+  });
+
+  test("weights of sent events add up to every occurrence they cover", () => {
+    const sample = createSampler(10);
+    let total = 0;
+    for (let i = 0; i < 101; i++) total += sample()?.sample_weight ?? 0;
+    expect(total).toBe(101);
+  });
+
+  test("an interval of one sends everything", () => {
+    const sample = createSampler(1);
+    expect([sample(), sample()]).toEqual([
+      { sample_weight: 1, page_occurrence: 1 },
+      { sample_weight: 1, page_occurrence: 2 },
+    ]);
   });
 });

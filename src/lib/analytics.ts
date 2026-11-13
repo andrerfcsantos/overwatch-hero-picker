@@ -180,6 +180,59 @@ type EventMap = {
 let initialized = false;
 
 /**
+ * Events fired so often that sending each one would dominate the event quota,
+ * mapped to "send one in this many". Rolling is the site's core loop: users
+ * re-roll dozens to thousands of times per visit, and before sampling
+ * `hero_randomized` alone was over a third of all events.
+ */
+const SAMPLE_EVERY: Partial<Record<keyof EventMap, number>> = {
+  hero_randomized: 10,
+};
+
+/** Added to every event listed in {@link SAMPLE_EVERY}. */
+export interface SampleProps {
+  /**
+   * How many occurrences this event stands for. Sum it, rather than counting
+   * events, to estimate the true total. Occurrences after a page's last sent
+   * event are never reported, so the sum runs slightly low.
+   */
+  sample_weight: number;
+  /** Which occurrence this is since the page loaded, counting unsent ones. */
+  page_occurrence: number;
+}
+
+/**
+ * Keeps the first occurrence, so "did this visit roll at all" stays exact,
+ * then every `every`-th after it. Deterministic rather than random, so the
+ * weights add up to the true count instead of only approximating it.
+ */
+export function createSampler(every: number): () => SampleProps | null {
+  let occurrences = 0;
+  let unsent = 0;
+  return () => {
+    occurrences += 1;
+    unsent += 1;
+    if (occurrences > 1 && unsent < every) return null;
+    const sampleWeight = unsent;
+    unsent = 0;
+    return { sample_weight: sampleWeight, page_occurrence: occurrences };
+  };
+}
+
+const samplers = new Map<keyof EventMap, () => SampleProps | null>();
+
+function sampleFor(event: keyof EventMap): SampleProps | null | undefined {
+  const every = SAMPLE_EVERY[event];
+  if (every === undefined) return undefined;
+  let sampler = samplers.get(event);
+  if (!sampler) {
+    sampler = createSampler(every);
+    samplers.set(event, sampler);
+  }
+  return sampler();
+}
+
+/**
  * Share payloads travel in the `d` query param as unique blobs. Left alone
  * they would make every share link its own URL in PostHog, fragmenting the
  * pages you most want to compare — so the blob never leaves the browser.
@@ -266,9 +319,21 @@ export function initAnalytics(projectToken: string, host: string): void {
       mask_personal_data_properties: true,
       custom_personal_data_properties: SECRET_PARAMS,
     }),
+    // Every interaction worth counting already has a typed event, so
+    // autocapture only doubled them: each "Randomize Hero" click sent both a
+    // `$autocapture` and a `hero_randomized`, and that pair alone was most of
+    // the event quota. It also takes `$rageclick` with it, which fired almost
+    // only on the Randomize button, where clicking fast is the point. Session
+    // replay records clicks on its own and is unaffected.
+    autocapture: false,
+    // Web Vitals sent nearly two `$web_vitals` events per pageview, for
+    // performance data nobody was reading. Only `web_vitals` is overridden:
+    // replay's network timing still follows the project setting.
+    capture_performance: { web_vitals: false },
     __extensionClasses: {
-      // Session replay, plus the autocapture/web-vitals family. Without these
-      // the slim build captures pageviews and manual `capture` calls only.
+      // Session replay, plus the analytics family (heatmaps and the rest).
+      // Without these the slim build captures pageviews and manual `capture`
+      // calls only.
       ...SessionReplayExtensions,
       ...AnalyticsExtensions,
       // The pair `capture_exceptions` below needs to have any effect.
@@ -306,5 +371,8 @@ export function track<E extends keyof EventMap>(
   event: E,
   properties: EventMap[E],
 ): void {
-  if (initialized) posthog.capture(event, properties);
+  if (!initialized) return;
+  const sample = sampleFor(event);
+  if (sample === null) return;
+  posthog.capture(event, sample ? { ...properties, ...sample } : properties);
 }
