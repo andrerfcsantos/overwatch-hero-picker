@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="text-gray-500 mt-4 lg:mt-0 max-[1220px]:mt-20">
@@ -14,6 +16,17 @@ export default function Footer() {
             >
               Hero Pickers
             </a>
+          </small>
+        </p>
+        <p className="text-[1.1em] mb-1">
+          <small>
+            <Link href="/privacy" className="text-gray-400 hover:text-gray-300">
+              Privacy Policy
+            </Link>
+            {" · "}
+            <Link href="/terms" className="text-gray-400 hover:text-gray-300">
+              Terms of Service
+            </Link>
           </small>
         </p>
       </div>

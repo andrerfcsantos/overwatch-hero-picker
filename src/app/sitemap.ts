@@ -22,5 +22,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.5,
     },
+    ...["privacy", "terms"].map((page) => ({
+      url: `https://www.owheropicker.com/${page}`,
+      lastModified: new Date(),
+      changeFrequency: "yearly" as const,
+      priority: 0.1,
+    })),
   ];
 }
