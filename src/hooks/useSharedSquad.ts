@@ -38,6 +38,9 @@ type ViewState =
 export function useSharedSquad() {
   const [view, setView] = useState<ViewState>({ status: "loading" });
   const [rolls, setRolls] = useState(0);
+  // Kept here rather than in the new design's view, so switching design and
+  // back does not seal a roll the visitor has already seen.
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     const raw = readShareParam(window.location.search);
@@ -149,6 +152,13 @@ export function useSharedSquad() {
 
   return {
     status: "ready" as const,
+    /** True once the visitor has asked to see a roll somebody sent. */
+    revealed,
+    reveal: () => {
+      if (revealed) return;
+      setRevealed(true);
+      track("shared_result_revealed", { share_type: "squad_result" });
+    },
     squad: view.squad,
     heroes: view.heroes,
     perks: view.perks,

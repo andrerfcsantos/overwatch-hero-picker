@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { track } from "@/lib/analytics";
 import { ROLES } from "@/data/heroes";
 import { SHARED_HERO_ERRORS, type SharedHero } from "@/hooks/useSharedHero";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
@@ -19,8 +17,6 @@ import styles from "./Shared.module.css";
  * out. After that it is the picker's rail, rolling from the sender's pool.
  */
 export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
-  const [opened, setOpened] = useState(false);
-
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -53,7 +49,7 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
 
   // Only a roll somebody else made is sealed. A hero this version of the site
   // does not know has nothing to reveal.
-  const sealed = !ownRoll && !opened && hero !== undefined;
+  const sealed = !ownRoll && !shared.revealed && hero !== undefined;
   const roleLabel = hero
     ? (ROLES.find((role) => role.key === hero.role)?.label ?? "")
     : "";
@@ -168,14 +164,7 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
 
         <div className={ui.rollBar} data-roll-bar>
           {sealed ? (
-            <button
-              type="button"
-              className={ui.roll}
-              onClick={() => {
-                setOpened(true);
-                track("shared_result_revealed", { share_type: "hero_result" });
-              }}
-            >
+            <button type="button" className={ui.roll} onClick={shared.reveal}>
               Reveal the hero
             </button>
           ) : (

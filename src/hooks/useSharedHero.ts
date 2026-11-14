@@ -43,6 +43,9 @@ export function useSharedHero() {
   // Counted separately so re-rolling perks doesn't replay the hero animations.
   const [heroRolls, setHeroRolls] = useState(0);
   const [perkRolls, setPerkRolls] = useState(0);
+  // Kept here rather than in the new design's view, so switching design and
+  // back does not seal a roll the visitor has already seen.
+  const [revealed, setRevealed] = useState(false);
 
   // Read straight from the URL rather than useSearchParams: the page is
   // client-only, and this keeps the static export free of a Suspense boundary.
@@ -149,6 +152,13 @@ export function useSharedHero() {
   const hero = view.heroKey ? heroByKey.get(view.heroKey) : undefined;
   return {
     status: "ready" as const,
+    /** True once the visitor has asked to see a roll somebody sent. */
+    revealed,
+    reveal: () => {
+      if (revealed) return;
+      setRevealed(true);
+      track("shared_result_revealed", { share_type: "hero_result" });
+    },
     picker: view.picker,
     ownRoll: view.ownRoll,
     /** Undefined when the link names a hero this version does not know. */

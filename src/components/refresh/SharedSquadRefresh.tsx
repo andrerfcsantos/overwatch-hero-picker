@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { track } from "@/lib/analytics";
 import { ROLES, getAllHeroes } from "@/data/heroes";
 import { SHARED_SQUAD_ERRORS, type SharedSquad } from "@/hooks/useSharedSquad";
 import { perksFromIndices } from "@/lib/heroService";
@@ -25,8 +23,6 @@ export default function SharedSquadRefresh({
 }: {
   shared: SharedSquad;
 }) {
-  const [opened, setOpened] = useState(false);
-
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -46,7 +42,7 @@ export default function SharedSquadRefresh({
   }
 
   const { squad, heroes, perks, ownRoll, rolls, handleReroll } = shared;
-  const sealed = !ownRoll && !opened;
+  const sealed = !ownRoll && !shared.revealed;
 
   const players = Array.from({ length: squad.size }, (_, index) => {
     const heroKey = heroes[index] ?? null;
@@ -97,14 +93,7 @@ export default function SharedSquadRefresh({
 
         <div className={ui.rollBar} data-roll-bar>
           {sealed ? (
-            <button
-              type="button"
-              className={ui.roll}
-              onClick={() => {
-                setOpened(true);
-                track("shared_result_revealed", { share_type: "squad_result" });
-              }}
-            >
+            <button type="button" className={ui.roll} onClick={shared.reveal}>
               Reveal the squad
             </button>
           ) : (
