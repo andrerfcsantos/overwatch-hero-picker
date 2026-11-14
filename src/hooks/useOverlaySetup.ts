@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { useDesign } from "@/context/DesignContext";
-import type { Design } from "@/lib/design";
+import { type Design, isDesign } from "@/lib/design";
 import {
   getBoolFromLS,
   getJsonFromLS,
@@ -24,6 +24,8 @@ import {
 
 /** Remembers the streamer's card size between visits; filters are the picker's. */
 const SIZE_STORAGE_KEY = "overlaySize";
+/** The card design the streamer picked here, when they picked one. */
+const CARD_DESIGN_STORAGE_KEY = "overlayCardDesign";
 /** Whether the overlay link includes the companion room. */
 const COMPANION_STORAGE_KEY = "overlayCompanion";
 /**
@@ -125,7 +127,9 @@ export function useOverlaySetup({
   const { design: siteDesign } = useDesign();
   // The card follows the design the streamer is looking at, unless they pick
   // the other one here. OBS cannot read their saved choice, so the link has
-  // to carry it.
+  // to carry it. A pick is remembered like the size is, so it survives a
+  // switch of the site's design (which swaps this setup for the other one)
+  // as well as a later visit.
   const [designOverride, setDesignOverride] = useState<Design | null>(null);
   const cardDesign = designOverride ?? siteDesign;
   const [size, setSize] = useState<OverlaySize>(DEFAULT_OVERLAY_SIZE);
@@ -148,6 +152,8 @@ export function useOverlaySetup({
     const savedSize = getJsonFromLS<string>(SIZE_STORAGE_KEY);
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved settings are in localStorage, read after mount
     if (isOverlaySize(savedSize)) setSize(savedSize);
+    const savedDesign = getJsonFromLS<string>(CARD_DESIGN_STORAGE_KEY);
+    if (isDesign(savedDesign)) setDesignOverride(savedDesign);
     const savedSecret = getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY);
     if (isRoomSecret(savedSecret)) setRoomSecret(savedSecret);
     setCompanionOn(getBoolFromLS(COMPANION_STORAGE_KEY, companionByDefault));
@@ -155,13 +161,16 @@ export function useOverlaySetup({
 
   // A companion that is on without anyone having switched it on (the default)
   // still needs a room. Made when the setup is first opened, so visitors who
-  // never open it are not given one.
+  // never open it are not given one. Another tab may have made one since this
+  // tab read storage; that room is used rather than replaced, so both tabs
+  // hand out the same links.
   useEffect(() => {
-    if (!open || !companionOn) return;
-    if (isRoomSecret(getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY))) return;
+    if (!open || !companionOn || roomSecret) return;
+    const stored = getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY);
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- the room is created on first open and kept in localStorage
-    newRoomSecret();
-  }, [open, companionOn, newRoomSecret]);
+    if (isRoomSecret(stored)) setRoomSecret(stored);
+    else newRoomSecret();
+  }, [open, companionOn, roomSecret, newRoomSecret]);
 
   // The companion link carries the hash of the secret, never the secret.
   useEffect(() => {
@@ -212,15 +221,17 @@ export function useOverlaySetup({
     setJsonToLS(SIZE_STORAGE_KEY, value);
   }, []);
 
-  const handleCompanion = useCallback(
-    (enabled: boolean) => {
-      setCompanionOn(enabled);
-      setBoolToLS(COMPANION_STORAGE_KEY, enabled);
-      if (enabled && !roomSecret) newRoomSecret();
-      track("overlay_companion_toggled", { enabled });
-    },
-    [roomSecret, newRoomSecret],
-  );
+  const handleCompanion = useCallback((enabled: boolean) => {
+    // A room for a companion switched on here comes from the effect above.
+    setCompanionOn(enabled);
+    setBoolToLS(COMPANION_STORAGE_KEY, enabled);
+    track("overlay_companion_toggled", { enabled });
+  }, []);
+
+  const handleCardDesign = useCallback((design: Design) => {
+    setDesignOverride(design);
+    setJsonToLS(CARD_DESIGN_STORAGE_KEY, design);
+  }, []);
 
   const handleNewCompanionLink = useCallback(() => {
     newRoomSecret();
@@ -239,7 +250,7 @@ export function useOverlaySetup({
 
   return {
     cardDesign,
-    setCardDesign: setDesignOverride,
+    setCardDesign: handleCardDesign,
     size,
     handleSize,
     companionOn,

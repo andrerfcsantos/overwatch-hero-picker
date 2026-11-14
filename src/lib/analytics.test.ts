@@ -3,6 +3,7 @@ import type { CaptureResult } from "posthog-js/dist/module.slim";
 
 import {
   createSampler,
+  designForPage,
   isStacklessThirdPartyException,
   redactUrl,
   scrubSecrets,
@@ -182,5 +183,33 @@ describe("createSampler", () => {
       { sample_weight: 1, page_occurrence: 1 },
       { sample_weight: 1, page_occurrence: 2 },
     ]);
+  });
+});
+
+describe("designForPage", () => {
+  const savedRefresh = { design: "refresh", chosen: true } as const;
+  const defaultClassic = { design: "classic", chosen: false } as const;
+
+  test("ordinary pages report the visitor's own choice", () => {
+    expect(designForPage("/", "", savedRefresh)).toEqual({
+      design: "refresh",
+      origin: "chosen",
+    });
+    expect(designForPage("/squad", "?look=refresh", defaultClassic)).toEqual({
+      design: "classic",
+      origin: "default",
+    });
+  });
+
+  test("the overlay and the companion report the design their link asks for", () => {
+    for (const path of ["/overlay", "/overlay/", "/overlay/companion"]) {
+      expect(
+        designForPage(path, "?view=x&look=refresh", defaultClassic),
+      ).toEqual({ design: "refresh", origin: "link" });
+      expect(designForPage(path, "?view=x", savedRefresh)).toEqual({
+        design: "classic",
+        origin: "link",
+      });
+    }
   });
 });

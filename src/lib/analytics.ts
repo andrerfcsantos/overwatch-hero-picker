@@ -19,6 +19,7 @@ import {
 import { HeroRole } from "@/types/hero";
 import {
   type Design,
+  type DesignChoice,
   overlayDesignFromSearch,
   readDesignChoice,
 } from "@/lib/design";
@@ -418,18 +419,35 @@ export function initAnalytics(projectToken: string, host: string): void {
   });
   initialized = true;
   // Registered before the SDK sends its first pageview, so every event of the
-  // visit says which design it happened under. The overlay card's design
-  // comes from its link: OBS has no access to the streamer's saved choice. The
-  // companion page shares the path prefix but is an ordinary page in the
-  // streamer's own browser, so it reports their choice like any other.
-  const onOverlayCard =
-    window.location.pathname.replace(/\/$/, "") === "/overlay";
-  if (onOverlayCard) {
-    registerDesign(overlayDesignFromSearch(window.location.search), "link");
-  } else {
-    const choice = readDesignChoice();
-    registerDesign(choice.design, choice.chosen ? "chosen" : "default");
+  // visit says which design it happened under.
+  const { design, origin } = designForPage(
+    window.location.pathname,
+    window.location.search,
+    readDesignChoice(),
+  );
+  registerDesign(design, origin);
+}
+
+/**
+ * Pages whose design comes from their link rather than the visitor's saved
+ * choice: the overlay runs in OBS, which has no access to it, and the
+ * companion is opened on a phone or second screen that usually has none.
+ */
+const LINK_DESIGN_PATHS = ["/overlay", "/overlay/companion"];
+
+/** The design a page is shown in, and where that came from, for analytics. */
+export function designForPage(
+  pathname: string,
+  search: string,
+  choice: DesignChoice,
+): { design: Design; origin: DesignOrigin } {
+  if (LINK_DESIGN_PATHS.includes(pathname.replace(/\/$/, ""))) {
+    return { design: overlayDesignFromSearch(search), origin: "link" };
   }
+  return {
+    design: choice.design,
+    origin: choice.chosen ? "chosen" : "default",
+  };
 }
 
 /**
