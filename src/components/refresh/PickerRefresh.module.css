@@ -1,0 +1,228 @@
+.app {
+  display: grid;
+  grid-template-columns: 22rem minmax(0, 1fr);
+  align-items: start;
+}
+
+/* The roll. It stays in view while the pool beside it scrolls, so the button
+   and its result are never more than a glance away. */
+.rail {
+  position: sticky;
+  top: var(--hp-nav-h);
+  display: flex;
+  flex-direction: column;
+  /* As tall as the page's row, which fills the window above the footer, and
+     never taller than the window, so it can stick while the side scrolls. */
+  align-self: stretch;
+  max-height: calc(100vh - var(--hp-nav-h));
+  padding: 1.5rem 1.5rem 1.25rem;
+  background: var(--hp-rail);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.lead {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--hp-muted);
+}
+
+/* Takes whatever height the rail has left, so the portrait is as large as
+   the window allows without pushing the roll button off it. */
+.portraitFrame {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-height: 9rem;
+  max-height: 25rem;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.portrait {
+  height: 100%;
+  aspect-ratio: 180 / 310;
+  border-radius: 0.25rem;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--hp-font-display);
+  font-size: 4rem;
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.noPortrait .name {
+  margin-top: 1.5rem;
+}
+
+.role {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--hp-muted);
+}
+
+.perks {
+  margin-top: 1rem;
+  padding: 0.75rem 0;
+  border-block: 1px solid var(--hp-line-soft);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.actions :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.settings {
+  margin-top: 0.75rem;
+  text-align: left;
+}
+
+.settings summary {
+  width: max-content;
+  margin: 0 auto;
+  padding: 0.35rem 0.5rem;
+  color: var(--hp-muted);
+  cursor: pointer;
+}
+
+.settings summary:hover,
+.settings[open] summary {
+  color: var(--hp-text);
+}
+
+.side {
+  min-width: 0;
+}
+
+.notice {
+  padding: 1rem 2rem 0;
+}
+
+/* Lined up with the pool below it, which brings its own space above. */
+.feedback {
+  max-width: 76rem;
+  padding: 1.5rem 2rem 0;
+}
+
+.feedback > * {
+  margin-bottom: 0;
+}
+
+.feedback:empty {
+  display: none;
+}
+
+.notice :global(.shared-preset-notice) {
+  max-width: none;
+  margin: 0;
+  border-radius: var(--hp-radius);
+}
+
+.notice :global(.shared-preset-notice-text) {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+@media (max-width: 63.99rem) {
+  .app {
+    display: block;
+    min-height: 0;
+  }
+
+  /* The result becomes a compact card: portrait on the left, facts beside it,
+     and the roll button leaves for the bottom of the screen. */
+  .rail {
+    position: static;
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-content: start;
+    max-height: none;
+    padding: 1rem;
+    text-align: left;
+    overflow: visible;
+  }
+
+  .noPortrait {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lead {
+    grid-column: 2;
+    font-size: 1rem;
+  }
+
+  .noPortrait .lead,
+  .noPortrait .name,
+  .noPortrait .role {
+    grid-column: 1;
+  }
+
+  .portraitFrame {
+    display: block;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+  }
+
+  .portrait {
+    width: 100%;
+    height: auto;
+  }
+
+  .name {
+    grid-column: 2;
+    font-size: 3rem;
+  }
+
+  .noPortrait .name {
+    margin-top: 0;
+  }
+
+  .role {
+    grid-column: 2;
+    align-self: start;
+    justify-content: flex-start;
+  }
+
+  .perks,
+  .actions,
+  .settings {
+    grid-column: 1 / -1;
+  }
+
+  .perks {
+    margin-top: 0.75rem;
+  }
+
+  .settings summary {
+    margin: 0;
+    padding-left: 0;
+  }
+
+  .notice,
+  .feedback {
+    padding: 1rem 1rem 0;
+  }
+
+  .feedback {
+    max-width: none;
+  }
+}

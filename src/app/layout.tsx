@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./refresh.css";
 import SiteChrome from "@/components/SiteChrome";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
 import { ICON_SPRITE, PORTRAIT_SPRITE, ROLE_SPRITE } from "@/data/spriteMap";
+import { DESIGN_BOOT_SCRIPT } from "@/lib/design";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.owheropicker.com"),
@@ -35,8 +37,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // The boot script below sets data-design before React hydrates, which
+    // React would otherwise report as a mismatch on this one element.
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Stamps the visitor's design on <html> before the first paint. */}
+        <script
+          id="design-boot"
+          dangerouslySetInnerHTML={{ __html: DESIGN_BOOT_SCRIPT }}
+        />
+
         {/* Preload critical navbar image */}
         <link rel="preload" as="image" href="/assets/imgs/logo/hp-logo.webp" />
 

@@ -1,26 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { track } from "@/lib/analytics";
 import Link from "next/link";
-import { PerkPick } from "@/types/hero";
 import { getAllHeroes } from "@/data/heroes";
-import { perksFromIndices, randomPerkIndices } from "@/lib/heroService";
+import { useDesign } from "@/context/DesignContext";
 import {
-  computeSquad,
-  pickForSlot,
-  slotConfigsFromEnabled,
-} from "@/lib/squadService";
-import { ShareErrorReason } from "@/lib/share/binary";
-import { tryDecodeShare } from "@/lib/share/codec";
+  SHARED_SQUAD_ERRORS,
+  type SharedSquad,
+  useSharedSquad,
+} from "@/hooks/useSharedSquad";
+import { perksFromIndices } from "@/lib/heroService";
 import { SquadPreset } from "@/lib/share/types";
-import {
-  SHARE_PARAM,
-  SHARE_PATHS,
-  readShareParam,
-  sharePath,
-  shareUrl,
-} from "@/lib/share/urls";
+import SharedSquadRefresh from "./refresh/SharedSquadRefresh";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 import ShareButton from "./ShareButton";
 import SpriteIcon from "./SpriteIcon";
@@ -28,141 +18,27 @@ import styles from "./SharedContent.module.css";
 
 const heroByKey = new Map(getAllHeroes().map((hero) => [hero.key, hero]));
 
-type ViewState =
-  | { status: "loading" }
-  | { status: "invalid"; reason: ShareErrorReason }
-  | {
-      status: "ready";
-      squad: SquadPreset;
-      heroes: (string | null)[];
-      perks: (PerkPick | null)[];
-      ownRoll: boolean;
-    };
-
-const ERROR_TEXT: Record<ShareErrorReason, string> = {
-  "unsupported-version":
-    "This link was made with a newer version of the site. Refresh the page and open it again.",
-  corrupt:
-    "This link looks like it was cut off or altered on the way here, so the squad it points at can't be trusted.",
-  malformed: "This share link isn't valid.",
-};
-
 function compositionLabel(squad: SquadPreset): string | null {
   if (squad.force122 && squad.size === 5) return "1-2-2 enforced";
   if (squad.force222 && squad.size === 6) return "2-2-2 enforced";
   return null;
 }
 
+/**
+ * The page a "Share this squad" link opens, in whichever design the visitor
+ * is on. Its behaviour is `useSharedSquad`, called here so that switching
+ * design keeps the squad.
+ */
 export default function SharedSquadContent() {
-  const [view, setView] = useState<ViewState>({ status: "loading" });
-  const [rolls, setRolls] = useState(0);
+  const { design, ready } = useDesign();
+  const shared = useSharedSquad();
+  // The saved design is only known after mount; see SquadPage.
+  if (!ready) return null;
+  if (design === "refresh") return <SharedSquadRefresh shared={shared} />;
+  return <SharedSquadClassic shared={shared} />;
+}
 
-  useEffect(() => {
-    const raw = readShareParam(window.location.search);
-    const decoded = tryDecodeShare(raw);
-
-    if (!decoded.ok) {
-      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the share link is in the URL, which only exists after mount
-      setView({ status: "invalid", reason: decoded.reason });
-      track("shared_link_opened", {
-        share_type: "unknown",
-        valid: false,
-        invalid_reason: decoded.reason,
-      });
-      return;
-    }
-
-    // A link of another kind redirects; the destination reports the open.
-    if (decoded.payload.kind !== "squad-result") {
-      window.location.replace(
-        `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
-      );
-      return;
-    }
-
-    setView({
-      status: "ready",
-      squad: decoded.payload.squad,
-      heroes: decoded.payload.result.heroes,
-      perks: decoded.payload.result.perks,
-      ownRoll: false,
-    });
-    track("shared_link_opened", { share_type: "squad_result", valid: true });
-  }, []);
-
-  const publish = useCallback(
-    (
-      squad: SquadPreset,
-      heroes: (string | null)[],
-      perks: (PerkPick | null)[],
-    ) => {
-      setView({ status: "ready", squad, heroes, perks, ownRoll: true });
-      setRolls((count) => count + 1);
-      window.history.replaceState(
-        null,
-        "",
-        sharePath({ kind: "squad-result", squad, result: { heroes, perks } }),
-      );
-    },
-    [],
-  );
-
-  const handleReroll = useCallback(() => {
-    if (view.status !== "ready") return;
-    const { squad } = view;
-    const configs = slotConfigsFromEnabled(squad.slots, squad.names);
-    const rolled = computeSquad(
-      configs,
-      squad.size,
-      squad.force122,
-      squad.force222,
-    );
-    publish(
-      squad,
-      rolled.map((hero) => hero?.key ?? null),
-      rolled.map((hero) =>
-        squad.randomizePerks && hero ? randomPerkIndices(hero.key) : null,
-      ),
-    );
-    track("squad_randomized", {
-      source: "shared_result",
-      squad_size: squad.size,
-      force_122: squad.force122,
-      force_222: squad.force222,
-      perks_enabled: squad.randomizePerks,
-      filtered_slot_count: squad.slots
-        .slice(0, squad.size)
-        .filter((slot) => slot !== null).length,
-    });
-  }, [view, publish]);
-
-  const handleRerollSlot = useCallback(
-    (index: number) => {
-      if (view.status !== "ready") return;
-      const { squad, heroes, perks } = view;
-      const configs = slotConfigsFromEnabled(squad.slots, squad.names);
-      const taken = new Set<string>();
-      heroes.forEach((key, i) => {
-        if (i !== index && key) taken.add(key);
-      });
-
-      const hero = pickForSlot(configs[index].disabledHeroes, taken);
-      const nextHeroes = [...heroes];
-      const nextPerks = [...perks];
-      nextHeroes[index] = hero?.key ?? null;
-      nextPerks[index] =
-        squad.randomizePerks && hero ? randomPerkIndices(hero.key) : null;
-      publish(squad, nextHeroes, nextPerks);
-      track("squad_slot_rerolled", {
-        source: "shared_result",
-        squad_size: squad.size,
-        slot_index: index,
-        perks_enabled: squad.randomizePerks,
-      });
-    },
-    [view, publish],
-  );
-
+function SharedSquadClassic({ shared: view }: { shared: SharedSquad }) {
   if (view.status === "loading") {
     return <div className={styles.container} />;
   }
@@ -172,7 +48,7 @@ export default function SharedSquadContent() {
       <div className={styles.container}>
         <div className={styles.errorBox}>
           <h1 className={styles.errorTitle}>This link didn&apos;t open</h1>
-          <p className={styles.errorText}>{ERROR_TEXT[view.reason]}</p>
+          <p className={styles.errorText}>{SHARED_SQUAD_ERRORS[view.reason]}</p>
           <div className={styles.actions}>
             <Link className={styles.linkBtn} href="/squad" prefetch={false}>
               Go to the squad generator
@@ -183,9 +59,8 @@ export default function SharedSquadContent() {
     );
   }
 
-  const { squad } = view;
+  const { squad, rolls, presetHref, handleReroll, handleRerollSlot } = view;
   const composition = compositionLabel(squad);
-  const presetHref = sharePath({ kind: "squad-preset", squad });
 
   return (
     <div className={styles.container}>
@@ -267,13 +142,7 @@ export default function SharedSquadContent() {
       <div className={styles.secondaryRow}>
         <ShareButton
           className={styles.linkBtn}
-          buildUrl={() =>
-            shareUrl({
-              kind: "squad-result",
-              squad,
-              result: { heroes: view.heroes, perks: view.perks },
-            })
-          }
+          buildUrl={view.buildResultUrl}
           shareType="squad_result"
           shareSource="shared_squad"
           label="Share this squad"

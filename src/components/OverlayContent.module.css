@@ -8,9 +8,19 @@
    `size=2` (Extra large) is that original card. A custom property rather than
    em, because the name and perks set their own font sizes and em would
    compound inside them. */
-.root {
+.root,
+.scaled {
   --overlay-scale: 1;
   --u: calc(8px * var(--overlay-scale));
+}
+
+/* The setup panel's preview: the same card, sized the same way, but laid out
+   where the panel puts it rather than pinned to the corner of the page. */
+.scaled {
+  padding: 16px;
+}
+
+.root {
   position: fixed;
   top: 0;
   left: 0;
@@ -117,4 +127,55 @@
   font-family: "Config", Arial, Helvetica, sans-serif;
   font-size: calc(1.1 * var(--u));
   max-width: calc(22 * var(--u));
+}
+
+/* The new design's card (`look=refresh` in the link). It keeps the classic
+   card's footprint: the same portrait, padding and 30-unit cap, and perks on
+   two short rows that never wrap, so it is never taller than the classic card
+   could get. The browser source sizes the setup panel recommends therefore
+   fit both. */
+.refresh .card {
+  background: rgb(27 38 50 / 0.96);
+  font-family: "Config", Arial, Helvetica, sans-serif;
+}
+
+.refresh .label {
+  font-size: calc(1.5 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #a9b6c5;
+}
+
+.refresh .name {
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+}
+
+.perkList {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: calc(0.6 * var(--u));
+  margin: calc(0.4 * var(--u)) 0 0;
+  font-size: calc(1.45 * var(--u));
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.perkList dt {
+  color: #a9b6c5;
+}
+
+.perkList dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.refresh .errorText {
+  font-size: calc(1.3 * var(--u));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .refresh .card {
+    animation: none;
+  }
 }

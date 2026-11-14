@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PickerContent from "@/components/PickerContent";
+import PickerPage from "@/components/PickerPage";
 
 export const metadata: Metadata = {
   title: { absolute: "Overwatch Hero Picker" },
@@ -19,6 +19,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PickerPage() {
-  return <PickerContent />;
+export default function Page() {
+  return <PickerPage />;
 }

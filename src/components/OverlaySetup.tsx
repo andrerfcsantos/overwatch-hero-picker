@@ -1,91 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { track } from "@/lib/analytics";
+import { DESIGNS, type Design, isDesign } from "@/lib/design";
+import { OVERLAY_SIZES, OverlaySize } from "@/lib/overlay";
 import {
-  getBoolFromLS,
-  getJsonFromLS,
-  setBoolToLS,
-  setJsonToLS,
-} from "@/lib/localStorage";
-import {
-  DEFAULT_OVERLAY_SIZE,
-  OVERLAY_SIZES,
-  OverlaySize,
-  companionUrl,
-  isOverlaySize,
-} from "@/lib/overlay";
-import {
-  generateRoomSecret,
-  isRoomSecret,
-  viewIdFor,
-} from "@/lib/rooms/protocol";
+  DESIGN_LABELS,
+  SOURCE_SIZES,
+  useOverlaySetup,
+} from "@/hooks/useOverlaySetup";
 import QrCode from "./QrCode";
-
-/** Remembers the streamer's card size between visits; filters are the picker's. */
-const SIZE_STORAGE_KEY = "overlaySize";
-/** Whether the overlay link includes the companion room. */
-const COMPANION_STORAGE_KEY = "overlayCompanion";
-/**
- * The companion room's publish secret. Kept between visits so the streamer's
- * OBS link and phone link stay valid when they come back to copy a new
- * overlay link with different filters.
- */
-const ROOM_SECRET_STORAGE_KEY = "overlayRoomSecret";
-
-/**
- * Browser source dimensions that always fit the card at each size, with some
- * headroom: its widest (perks wrap at 30 units) and tallest (long perks
- * wrapping to three lines) plus the 16px margin. Measured over many rolls of
- * every hero; a unit is 8px times the size's scale, see OverlayContent.module.css.
- */
-const SOURCE_SIZES: Record<OverlaySize, string> = {
-  small: "220 × 110",
-  medium: "280 × 140",
-  large: "400 × 180",
-  xl: "520 × 240",
-};
-
-type CopyMethod = "clipboard" | "fallback";
-
-/**
- * Copies text, falling back to selecting it in its input when the clipboard
- * API is unavailable (it needs a secure context and permission).
- */
-function useCopy(onCopied: (method: CopyMethod) => void) {
-  const [copied, setCopied] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-    },
-    [],
-  );
-
-  const copy = useCallback(
-    async (text: string) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        onCopied("clipboard");
-        if (timer.current) clearTimeout(timer.current);
-        timer.current = setTimeout(() => setCopied(false), 1800);
-      } catch {
-        inputRef.current?.select();
-        onCopied("fallback");
-      }
-    },
-    [onCopied],
-  );
-
-  return { copied, copy, inputRef };
-}
 
 interface OverlaySetupProps {
   /** Built on every render so the link always matches the current filters. */
-  buildUrl: (size: OverlaySize, room: string | null) => string;
+  buildUrl: (size: OverlaySize, room: string | null, design: Design) => string;
   /** How many heroes the link's filters select, for analytics. */
   heroCount: number;
 }
@@ -100,101 +28,30 @@ export default function OverlaySetup({
   heroCount,
 }: OverlaySetupProps) {
   const [open, setOpen] = useState(false);
-  const [size, setSize] = useState<OverlaySize>(DEFAULT_OVERLAY_SIZE);
-  const [companionOn, setCompanionOn] = useState(false);
-  const [roomSecret, setRoomSecret] = useState<string | null>(null);
-  // Remembers which secret the view id was hashed from, so a stale id is
-  // never shown for a different secret, or after the secret is cleared.
-  const [derivedView, setDerivedView] = useState<{
-    secret: string;
-    id: string | null;
-  } | null>(null);
   const panelId = useId();
-
-  useEffect(() => {
-    const savedSize = getJsonFromLS<string>(SIZE_STORAGE_KEY);
-    // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved settings are in localStorage, read after mount
-    if (isOverlaySize(savedSize)) setSize(savedSize);
-    const savedSecret = getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY);
-    if (isRoomSecret(savedSecret)) setRoomSecret(savedSecret);
-    setCompanionOn(getBoolFromLS(COMPANION_STORAGE_KEY, false));
-  }, []);
-
-  // The companion link carries the hash of the secret, never the secret.
-  useEffect(() => {
-    if (!roomSecret) return;
-    let current = true;
-    viewIdFor(roomSecret).then(
-      (id) => current && setDerivedView({ secret: roomSecret, id }),
-      () => current && setDerivedView({ secret: roomSecret, id: null }),
-    );
-    return () => {
-      current = false;
-    };
-  }, [roomSecret]);
-
-  const room = companionOn ? roomSecret : null;
-  const url = open ? buildUrl(size, room) : "";
-  // The preview never joins the companion room: it rolls its own hero, which
-  // would otherwise replace the one OBS is showing on the streamer's phone.
-  const previewUrl = open ? buildUrl(size, null) : "";
-  const viewId =
-    roomSecret && derivedView?.secret === roomSecret ? derivedView.id : null;
-  const companionLink = companionOn && viewId ? companionUrl(viewId) : "";
-
   const {
-    copied: overlayCopied,
-    copy: copyOverlay,
-    inputRef: overlayInputRef,
-  } = useCopy(
-    useCallback(
-      (method: CopyMethod) =>
-        track("overlay_link_copied", {
-          method,
-          hero_count: heroCount,
-          size,
-          companion: room !== null,
-        }),
-      [heroCount, size, room],
-    ),
-  );
-  const {
-    copied: companionCopied,
-    copy: copyCompanion,
-    inputRef: companionInputRef,
-  } = useCopy(
-    useCallback(
-      (method: CopyMethod) => track("companion_link_copied", { method }),
-      [],
-    ),
-  );
-
-  const handleSize = useCallback((value: string) => {
-    if (!isOverlaySize(value)) return;
-    setSize(value);
-    setJsonToLS(SIZE_STORAGE_KEY, value);
-  }, []);
-
-  const newRoomSecret = useCallback(() => {
-    const secret = generateRoomSecret();
-    setRoomSecret(secret);
-    setJsonToLS(ROOM_SECRET_STORAGE_KEY, secret);
-  }, []);
-
-  const handleCompanion = useCallback(
-    (enabled: boolean) => {
-      setCompanionOn(enabled);
-      setBoolToLS(COMPANION_STORAGE_KEY, enabled);
-      if (enabled && !roomSecret) newRoomSecret();
-      track("overlay_companion_toggled", { enabled });
+    cardDesign,
+    setCardDesign,
+    size,
+    handleSize,
+    companionOn,
+    handleCompanion,
+    handleNewCompanionLink,
+    url,
+    previewUrl,
+    companionLink,
+    overlayCopy: {
+      copied: overlayCopied,
+      copy: copyOverlay,
+      inputRef: overlayInputRef,
     },
-    [roomSecret, newRoomSecret],
-  );
-
-  const handleNewCompanionLink = useCallback(() => {
-    newRoomSecret();
-    track("companion_link_reset", {});
-  }, [newRoomSecret]);
+    companionCopy: {
+      copied: companionCopied,
+      copy: copyCompanion,
+      inputRef: companionInputRef,
+    },
+    trackPreviewOpened,
+  } = useOverlaySetup({ buildUrl, heroCount, open });
 
   const toggle = useCallback(() => {
     if (!open) track("overlay_setup_opened", {});
@@ -210,7 +67,7 @@ export default function OverlaySetup({
         aria-controls={panelId}
         title="Show your random hero on stream with OBS"
       >
-        Stream overlay {open ? "▾" : "▸"}
+        Stream overlay{open ? " ▾" : " ▸"}
       </button>
 
       {open && (
@@ -232,6 +89,20 @@ export default function OverlaySetup({
               {OVERLAY_SIZES.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor={`${panelId}-design`}>Card design</label>
+            <select
+              id={`${panelId}-design`}
+              value={cardDesign}
+              onChange={(e) => {
+                if (isDesign(e.target.value)) setCardDesign(e.target.value);
+              }}
+            >
+              {DESIGNS.map((option) => (
+                <option key={option} value={option}>
+                  {DESIGN_LABELS[option]}
                 </option>
               ))}
             </select>
@@ -258,9 +129,7 @@ export default function OverlaySetup({
               target="_blank"
               rel="noopener noreferrer"
               title="Preview the overlay in a new tab"
-              onClick={() =>
-                track("overlay_link_opened", { hero_count: heroCount, size })
-              }
+              onClick={trackPreviewOpened}
             >
               Open in new tab
             </a>
@@ -269,8 +138,9 @@ export default function OverlaySetup({
           <ol className="overlay-setup-steps">
             <li>
               In OBS, add a <strong>Browser</strong> source and paste the link
-              as its URL. A source of {SOURCE_SIZES[size]} fits the card at this
-              size; place it anywhere on your scene.
+              as its URL. A source of {SOURCE_SIZES[size].width} ×{" "}
+              {SOURCE_SIZES[size].height} fits the card at this size; place it
+              anywhere on your scene.
             </li>
             <li>
               In the same source&apos;s properties, tick{" "}

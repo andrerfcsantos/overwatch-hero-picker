@@ -1,0 +1,264 @@
+/* The new design ("refresh"). Everything here is either a token, or a rule
+   that only applies once <html> carries data-design="refresh", so the classic
+   design is untouched by this file. Page-level styles live in CSS modules
+   next to their components (src/components/refresh); what is here has to be
+   global because it restyles markup that both designs share: the navbar, the
+   footer and a few shared widgets. */
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedMedium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Config";
+  src: url("/assets/fonts/ConfigCondensedSemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* The page colour of whichever design is showing. Classic containers that
+     paint their own background read it, so no page ends up two-tone. */
+  --site-bg: #2c3e50;
+
+  --hp-page: #243140;
+  --hp-rail: #1b2632;
+  --hp-nav: #161f29;
+  --hp-tile: #32455a;
+  --hp-tile-hi: #3d536b;
+  --hp-line: #4d6179;
+  --hp-line-soft: #2f3f51;
+  --hp-text: #f2f5f8;
+  --hp-muted: #a9b6c5;
+  --hp-orange: #f06414;
+  --hp-focus: #ffd08a;
+  --hp-danger: #ff9d8a;
+  --hp-nav-h: 3.25rem;
+  --hp-radius: 0.375rem;
+  --hp-font-display:
+    "Big Noodle Titling", "Arial Narrow", Arial, Helvetica, sans-serif;
+  --hp-font-ui: "Config", "Arial Narrow", Arial, Helvetica, sans-serif;
+}
+
+html[data-design="refresh"] {
+  --site-bg: var(--hp-page);
+}
+
+/* Text that differs between designs is written twice and shown by CSS, so the
+   static HTML is right for both before React has loaded. */
+html[data-design="refresh"] .only-classic,
+html:not([data-design="refresh"]) .only-refresh {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ Navbar */
+
+.site-nav-switch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 0.25rem;
+  background: none;
+  color: white;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.site-nav-switch:hover {
+  border-color: rgb(240, 100, 20);
+  background: rgba(240, 100, 20, 0.16);
+}
+
+.site-nav-switch:focus-visible,
+html[data-design="refresh"] .site-nav a:focus-visible,
+html[data-design="refresh"] .site-nav button:focus-visible,
+html[data-design="refresh"] .site-footer a:focus-visible {
+  outline: 3px solid var(--hp-focus);
+  outline-offset: 2px;
+}
+
+html[data-design="refresh"] .site-nav {
+  background: var(--hp-nav);
+  font-family: var(--hp-font-ui);
+}
+
+html[data-design="refresh"] .site-nav-brand {
+  font-family: var(--hp-font-display);
+}
+
+html[data-design="refresh"] .site-nav .nav-link {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--hp-muted) !important;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease;
+}
+
+html[data-design="refresh"] .site-nav .nav-link:hover,
+html[data-design="refresh"] .site-nav .nav-link-active {
+  color: var(--hp-text) !important;
+}
+
+html[data-design="refresh"] .site-nav .nav-link-active {
+  border-bottom-color: var(--hp-orange);
+}
+
+html[data-design="refresh"] .site-nav-switch {
+  min-height: 2.25rem;
+  border-color: var(--hp-line);
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+html[data-design="refresh"] .site-nav-switch:hover {
+  border-color: var(--hp-orange);
+  background: var(--hp-tile);
+}
+
+@media (min-width: 64rem) {
+  /* The result rail sticks under the navbar, so the navbar has to be a known
+     height and stay put. Below this width it is a menu that opens and closes,
+     and nothing sticks. */
+  html[data-design="refresh"] .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    min-height: var(--hp-nav-h);
+    height: var(--hp-nav-h);
+    padding-block: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ Footer */
+
+/* The page fills whatever the window has left between the navbar and the
+   footer, so a short page ends exactly at the bottom of the window instead of
+   being pushed past it by the footer. */
+html[data-design="refresh"] body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+html[data-design="refresh"] body > main {
+  flex: 1 0 auto;
+}
+
+html[data-design="refresh"] body > .site-footer {
+  margin-top: auto;
+}
+
+html[data-design="refresh"] .site-footer {
+  margin-top: 0;
+  padding: 1.5rem 1rem;
+  border-top: 1px solid var(--hp-line-soft);
+  color: var(--hp-muted);
+  font-family: var(--hp-font-ui);
+}
+
+html[data-design="refresh"] .site-footer p {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+html[data-design="refresh"] .site-footer small {
+  font-size: inherit;
+}
+
+html[data-design="refresh"] .site-footer a {
+  color: var(--hp-text);
+}
+
+/* ------------------------------------------------------- Shared with pages */
+
+@media (max-width: 63.99rem) {
+  /* The roll button is fixed to the bottom of the screen at these widths. The
+     shortcut hint would sit on top of it, and has nothing to say to a
+     touchscreen anyway; the footer needs room to scroll clear of the button. */
+  html[data-design="refresh"]:has([data-roll-bar]) .shortcut-hint-container {
+    display: none;
+  }
+
+  html[data-design="refresh"]:has([data-roll-bar]) .site-footer {
+    padding-bottom: 6.5rem;
+  }
+}
+
+/* Invitation to try the new design, shown above the classic pages. */
+.design-invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.9rem;
+  padding: 0.5rem 1rem;
+  background: #1b2632;
+  border-bottom: 1px solid rgba(240, 100, 20, 0.5);
+  color: white;
+  font-family: "Config", Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.design-invite p {
+  margin: 0;
+  font-family: inherit;
+}
+
+.design-invite-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.design-invite-try,
+.design-invite-dismiss {
+  min-height: 2rem;
+  padding: 0 0.8rem;
+  border-radius: 0.25rem;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.design-invite-try {
+  border: 1px solid rgb(240, 100, 20);
+  background: rgb(240, 100, 20);
+  /* Dark on orange: white would be 3.2:1 at this size. */
+  color: #16110b;
+}
+
+.design-invite-try:hover {
+  filter: brightness(1.1);
+}
+
+.design-invite-dismiss {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+.design-invite-dismiss:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: white;
+}
+
+.design-invite-try:focus-visible,
+.design-invite-dismiss:focus-visible {
+  outline: 3px solid #ffd08a;
+  outline-offset: 2px;
+}

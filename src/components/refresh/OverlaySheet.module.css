@@ -1,0 +1,484 @@
+/* The stream overlay's setup: a sheet on the right edge, over the pool. It is
+   a modal <dialog>, so the browser handles focus, Escape and the backdrop. */
+
+.sheet {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(31rem, 100vw);
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--hp-line-soft);
+  background: var(--hp-rail);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sheet[open] {
+  animation: slideIn 0.2s ease-out;
+}
+
+.sheet::backdrop {
+  background: rgb(10 15 20 / 0.6);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+
+/* The page behind stays where it was while the sheet is read. */
+:global(html):has(.sheet[open]) {
+  overflow: hidden;
+}
+
+.body {
+  padding: 1.25rem 1.5rem 3rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--hp-font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.intro {
+  max-width: 26rem;
+  margin: 0.5rem 0 0;
+  font-family: inherit;
+  color: var(--hp-muted);
+}
+
+/* The steps are a real sequence, so they are numbered; the number sits in
+   the margin and the step's content hangs from it. */
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  margin-top: 1.75rem;
+  padding: 1.5rem 0 0 2.75rem;
+  border-top: 1px solid var(--hp-line-soft);
+  counter-increment: step;
+}
+
+.step::before {
+  content: counter(step);
+  position: absolute;
+  top: 1.35rem;
+  left: 0;
+  font-family: var(--hp-font-display);
+  font-size: 2.25rem;
+  line-height: 1;
+  color: var(--hp-orange);
+}
+
+.stepTitle {
+  margin: 0 0 0.75rem;
+  font-family: var(--hp-font-ui);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.text,
+.fine {
+  margin: 0;
+  font-family: inherit;
+}
+
+.text + .text,
+.fine {
+  margin-top: 0.75rem;
+}
+
+.fine {
+  font-size: 1rem;
+  color: var(--hp-muted);
+}
+
+.text strong,
+.choiceText {
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------- Card preview */
+
+/* A checkerboard, the usual sign for "transparent": the card is all OBS
+   draws, and the rest of the source lets the game through. */
+.stage {
+  padding: 1rem;
+  border-radius: var(--hp-radius);
+  background-color: #1f2a36;
+  background-image:
+    linear-gradient(45deg, #263443 25%, transparent 25%),
+    linear-gradient(-45deg, #263443 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #263443 75%),
+    linear-gradient(-45deg, transparent 75%, #263443 75%);
+  background-position:
+    0 0,
+    0 0.5rem,
+    0.5rem -0.5rem,
+    -0.5rem 0;
+  background-size: 1rem 1rem;
+}
+
+.stageMeasure {
+  min-width: 0;
+}
+
+.sourceFrame {
+  outline: 1px dashed var(--hp-muted);
+  overflow: hidden;
+}
+
+.source {
+  transform-origin: 0 0;
+}
+
+/* The card slides in on stream. Here it would replay on every change of size
+   or look, which is noise. */
+.source > div {
+  animation: none;
+}
+
+.stageNote {
+  margin: 0.75rem 0 0;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--hp-text);
+}
+
+/* ------------------------------------------------------ Size and look */
+
+.field {
+  min-width: 0;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.field legend {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font-weight: 500;
+  color: var(--hp-muted);
+}
+
+.seg {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.seg label {
+  flex: 1 1 0;
+  cursor: pointer;
+}
+
+.seg span {
+  display: grid;
+  place-items: center;
+  min-height: 2.5rem;
+  padding: 0 0.4rem;
+  border: 1px solid var(--hp-line);
+  border-radius: var(--hp-radius);
+  font-weight: 500;
+  line-height: 1.1;
+  text-align: center;
+  transition: background-color 0.12s ease;
+}
+
+.seg label:hover span {
+  background: var(--hp-tile);
+}
+
+/* Filled, as the squad size is: the choice does not rest on colour alone. */
+.seg input:checked + span {
+  border-color: var(--hp-text);
+  background: var(--hp-text);
+  color: var(--hp-rail);
+}
+
+.seg input:focus-visible + span {
+  outline: 3px solid var(--hp-focus);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------- Where the roll shows */
+
+/* Three screens: the game has no card, the stream has it, and the phone has
+   it only when the companion is on. */
+.screens {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.6fr;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.screens figure {
+  margin: 0;
+}
+
+.screens figcaption {
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  color: var(--hp-muted);
+}
+
+.screen,
+.phone {
+  position: relative;
+  border: 1px solid var(--hp-line);
+  border-radius: 0.25rem;
+  background: var(--hp-page);
+}
+
+.screen {
+  aspect-ratio: 16 / 9;
+}
+
+.phone {
+  width: 2.6rem;
+  aspect-ratio: 9 / 16;
+  border-radius: 0.4rem;
+}
+
+.miniCard {
+  position: absolute;
+  top: 12%;
+  left: 8%;
+  width: 46%;
+  height: 26%;
+  border-left: 3px solid var(--hp-orange);
+  border-radius: 2px;
+  background: var(--hp-text);
+}
+
+.phone .miniCard {
+  top: 34%;
+  left: 14%;
+  width: 72%;
+  height: 22%;
+}
+
+/* Companion off: the phone has nothing to show. */
+.screens:not(.withPhone) .phone {
+  border-style: dashed;
+}
+
+.screens:not(.withPhone) .phone .miniCard {
+  display: none;
+}
+
+.choices {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--hp-line-soft);
+  border-radius: var(--hp-radius);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--hp-line);
+  background: var(--hp-page);
+}
+
+.choice input {
+  margin-top: 0.2rem;
+}
+
+.choice small {
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--hp-muted);
+}
+
+.companion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.companion > .fine {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+.qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 8.5rem;
+}
+
+.qrCode,
+.qrCover {
+  display: block;
+  width: 8.5rem;
+  height: 8.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Stands in for the code until it is asked for. */
+.qrCover {
+  border: 1px dashed var(--hp-line);
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 0.5rem,
+    var(--hp-line-soft) 0.5rem 0.6rem
+  );
+}
+
+.qr button {
+  white-space: normal;
+  text-align: center;
+}
+
+.inlineLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--hp-text);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--hp-orange);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------ The links */
+
+.secret {
+  margin-top: 0.75rem;
+}
+
+.secretInput {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--hp-line);
+  border-radius: var(--hp-radius);
+  background: var(--hp-page);
+  color: var(--hp-text);
+  font: inherit;
+  font-size: 1rem;
+  text-overflow: ellipsis;
+}
+
+.secretActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.secretActions > * {
+  flex: 1 1 auto;
+}
+
+/* The action the step exists for. Dark on orange: white on it would be 3.2:1
+   at this size. */
+.copy,
+.copy:hover {
+  border-color: var(--hp-orange);
+  background: var(--hp-orange);
+  color: #16110b;
+  font-weight: 600;
+}
+
+.copy:hover {
+  filter: brightness(1.08);
+}
+
+.dims {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0.9rem 0 0;
+}
+
+.dims div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.dims dt {
+  color: var(--hp-muted);
+}
+
+.dims dd {
+  margin: 0;
+  font-family: var(--hp-font-display);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+@media (max-width: 30rem) {
+  .body {
+    padding: 1rem 1rem 3rem;
+  }
+
+  .step {
+    padding-left: 2rem;
+  }
+
+  .step::before {
+    font-size: 1.9rem;
+  }
+
+  .companion {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .seg {
+    flex-wrap: wrap;
+  }
+
+  .seg label {
+    flex-basis: 40%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] {
+    animation: none;
+  }
+
+  .seg span {
+    transition: none;
+  }
+}

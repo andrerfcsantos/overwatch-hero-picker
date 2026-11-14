@@ -15,8 +15,7 @@ import { openRoomSocket, RoomSocket } from "@/lib/rooms/client";
 import { generateRollId, publisherRollMessage } from "@/lib/rooms/protocol";
 import { PickerPreset } from "@/lib/share/types";
 import { Hero, PerkPick } from "@/types/hero";
-import RoleSpriteIcon from "./RoleSpriteIcon";
-import SpriteIcon from "./SpriteIcon";
+import OverlayCard from "./OverlayCard";
 import styles from "./OverlayContent.module.css";
 
 const allHeroes = getAllHeroes();
@@ -89,6 +88,10 @@ export default function OverlayContent() {
   const picker = config?.ok ? config.picker : null;
   const shortcut = config?.ok ? config.shortcut : null;
   const room = config?.ok ? config.room : null;
+  // The link says which card to draw: OBS has no access to the design the
+  // streamer picked on the site, and a link already on stream must keep the
+  // look it was copied with.
+  const refresh = config?.design === "refresh";
   const pool = useMemo(() => (picker ? poolFor(picker) : []), [picker]);
 
   const reroll = useCallback(
@@ -198,7 +201,7 @@ export default function OverlayContent() {
       <style>{`html, body { background: transparent !important; overflow: hidden; }`}</style>
 
       <main
-        className={styles.root}
+        className={`${styles.root} ${refresh ? styles.refresh : ""}`}
         style={{ "--overlay-scale": config?.scale ?? 1 } as React.CSSProperties}
       >
         {config && !config.ok && (
@@ -212,38 +215,13 @@ export default function OverlayContent() {
         )}
 
         {roll && picker && (
-          <div
+          <OverlayCard
             key={`${roll.count}-${reveals}`}
-            className={styles.card}
-            data-hero={roll.hero.key}
-          >
-            {picker.showPortrait && (
-              <SpriteIcon
-                heroKey={roll.hero.key}
-                type="portrait"
-                className={styles.portrait}
-                alt={`${roll.hero.name} portrait`}
-              />
-            )}
-            <div className={styles.text}>
-              <span className={styles.label}>Random hero</span>
-              <span className={styles.name}>
-                <RoleSpriteIcon
-                  roleKey={roll.hero.role}
-                  alt={roll.hero.role}
-                  className={styles.roleIcon}
-                />
-                {roll.hero.name}
-              </span>
-              {perkLabels && (
-                <span className={styles.perks}>
-                  <span className={styles.minorPerk}>{perkLabels.minor}</span>
-                  <span className={styles.perkDivider}>|</span>
-                  <span className={styles.majorPerk}>{perkLabels.major}</span>
-                </span>
-              )}
-            </div>
-          </div>
+            hero={roll.hero}
+            perks={perkLabels}
+            showPortrait={picker.showPortrait}
+            refresh={refresh}
+          />
         )}
       </main>
     </>
