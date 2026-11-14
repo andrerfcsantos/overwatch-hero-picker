@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
 import { getAllHeroes } from "@/data/heroes";
+import { overlayDesignFromSearch } from "@/lib/design";
 import { perksFromIndices } from "@/lib/heroService";
 import { readRawParam } from "@/lib/overlay";
 import { RoomConnectionStatus, openRoomSocket } from "@/lib/rooms/client";
@@ -87,12 +88,16 @@ function useWakeLock(active: boolean) {
 export default function CompanionContent() {
   const [view, setView] = useState<ViewState>({ status: "loading" });
   const [now, setNow] = useState(() => Date.now());
+  // Like the overlay, this page is opened on a device that does not know the
+  // streamer's design, so its link says which one to wear.
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     // Literal name only, so the id is always one analytics knows to redact.
     const viewId = readRawParam(window.location.search, ROOM_VIEW_PARAM);
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the design is in the URL, which only exists after mount
+    setRefresh(overlayDesignFromSearch(window.location.search) === "refresh");
     if (!isViewId(viewId)) {
-      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the view id is in the URL, which only exists after mount
       setView({ status: "invalid" });
       track("companion_opened", { valid: false });
       return;
@@ -169,13 +174,15 @@ export default function CompanionContent() {
     document.title = hero ? `${hero.name} | Stream companion` : BASE_TITLE;
   }, [hero]);
 
+  const pageClass = `${styles.page} ${refresh ? styles.refresh : ""}`;
+
   if (view.status === "loading") {
-    return <main className={styles.page} />;
+    return <main className={pageClass} />;
   }
 
   if (view.status === "invalid") {
     return (
-      <main className={styles.page}>
+      <main className={pageClass}>
         <div className={styles.message} role="alert">
           <h1>This companion link is invalid</h1>
           <p>
@@ -204,7 +211,7 @@ export default function CompanionContent() {
   })();
 
   return (
-    <main className={styles.page}>
+    <main className={pageClass}>
       {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a live status line, not the result of a form */}
       <p className={`${styles.status} ${styles[status.tone]}`} role="status">
         <span className={styles.dot} aria-hidden="true" />
@@ -227,13 +234,26 @@ export default function CompanionContent() {
             />
             {hero.name}
           </h1>
-          {perks && (
-            <p className={styles.perks}>
-              <span className={styles.minorPerk}>{perks.minor}</span>
-              <span className={styles.perkDivider}>|</span>
-              <span className={styles.majorPerk}>{perks.major}</span>
-            </p>
-          )}
+          {perks &&
+            (refresh ? (
+              // Named rather than colour-coded, as on the site.
+              <dl className={styles.perkList}>
+                <div>
+                  <dt>Minor perk</dt>
+                  <dd>{perks.minor}</dd>
+                </div>
+                <div>
+                  <dt>Major perk</dt>
+                  <dd>{perks.major}</dd>
+                </div>
+              </dl>
+            ) : (
+              <p className={styles.perks}>
+                <span className={styles.minorPerk}>{perks.minor}</span>
+                <span className={styles.perkDivider}>|</span>
+                <span className={styles.majorPerk}>{perks.major}</span>
+              </p>
+            ))}
           <p className={styles.when}>Rolled {timeAgo(roll.rolledAt, now)}</p>
         </div>
       ) : roll ? (

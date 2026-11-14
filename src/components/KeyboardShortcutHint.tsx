@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useDesign } from "@/context/DesignContext";
 
 const soloShortcuts = [
   { key: "R", description: "Randomize hero" },
@@ -18,12 +19,37 @@ const squadShortcuts = [
   { key: "Ctrl+C", description: "Copy squad to clipboard" },
 ];
 
+// The new design names the same actions the way its buttons do.
+const soloShortcutsRefresh = [
+  { key: "R", description: "Roll a hero" },
+  { key: "P", description: "Reroll perks" },
+  { key: "T", description: "Add or remove all tanks" },
+  { key: "D", description: "Add or remove all damage" },
+  { key: "S", description: "Add or remove all supports" },
+  { key: "U", description: "Clear the pool" },
+  { key: "1–0", description: "Apply preset 1 to 10" },
+];
+
+const squadShortcutsRefresh = [
+  { key: "R", description: "Roll the squad" },
+  { key: "Ctrl+C", description: "Copy the squad as text" },
+];
+
 export default function KeyboardShortcutHint() {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const { design } = useDesign();
 
-  const shortcuts = pathname === "/squad" ? squadShortcuts : soloShortcuts;
+  const onSquad = pathname === "/squad";
+  const shortcuts =
+    design === "refresh"
+      ? onSquad
+        ? squadShortcutsRefresh
+        : soloShortcutsRefresh
+      : onSquad
+        ? squadShortcuts
+        : soloShortcuts;
 
   useEffect(() => {
     if (!open) return;

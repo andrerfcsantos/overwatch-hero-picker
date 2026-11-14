@@ -7,12 +7,17 @@ import RoleSection from "./RoleSection";
 import ShareButton from "./ShareButton";
 import OverlaySetup from "./OverlaySetup";
 import { OverlaySize } from "@/lib/overlay";
+import type { Design } from "@/lib/design";
 
 interface HeroFilterPanelProps {
   /** Supplied by the picker, which owns the options the preset also carries. */
   buildPresetUrl?: () => string;
   /** Supplied by the picker, for the same reason. */
-  buildOverlayUrl?: (size: OverlaySize, room: string | null) => string;
+  buildOverlayUrl?: (
+    size: OverlaySize,
+    room: string | null,
+    design: Design,
+  ) => string;
 }
 
 export default function HeroFilterPanel({

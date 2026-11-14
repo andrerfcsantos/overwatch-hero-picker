@@ -1,167 +1,46 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { heroPoolProps, track } from "@/lib/analytics";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { PerkPick } from "@/types/hero";
-import { getAllHeroes } from "@/data/heroes";
+import { useDesign } from "@/context/DesignContext";
 import {
-  perksFromIndices,
-  randomHero,
-  randomPerkIndices,
-} from "@/lib/heroService";
-import { ShareErrorReason } from "@/lib/share/binary";
-import { tryDecodeShare } from "@/lib/share/codec";
-import { PickerPreset } from "@/lib/share/types";
-import {
-  SHARE_PARAM,
-  SHARE_PATHS,
-  readShareParam,
-  sharePath,
-  shareUrl,
-} from "@/lib/share/urls";
+  SHARED_HERO_ERRORS,
+  type SharedHero,
+  useSharedHero,
+} from "@/hooks/useSharedHero";
+import SharedHeroRefresh from "./refresh/SharedHeroRefresh";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 import ShareButton from "./ShareButton";
 import SpriteIcon from "./SpriteIcon";
 import styles from "./SharedContent.module.css";
 
-const heroByKey = new Map(getAllHeroes().map((hero) => [hero.key, hero]));
-
-type ViewState =
-  | { status: "loading" }
-  | { status: "invalid"; reason: ShareErrorReason }
-  | {
-      status: "ready";
-      picker: PickerPreset;
-      heroKey: string | null;
-      perks: PerkPick | null;
-      /** True once the visitor has rolled for themselves. */
-      ownRoll: boolean;
-    };
-
-const ERROR_TEXT: Record<ShareErrorReason, string> = {
-  "unsupported-version":
-    "This link was made with a newer version of the site. Refresh the page and open it again.",
-  corrupt:
-    "This link looks like it was cut off or altered on the way here, so the hero it points at can't be trusted.",
-  malformed: "This share link isn't valid.",
-};
-
+/**
+ * The page a "Share this roll" link opens, in whichever design the visitor is
+ * on. Its behaviour is `useSharedHero`, called here so that switching design
+ * keeps the roll.
+ */
 export default function SharedHeroContent() {
-  const [view, setView] = useState<ViewState>({ status: "loading" });
-  // Counted separately so re-rolling perks doesn't replay the hero animations.
-  const [heroRolls, setHeroRolls] = useState(0);
-  const [perkRolls, setPerkRolls] = useState(0);
+  const { design, ready } = useDesign();
+  const shared = useSharedHero();
+  // The saved design is only known after mount; see PickerPage.
+  if (!ready) return null;
+  if (design === "refresh") return <SharedHeroRefresh shared={shared} />;
+  return <SharedHeroClassic shared={shared} />;
+}
+
+function SharedHeroClassic({ shared: view }: { shared: SharedHero }) {
   const [poolOpen, setPoolOpen] = useState(false);
   const portraitRef = useRef<HTMLDivElement>(null);
+  const heroRolls = view.status === "ready" ? view.heroRolls : 0;
 
-  // Read straight from the URL rather than useSearchParams: the page is
-  // client-only, and this keeps the static export free of a Suspense boundary.
+  // Replays the portrait's entrance on each roll the visitor asks for.
   useEffect(() => {
-    const raw = readShareParam(window.location.search);
-    const decoded = tryDecodeShare(raw);
-
-    if (!decoded.ok) {
-      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the share link is in the URL, which only exists after mount
-      setView({ status: "invalid", reason: decoded.reason });
-      track("shared_link_opened", {
-        share_type: "unknown",
-        valid: false,
-        invalid_reason: decoded.reason,
-      });
-      return;
-    }
-
-    // The kind travels inside the payload, so a link opened on the wrong page
-    // can send itself where it belongs. The destination reports the open.
-    if (decoded.payload.kind !== "hero-result") {
-      window.location.replace(
-        `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
-      );
-      return;
-    }
-
-    setView({
-      status: "ready",
-      picker: decoded.payload.picker,
-      heroKey: decoded.payload.result.heroKey,
-      perks: decoded.payload.result.perks,
-      ownRoll: false,
-    });
-    track("shared_link_opened", { share_type: "hero_result", valid: true });
-  }, []);
-
-  const pool = useMemo(() => {
-    if (view.status !== "ready") return [];
-    const all = getAllHeroes();
-    const selected = all.filter((hero) =>
-      view.picker.selected.includes(hero.key),
-    );
-    // Matches the picker: no selection means every hero is in play.
-    return selected.length > 0 ? selected : all;
-  }, [view]);
-
-  const publish = useCallback(
-    (
-      picker: PickerPreset,
-      heroKey: string,
-      perks: PerkPick | null,
-      heroChanged: boolean,
-    ) => {
-      setView({ status: "ready", picker, heroKey, perks, ownRoll: true });
-      setPerkRolls((count) => count + 1);
-      window.history.replaceState(
-        null,
-        "",
-        sharePath({ kind: "hero-result", picker, result: { heroKey, perks } }),
-      );
-
-      if (!heroChanged) return;
-      setHeroRolls((count) => count + 1);
-
-      if (portraitRef.current) {
-        portraitRef.current.classList.remove("hero-portrait-animate");
-        void portraitRef.current.offsetWidth;
-        portraitRef.current.classList.add("hero-portrait-animate");
-      }
-    },
-    [],
-  );
-
-  const handleReroll = useCallback(() => {
-    if (view.status !== "ready" || pool.length === 0) return;
-    const hero = randomHero(pool, {
-      preventRepeat: view.picker.nonRepeating,
-      previousHeroKey: view.heroKey ?? "",
-    });
-    publish(
-      view.picker,
-      hero.key,
-      view.picker.showPerks ? randomPerkIndices(hero.key) : null,
-      true,
-    );
-    track("hero_randomized", {
-      source: "shared_result",
-      hero_key: hero.key,
-      hero_role: hero.role,
-      non_repeating: view.picker.nonRepeating,
-      perks_enabled: view.picker.showPerks,
-      ...heroPoolProps(pool),
-    });
-  }, [view, pool, publish]);
-
-  const handleRerollPerks = useCallback(() => {
-    if (view.status !== "ready" || !view.heroKey) return;
-    publish(view.picker, view.heroKey, randomPerkIndices(view.heroKey), false);
-    const hero = heroByKey.get(view.heroKey);
-    if (hero) {
-      track("perks_randomized", {
-        source: "shared_result",
-        hero_key: hero.key,
-        hero_role: hero.role,
-      });
-    }
-  }, [view, publish]);
+    const portrait = portraitRef.current;
+    if (heroRolls === 0 || !portrait) return;
+    portrait.classList.remove("hero-portrait-animate");
+    void portrait.offsetWidth;
+    portrait.classList.add("hero-portrait-animate");
+  }, [heroRolls]);
 
   if (view.status === "loading") {
     return <div className={styles.container} />;
@@ -172,7 +51,7 @@ export default function SharedHeroContent() {
       <div className={styles.container}>
         <div className={styles.errorBox}>
           <h1 className={styles.errorTitle}>This link didn&apos;t open</h1>
-          <p className={styles.errorText}>{ERROR_TEXT[view.reason]}</p>
+          <p className={styles.errorText}>{SHARED_HERO_ERRORS[view.reason]}</p>
           <div className={styles.actions}>
             <Link className={styles.linkBtn} href="/" prefetch={false}>
               Go to the hero picker
@@ -183,14 +62,15 @@ export default function SharedHeroContent() {
     );
   }
 
-  const hero = view.heroKey ? heroByKey.get(view.heroKey) : undefined;
-  const perkLabels = view.heroKey
-    ? perksFromIndices(view.heroKey, view.perks)
-    : null;
-  const presetHref = sharePath({
-    kind: "picker-preset",
-    picker: view.picker,
-  });
+  const {
+    hero,
+    perkLabels,
+    pool,
+    perkRolls,
+    presetHref,
+    handleReroll,
+    handleRerollPerks,
+  } = view;
 
   return (
     <div className={styles.container}>
@@ -262,13 +142,7 @@ export default function SharedHeroContent() {
       <div className={styles.secondaryRow}>
         <ShareButton
           className={styles.linkBtn}
-          buildUrl={() =>
-            shareUrl({
-              kind: "hero-result",
-              picker: view.picker,
-              result: { heroKey: view.heroKey, perks: view.perks },
-            })
-          }
+          buildUrl={view.buildResultUrl}
           shareType="hero_result"
           shareSource="shared_hero"
           label="Share this roll"
@@ -294,7 +168,7 @@ export default function SharedHeroContent() {
           className={styles.poolToggle}
           onClick={() => setPoolOpen(!poolOpen)}
         >
-          {view.picker.selected.length === 0
+          {view.everyHero
             ? "Picked from all heroes"
             : `Picked from ${pool.length} ${pool.length === 1 ? "hero" : "heroes"}`}
           {poolOpen ? " ▾" : " ▸"}

@@ -17,6 +17,11 @@ import {
   SessionReplayExtensions,
 } from "posthog-js/dist/extension-bundles";
 import { HeroRole } from "@/types/hero";
+import {
+  type Design,
+  overlayDesignFromSearch,
+  readDesignChoice,
+} from "@/lib/design";
 import type { OverlaySize } from "@/lib/overlay";
 
 /** One value per share surface, so the funnel can tell them apart. */
@@ -36,6 +41,15 @@ export type ShareSource =
   | "manage_page";
 
 export type PresetKind = "builtin" | "custom";
+
+/**
+ * How the design on an event came about: the build's default, the visitor's
+ * own switch, or (on the stream overlay) the link it was opened with.
+ */
+export type DesignOrigin = "default" | "chosen" | "link";
+
+/** Which control a visitor used to change design. */
+export type DesignSwitchSource = "invite" | "nav";
 
 interface HeroPoolProps {
   pool_size: number;
@@ -146,6 +160,23 @@ type EventMap = {
       | "restored_defaults";
   };
   keyboard_shortcut_used: { key: string };
+  /**
+   * A visitor moved between the classic and the new design. Every event also
+   * carries the `design` it happened under (see {@link registerDesign}), so
+   * this one is for the moment of switching: who tries the new design, from
+   * which control, and who goes back.
+   */
+  design_switched: {
+    from: Design;
+    to: Design;
+    source: DesignSwitchSource;
+  };
+  /** The invitation to try the new design was closed without trying it. */
+  design_invite_dismissed: Record<string, never>;
+  /** The banner asking for feedback on the new design led to Discord. */
+  design_feedback_clicked: Record<string, never>;
+  /** The banner asking for feedback on the new design was closed. */
+  design_feedback_dismissed: Record<string, never>;
   overlay_setup_opened: Record<string, never>;
   overlay_link_copied: {
     /** "fallback" means the clipboard failed and the link was selected instead. */
@@ -154,8 +185,23 @@ type EventMap = {
     size: OverlaySize;
     /** Whether the copied link publishes to a companion room. */
     companion: boolean;
+    /** The card design the link asks for. */
+    card_design: Design;
   };
-  overlay_link_opened: { hero_count: number; size: OverlaySize };
+  overlay_link_opened: {
+    hero_count: number;
+    size: OverlaySize;
+    card_design: Design;
+  };
+  /**
+   * A hidden link or QR code in the new design's overlay setup was shown.
+   * Copying works without it, so this says how often hiding gets in the way.
+   */
+  overlay_secret_revealed: {
+    secret: "overlay_link" | "companion_link" | "companion_qr";
+  };
+  /** Someone opened a shared roll and asked to see what it was. */
+  shared_result_revealed: { share_type: "hero_result" | "squad_result" };
   overlay_companion_toggled: { enabled: boolean };
   companion_link_copied: { method: "clipboard" | "fallback" };
   companion_link_opened: Record<string, never>;
@@ -371,6 +417,29 @@ export function initAnalytics(projectToken: string, host: string): void {
     },
   });
   initialized = true;
+  // Registered before the SDK sends its first pageview, so every event of the
+  // visit says which design it happened under. The overlay card's design
+  // comes from its link: OBS has no access to the streamer's saved choice. The
+  // companion page shares the path prefix but is an ordinary page in the
+  // streamer's own browser, so it reports their choice like any other.
+  const onOverlayCard =
+    window.location.pathname.replace(/\/$/, "") === "/overlay";
+  if (onOverlayCard) {
+    registerDesign(overlayDesignFromSearch(window.location.search), "link");
+  } else {
+    const choice = readDesignChoice();
+    registerDesign(choice.design, choice.chosen ? "chosen" : "default");
+  }
+}
+
+/**
+ * Stamps `design` and `design_origin` on every event from here on. Adoption
+ * of the new design is read off these: the share of visitors, pageviews or
+ * rolls with `design = refresh`, and how many of them chose it.
+ */
+export function registerDesign(design: Design, origin: DesignOrigin): void {
+  if (!initialized) return;
+  posthog.register({ design, design_origin: origin });
 }
 
 export function track<E extends keyof EventMap>(

@@ -1,0 +1,161 @@
+.slot {
+  border-radius: var(--hp-radius);
+  background: var(--hp-tile);
+}
+
+/* Face, who and what, perks, then the two things done to a player. */
+.row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(11rem, 1fr) minmax(0, 1.3fr) auto;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+}
+
+.face {
+  width: 4.5rem;
+  aspect-ratio: 95 / 85;
+  border-radius: 0.25rem;
+}
+
+.faceEmpty {
+  display: block;
+  border: 1px dashed var(--hp-line);
+}
+
+.who {
+  min-width: 0;
+}
+
+/* Reads as a label until it is pointed at or filled in. */
+.nameInput {
+  display: block;
+  width: 100%;
+  max-width: 14rem;
+  min-height: 1.9rem;
+  margin-left: -0.4rem;
+  padding: 0 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--hp-text);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.nameInput::placeholder {
+  color: var(--hp-muted);
+  opacity: 1;
+}
+
+.nameInput:hover {
+  border-color: var(--hp-line);
+}
+
+.nameInput:focus {
+  border-color: var(--hp-line);
+  background: var(--hp-rail);
+}
+
+.result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.75rem;
+  margin: 0;
+  font-family: inherit;
+}
+
+.heroName {
+  font-family: var(--hp-font-display);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.role {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 500;
+  color: var(--hp-muted);
+}
+
+.none {
+  margin: 0;
+  font-family: inherit;
+  color: var(--hp-muted);
+}
+
+.perks {
+  grid-column: 3;
+}
+
+.actions {
+  display: flex;
+  grid-column: 4;
+  gap: 0.5rem;
+}
+
+.pool {
+  padding: 1rem;
+  border-top: 1px solid var(--hp-page);
+  border-radius: 0 0 var(--hp-radius) var(--hp-radius);
+  background: var(--hp-rail);
+}
+
+.poolHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--hp-muted);
+}
+
+@media (max-width: 80rem) {
+  /* Perks move under the name before the row gets tight. */
+  .row {
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  }
+
+  .perks {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .actions {
+    grid-column: 3;
+  }
+}
+
+@media (max-width: 40rem) {
+  .row {
+    grid-template-columns: 3.75rem minmax(0, 1fr);
+    padding: 0.75rem;
+  }
+
+  .face {
+    width: 3.75rem;
+  }
+
+  .heroName {
+    font-size: 2rem;
+  }
+
+  .perks {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .actions {
+    grid-column: 1 / -1;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+
+  .pool {
+    padding: 0.75rem;
+  }
+}

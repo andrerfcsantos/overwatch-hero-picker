@@ -1,3 +1,8 @@
+import {
+  type Design,
+  OVERLAY_DESIGN_PARAM,
+  overlayDesignFromSearch,
+} from "@/lib/design";
 import { randomHero } from "@/lib/heroService";
 import { ShareErrorReason } from "@/lib/share/binary";
 import { encodeShare, tryDecodeShare } from "@/lib/share/codec";
@@ -84,19 +89,34 @@ export function overlayUrl(
   size: OverlaySize = DEFAULT_OVERLAY_SIZE,
   /** Publish secret of the companion room, when the companion is on. */
   room: string | null = null,
+  /** Which card to draw. Classic stays out of the link, as it always was. */
+  design: Design = "classic",
 ): string {
   const encoded = encodeShare({ kind: "picker-preset", picker });
   // The default size stays out of the link, so it can change in one place.
   const sizeParam =
     size === DEFAULT_OVERLAY_SIZE ? "" : `&${OVERLAY_SIZE_PARAM}=${size}`;
   const roomParam = room ? `&${ROOM_PUBLISH_PARAM}=${room}` : "";
-  const path = `${OVERLAY_PATH}?${SHARE_PARAM}=${encoded}${sizeParam}${roomParam}`;
+  const designParam =
+    design === "classic" ? "" : `&${OVERLAY_DESIGN_PARAM}=${design}`;
+  const path = `${OVERLAY_PATH}?${SHARE_PARAM}=${encoded}${sizeParam}${designParam}${roomParam}`;
   return absolute(path);
 }
 
-/** Link to the companion page for a room's view id. */
-export function companionUrl(viewId: string): string {
-  return absolute(`${COMPANION_PATH}?${ROOM_VIEW_PARAM}=${viewId}`);
+/**
+ * Link to the companion page for a room's view id. Like the overlay, the page
+ * is opened on a device that does not know the streamer's design, so a link
+ * for the new card says so; a classic link stays as it always was.
+ */
+export function companionUrl(
+  viewId: string,
+  design: Design = "classic",
+): string {
+  const designParam =
+    design === "classic" ? "" : `&${OVERLAY_DESIGN_PARAM}=${design}`;
+  return absolute(
+    `${COMPANION_PATH}?${ROOM_VIEW_PARAM}=${viewId}${designParam}`,
+  );
 }
 
 /** Absolute link for copying. Client-only; falls back to a relative path. */
@@ -242,8 +262,10 @@ export type OverlayConfig =
       scale: number;
       /** Publish secret for the companion room, or null when off. */
       room: string | null;
+      /** Which card the link asks for. */
+      design: Design;
     }
-  | { ok: false; reason: ShareErrorReason; scale: number };
+  | { ok: false; reason: ShareErrorReason; scale: number; design: Design };
 
 /**
  * Reads one query parameter by its literal name, without the form-encoding
@@ -282,20 +304,32 @@ export function readOverlayConfig(search: string): OverlayConfig {
   // only the companion view stays empty.
   const roomParam = readRawParam(search, ROOM_PUBLISH_PARAM);
   const room = isRoomSecret(roomParam) ? roomParam : null;
+  // The error card follows the link's design too, for the same reason it
+  // follows its size.
+  const design = overlayDesignFromSearch(search);
   const raw = params.get(SHARE_PARAM);
 
   if (!raw) {
-    return { ok: true, picker: DEFAULT_OVERLAY_PICKER, shortcut, scale, room };
+    return {
+      ok: true,
+      picker: DEFAULT_OVERLAY_PICKER,
+      shortcut,
+      scale,
+      room,
+      design,
+    };
   }
 
   const decoded = tryDecodeShare(raw);
-  if (!decoded.ok) return { ok: false, reason: decoded.reason, scale };
+  if (!decoded.ok) {
+    return { ok: false, reason: decoded.reason, scale, design };
+  }
 
   // A result link carries the filters that produced it, which are just as
   // usable here as a preset's.
   const { payload } = decoded;
   if (payload.kind === "picker-preset" || payload.kind === "hero-result") {
-    return { ok: true, picker: payload.picker, shortcut, scale, room };
+    return { ok: true, picker: payload.picker, shortcut, scale, room, design };
   }
-  return { ok: false, reason: "malformed", scale };
+  return { ok: false, reason: "malformed", scale, design };
 }

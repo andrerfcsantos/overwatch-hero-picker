@@ -1,0 +1,242 @@
+/* Pieces every page of the new design shares. Colours and fonts come from the
+   --hp-* tokens in src/app/refresh.css. */
+
+.page {
+  background: var(--hp-page);
+  color: var(--hp-text);
+  font-family: var(--hp-font-ui);
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.page :focus-visible {
+  outline: 3px solid var(--hp-focus);
+  outline-offset: 2px;
+}
+
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Secondary action. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--hp-line);
+  border-radius: var(--hp-radius);
+  background: transparent;
+  color: var(--hp-text);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--hp-tile);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn[aria-expanded="true"] {
+  background: var(--hp-tile);
+}
+
+.caret::after {
+  content: "";
+  flex: none;
+  border: 0.3rem solid transparent;
+  border-top-color: currentColor;
+  border-bottom-width: 0;
+}
+
+.caret[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
+
+/* An action that reads as text, for the quiet ones. The padding keeps it a
+   comfortable target without making it look like a button. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--hp-text);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--hp-line);
+  text-underline-offset: 0.2em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration-color: var(--hp-orange);
+}
+
+/* The one call to action on a page. */
+.roll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.75rem;
+  border: 0;
+  border-radius: var(--hp-radius);
+  background: var(--hp-orange);
+  /* White on the brand orange is 3.2:1, which holds only because this label
+     is large display type. Small text on orange is set dark instead. */
+  color: #fff;
+  font-family: var(--hp-font-display);
+  font-size: 2.1rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.roll:hover {
+  filter: brightness(1.08);
+}
+
+.roll:active {
+  transform: translateY(1px);
+}
+
+.kbd {
+  display: grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.3rem;
+  border-radius: 0.25rem;
+  background: rgb(0 0 0 / 0.28);
+  font-family: var(--hp-font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* Holds the roll button. On small screens it is fixed to the bottom of the
+   viewport, where a thumb already is. */
+.rollBar {
+  margin-top: 0.75rem;
+}
+
+.check {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--hp-orange);
+  cursor: pointer;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+}
+
+/* Perks carry their names as labels, so nobody has to know that blue means
+   minor and gold means major. */
+.perks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.perks dt {
+  font-size: 0.9rem;
+  color: var(--hp-muted);
+}
+
+.perks dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.roleIcon {
+  display: inline-block;
+  flex: none;
+  height: 1.1rem;
+  aspect-ratio: 175 / 150;
+}
+
+/* Motion that answers a roll. */
+.land {
+  animation: land 0.18s ease-out;
+}
+
+@keyframes land {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .rollBar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 15;
+    margin: 0;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: rgb(22 31 41 / 0.95);
+    border-top: 1px solid var(--hp-line-soft);
+  }
+
+  .roll {
+    min-height: 3.25rem;
+  }
+
+  /* No keyboard to hint at. */
+  .rollBar .kbd {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .land {
+    animation: none;
+  }
+
+  .roll:active {
+    transform: none;
+  }
+
+  .btn {
+    transition: none;
+  }
+}
+
+/* The site's links are orange, and that rule is specific enough to reach a
+   link dressed as one of these. */
+a.btn:link,
+a.btn:visited,
+a.btn:hover,
+a.link:link,
+a.link:visited,
+a.link:hover {
+  color: var(--hp-text);
+}

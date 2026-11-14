@@ -1,0 +1,76 @@
+.pool {
+  min-width: 0;
+  max-width: 76rem;
+  padding: 1.5rem 2rem 4rem;
+}
+
+/* One wrapping row: the title, then the tools pushed to the far edge. */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  flex: 1 1 18rem;
+  margin-right: auto;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--hp-font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  margin-top: 0.2rem;
+  color: var(--hp-muted);
+}
+
+.head :global(.share-fallback-input) {
+  flex-basis: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.dirty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: -0.5rem 0 1.5rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--hp-line);
+  border-radius: var(--hp-radius);
+  background: var(--hp-rail);
+}
+
+.dirtyActions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dirty button {
+  min-height: 2.25rem;
+}
+
+@media (max-width: 63.99rem) {
+  .pool {
+    max-width: none;
+    /* Room to scroll the last row clear of the fixed roll button. */
+    padding: 1.25rem 1rem 6.5rem;
+  }
+
+  .title {
+    flex-basis: 100%;
+  }
+}

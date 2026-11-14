@@ -101,7 +101,7 @@ export default function PresetsContent() {
   );
 
   return (
-    <div className="w-full bg-[#2c3e50] text-white min-h-[85vh] px-[3%] py-4">
+    <div className="w-full bg-[var(--site-bg)] text-white min-h-[85vh] px-[3%] py-4">
       <h1 className="text-white">Manage presets</h1>
 
       <p className="preset-page-intro">

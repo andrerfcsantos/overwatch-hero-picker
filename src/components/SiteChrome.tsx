@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { DesignProvider } from "@/context/DesignContext";
 import { HeroProvider } from "@/context/HeroContext";
 import { PresetProvider } from "@/context/PresetContext";
 import { OVERLAY_PATH } from "@/lib/overlay";
@@ -38,14 +39,16 @@ export default function SiteChrome({
   }
 
   return (
-    <HeroProvider>
-      <PresetProvider>
-        {navbar}
-        {children}
-        {footer}
-        {extras}
-        {analytics}
-      </PresetProvider>
-    </HeroProvider>
+    <DesignProvider>
+      <HeroProvider>
+        <PresetProvider>
+          {navbar}
+          {children}
+          {footer}
+          {extras}
+          {analytics}
+        </PresetProvider>
+      </HeroProvider>
+    </DesignProvider>
   );
 }

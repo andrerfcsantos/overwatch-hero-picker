@@ -139,6 +139,7 @@ describe("readOverlayConfig", () => {
       shortcut: null,
       scale: 1,
       room: null,
+      design: "classic",
     });
   });
 
@@ -152,6 +153,7 @@ describe("readOverlayConfig", () => {
       shortcut: null,
       scale: 1,
       room: null,
+      design: "classic",
     });
   });
 
@@ -162,6 +164,36 @@ describe("readOverlayConfig", () => {
       const config = readOverlayConfig(url.search);
       expect(config).toMatchObject({ ok: true, picker, scale: size.scale });
     }
+  });
+
+  test("leaves the classic card out of the link and carries the new one", () => {
+    expect(overlayUrl(picker, "medium", null, "classic")).not.toContain(
+      "look=",
+    );
+    const room = generateRoomSecret();
+    const url = new URL(
+      overlayUrl(picker, "large", room, "refresh"),
+      "https://example.com",
+    );
+    expect(readOverlayConfig(url.search)).toEqual({
+      ok: true,
+      picker,
+      shortcut: null,
+      scale: 1.5,
+      room,
+      design: "refresh",
+    });
+  });
+
+  test("keeps the design on a link whose filters cannot be read", () => {
+    expect(readOverlayConfig("?d=garbage&look=refresh")).toMatchObject({
+      ok: false,
+      design: "refresh",
+    });
+    expect(readOverlayConfig("?d=garbage")).toMatchObject({
+      ok: false,
+      design: "classic",
+    });
   });
 
   test("carries the companion room's publish secret", () => {

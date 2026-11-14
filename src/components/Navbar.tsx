@@ -4,29 +4,37 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useDesign } from "@/context/DesignContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { design, setDesign } = useDesign();
 
   return (
-    <nav className="bg-[#343a40] min-h-[5vh] flex flex-wrap items-center justify-between px-4 py-2 lg:px-6">
+    <nav
+      className="site-nav bg-[#343a40] min-h-[5vh] flex flex-wrap items-center justify-between px-4 py-2 lg:px-6"
+      aria-label="Main"
+    >
       <button
         className="lg:hidden text-white text-2xl border border-gray-500 rounded px-2 py-1 transition-[filter,transform] duration-150 ease-in-out hover:brightness-125 active:scale-95 active:brightness-90"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle navigation"
+        aria-expanded={isOpen}
+        aria-controls="site-nav-links"
       >
         &#9776;
       </button>
 
       <div
+        id="site-nav-links"
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-start lg:items-center justify-between flex-1`}
       >
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
           <Link
             href="/"
             prefetch={false}
-            className="flex items-center no-underline text-white"
+            className="site-nav-brand flex items-center no-underline text-white"
           >
             <Image
               className="h-[2em] w-auto pr-2"
@@ -59,6 +67,17 @@ export default function Navbar() {
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mt-2 lg:mt-0 text-[1.25em]">
+          {/* Both labels ship in the static HTML and CSS shows the right one,
+              so the button never reads wrong while the page loads. */}
+          <button
+            className="site-nav-switch"
+            onClick={() =>
+              setDesign(design === "refresh" ? "classic" : "refresh", "nav")
+            }
+          >
+            <span className="only-classic">Try the new design</span>
+            <span className="only-refresh">Classic design</span>
+          </button>
           <Link
             href="/about"
             prefetch={false}

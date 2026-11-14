@@ -47,6 +47,24 @@ same major so the types match what actually runs.
   - `npm run build` to generate a production build
   - `npm run start` to serve the production build on localhost
 
+## The two designs
+
+The site ships a classic design and a new one ("refresh") side by side while
+the new one is adopted. Visitors switch between them from the navbar, and the
+choice is remembered in their browser.
+
+- **Default:** `NEXT_PUBLIC_DEFAULT_DESIGN` sets what a visitor sees before
+  they choose (`classic` unless set to `refresh`). See `.env.example`.
+- **Code:** each page with two designs has one hook holding its behaviour
+  (`src/hooks/usePicker.ts`, `src/hooks/useSquad.ts`) and two views over it.
+  The new views live in `src/components/refresh`, their tokens in
+  `src/app/refresh.css`.
+- **Stream overlay:** OBS cannot read the streamer's choice, so the overlay
+  link carries it as `look=refresh`. Links without it keep the classic card.
+- **Adoption:** every PostHog event carries `design` and `design_origin`
+  (`default`, `chosen`, or `link` on the overlay), and `design_switched`
+  records each switch with the control it came from.
+
 ## Logos
 
 The master artwork lives in [`images/logo/`](images/logo). Every size the site
