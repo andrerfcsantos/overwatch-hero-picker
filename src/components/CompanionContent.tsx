@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { getAllHeroes } from "@/data/heroes";
 import { overlayDesignFromSearch } from "@/lib/design";
 import { perksFromIndices } from "@/lib/heroService";
 import { readRawParam } from "@/lib/overlay";
-import { RoomConnectionStatus, openRoomSocket } from "@/lib/rooms/client";
 import {
+  RoomConnectionStatus,
+  RoomSocket,
+  openRoomSocket,
+} from "@/lib/rooms/client";
+import {
+  REROLL_MESSAGE,
+  ROOM_CONTROL_PARAM,
   ROOM_VIEW_PARAM,
   RoomRoll,
+  isControlKey,
   isViewId,
   parseViewerMessage,
 } from "@/lib/rooms/protocol";
@@ -30,7 +37,15 @@ type ViewState =
       overlayOnline: boolean;
       /** Bumped per roll so the card replays its entrance. */
       rolls: number;
+      /** Whether the link carries the key that lets this page ask for a roll. */
+      canRoll: boolean;
     };
+
+/**
+ * How long the roll button rests after a press. The room passes on at most
+ * one request in about this long, so a faster second press would be dropped.
+ */
+const ROLL_COOLDOWN_MS = 1_000;
 
 const BASE_TITLE = "Stream companion | Overwatch Hero Picker";
 
@@ -84,6 +99,9 @@ function useWakeLock(active: boolean) {
  * Shows the hero the streamer's overlay just rolled, live, on another screen.
  * The overlay publishes each roll to a room on the rooms Worker; this page
  * listens to that room with its view id, which can watch but not post.
+ *
+ * A link that also carries the room's control key gets a button that asks the
+ * overlay for a new hero: a way to roll with no hotkey set up in OBS.
  */
 export default function CompanionContent() {
   const [view, setView] = useState<ViewState>({ status: "loading" });
@@ -91,18 +109,34 @@ export default function CompanionContent() {
   // Like the overlay, this page is opened on a device that does not know the
   // streamer's design, so its link says which one to wear.
   const [refresh, setRefresh] = useState(false);
+  const socketRef = useRef<RoomSocket | null>(null);
+  const [resting, setResting] = useState(false);
+  const restTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (restTimer.current) clearTimeout(restTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
-    // Literal name only, so the id is always one analytics knows to redact.
+    // Literal names only, so the keys are always ones analytics redacts.
     const viewId = readRawParam(window.location.search, ROOM_VIEW_PARAM);
+    const controlParam = readRawParam(
+      window.location.search,
+      ROOM_CONTROL_PARAM,
+    );
+    // A malformed control key leaves a page that still shows the rolls.
+    const control = isControlKey(controlParam) ? controlParam : null;
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- the design is in the URL, which only exists after mount
     setRefresh(overlayDesignFromSearch(window.location.search) === "refresh");
     if (!isViewId(viewId)) {
       setView({ status: "invalid" });
-      track("companion_opened", { valid: false });
+      track("companion_opened", { valid: false, can_roll: false });
       return;
     }
-    track("companion_opened", { valid: true });
+    track("companion_opened", { valid: true, can_roll: control !== null });
 
     setView({
       status: "ready",
@@ -110,6 +144,7 @@ export default function CompanionContent() {
       roll: undefined,
       overlayOnline: false,
       rolls: 0,
+      canRoll: control !== null,
     });
 
     const update = (
@@ -120,7 +155,7 @@ export default function CompanionContent() {
       );
 
     const socket = openRoomSocket({
-      target: { role: "viewer", viewId },
+      target: { role: "viewer", viewId, control },
       onStatus: (connection) =>
         update((current) => ({ ...current, connection })),
       onMessage: (data) => {
@@ -154,8 +189,20 @@ export default function CompanionContent() {
         });
       },
     });
-    return () => socket.close();
+    socketRef.current = socket;
+    return () => {
+      socket.close();
+      socketRef.current = null;
+    };
   }, []);
+
+  const requestRoll = () => {
+    if (!socketRef.current?.send(REROLL_MESSAGE)) return;
+    track("companion_roll_requested", {});
+    setResting(true);
+    if (restTimer.current) clearTimeout(restTimer.current);
+    restTimer.current = setTimeout(() => setResting(false), ROLL_COOLDOWN_MS);
+  };
 
   // Keeps "rolled 2 min ago" honest.
   useEffect(() => {
@@ -277,12 +324,35 @@ export default function CompanionContent() {
         )
       )}
 
+      {view.canRoll && (
+        <button
+          type="button"
+          className={styles.roll}
+          onClick={requestRoll}
+          // The overlay rolls, not this page: without it there is no one to ask.
+          disabled={
+            resting || view.connection !== "open" || !view.overlayOnline
+          }
+        >
+          New hero
+        </button>
+      )}
+
       {!view.overlayOnline && view.roll && view.connection === "open" && (
         <p className={styles.hint}>
           This is the last hero. The next one appears when the overlay is shown
           again.
         </p>
       )}
+
+      {view.canRoll &&
+        !view.overlayOnline &&
+        view.roll === null &&
+        view.connection === "open" && (
+          <p className={styles.hint}>
+            The button works while the overlay is showing in OBS.
+          </p>
+        )}
     </main>
   );
 }

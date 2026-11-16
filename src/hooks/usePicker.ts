@@ -14,7 +14,7 @@ import {
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
 import { PickerPreset } from "@/lib/share/types";
 import { shareUrl } from "@/lib/share/urls";
-import { OverlaySize, overlayUrl } from "@/lib/overlay";
+import { OverlaySize, overlayPicker, overlayUrl } from "@/lib/overlay";
 import type { Design } from "@/lib/design";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
@@ -203,8 +203,13 @@ export function usePicker() {
   );
 
   const buildOverlayUrl = useCallback(
-    (size: OverlaySize, room: string | null, design: Design) =>
-      overlayUrl(currentPreset(), size, room, design),
+    (
+      size: OverlaySize,
+      room: string | null,
+      design: Design,
+      hidePerks: boolean,
+    ) =>
+      overlayUrl(overlayPicker(currentPreset(), hidePerks), size, room, design),
     [currentPreset],
   );
 

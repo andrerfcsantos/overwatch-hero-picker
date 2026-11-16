@@ -6,7 +6,9 @@ import { DESIGNS, type Design } from "@/lib/design";
 import { OVERLAY_SIZES, OverlaySize } from "@/lib/overlay";
 import {
   DESIGN_LABELS,
+  ROLL_METHODS,
   SOURCE_SIZES,
+  isRollMethod,
   useOverlaySetup,
 } from "@/hooks/useOverlaySetup";
 import { Hero } from "@/types/hero";
@@ -27,7 +29,12 @@ export interface OverlayPreview {
 
 interface OverlaySheetProps {
   /** Built on every render so the link always matches the current pool. */
-  buildUrl: (size: OverlaySize, room: string | null, design: Design) => string;
+  buildUrl: (
+    size: OverlaySize,
+    room: string | null,
+    design: Design,
+    hidePerks: boolean,
+  ) => string;
   /** How many heroes are in the pool; none means every hero. */
   heroCount: number;
   totalHeroes: number;
@@ -43,7 +50,7 @@ function maskLink(link: string): string {
   return query === -1 ? link : `${link.slice(0, query + 1)}${"•".repeat(20)}`;
 }
 
-type Secret = "overlay_link" | "companion_link" | "companion_qr";
+type Secret = "overlay_link" | "companion_link" | "companion_qr" | "roll_link";
 
 interface SecretLinkProps {
   /** Names the link for assistive technology, such as "Overlay link". */
@@ -61,7 +68,7 @@ interface SecretLinkProps {
 
 /**
  * A link that is hidden until asked for. A streamer may have this page on
- * stream, and either link lets a viewer watch or post their rolls. Hidden or
+ * stream, and each link lets a viewer watch, post or ask for their rolls. Hidden or
  * not, the Copy button and the copy keys both give the real link.
  */
 function SecretLink({
@@ -128,7 +135,8 @@ function SecretLink({
 /**
  * The stream overlay's setup, in a sheet at the right edge of the page. It
  * reads top to bottom in the order a streamer does things: pick the card,
- * decide how they will see their own roll, then put the link into OBS.
+ * decide how they will see their own roll, put the link into OBS, then choose
+ * how they will ask for a new hero.
  */
 export default function OverlaySheet({
   buildUrl,
@@ -147,14 +155,20 @@ export default function OverlaySheet({
     setCardDesign,
     size,
     handleSize,
+    hidePerks,
+    handleHidePerks,
+    rollMethod,
+    handleRollMethod,
     companionOn,
     handleCompanion,
     handleNewCompanionLink,
     url,
     previewUrl,
     companionLink,
+    rollLink,
     overlayCopy,
     companionCopy,
+    rollCopy,
     trackPreviewOpened,
     // Almost every streamer needs the companion, so it is on until they say
     // otherwise.
@@ -177,6 +191,9 @@ export default function OverlaySheet({
   const source = SOURCE_SIZES[size];
   const scale = OVERLAY_SIZES.find((option) => option.id === size)?.scale ?? 1;
   const fit = stageWidth > 0 ? Math.min(1, stageWidth / source.width) : 1;
+
+  // Perks reach the card only when they are rolled at all and not hidden here.
+  const cardPerks = preview.showPerks && !hidePerks;
 
   const everyHero = heroCount === 0 || heroCount === totalHeroes;
   const poolPhrase = everyHero
@@ -235,7 +252,7 @@ export default function OverlaySheet({
             </header>
             <p className={styles.intro}>
               A card on your stream that shows a new random hero each time you
-              press a hotkey in OBS.
+              press a hotkey in OBS, or a button on another screen.
             </p>
 
             <ol className={styles.steps}>
@@ -265,7 +282,7 @@ export default function OverlaySheet({
                         {preview.hero && (
                           <OverlayCard
                             hero={preview.hero}
-                            perks={preview.showPerks ? preview.perks : null}
+                            perks={cardPerks ? preview.perks : null}
                             showPortrait={preview.showPortrait}
                             refresh={cardDesign === "refresh"}
                           />
@@ -316,9 +333,27 @@ export default function OverlaySheet({
                   </div>
                 </fieldset>
 
+                {/* Nothing to hide when the roll settings have perks off. */}
+                {preview.showPerks && (
+                  <label className={`${ui.option} ${styles.option}`}>
+                    <input
+                      type="checkbox"
+                      className={ui.check}
+                      checked={hidePerks}
+                      onChange={(e) => handleHidePerks(e.target.checked)}
+                    />
+                    <span>
+                      Hide perks on the card
+                      <small>
+                        For when you are not playing the random perks.
+                      </small>
+                    </span>
+                  </label>
+                )}
+
                 <p className={styles.fine}>
                   It rolls from {poolPhrase}
-                  {preview.showPerks ? ", with perks" : ""}
+                  {cardPerks ? ", with perks" : ""}
                   {preview.nonRepeating
                     ? ", and never the same hero twice in a row"
                     : ""}
@@ -374,7 +409,7 @@ export default function OverlaySheet({
                       On my phone or another screen
                       <small>
                         The companion page shows each roll the moment it
-                        happens.
+                        happens, and has a button that rolls a new hero.
                       </small>
                     </span>
                   </label>
@@ -448,8 +483,8 @@ export default function OverlaySheet({
                       </SecretLink>
                     </div>
                     <p className={styles.fine}>
-                      Anyone with this link can watch your rolls, but cannot
-                      change them. If it gets out,{" "}
+                      Anyone with this link can watch your rolls and roll a new
+                      hero, but cannot choose it. If it gets out,{" "}
                       <button
                         type="button"
                         className={styles.inlineLink}
@@ -457,7 +492,7 @@ export default function OverlaySheet({
                       >
                         make a new link
                       </button>
-                      , then copy both links again.
+                      , then copy every link again.
                     </p>
                   </div>
                 )}
@@ -500,7 +535,7 @@ export default function OverlaySheet({
                   </div>
                 </dl>
                 <p className={styles.fine}>
-                  Both links stay hidden in case this page is on your stream.
+                  The links stay hidden in case this page is on your stream.
                   Copying works while they are hidden.
                   {companionOn ? " This one includes your companion." : ""}
                 </p>
@@ -508,24 +543,124 @@ export default function OverlaySheet({
 
               <li className={styles.step}>
                 <h3 className={styles.stepTitle}>
-                  Tick “Shutdown source when not visible”
+                  Choose how you roll a new hero
                 </h3>
                 <p className={styles.text}>
-                  It is in the same source&apos;s properties. Without it, the
-                  previous hero shows for a moment before each new one.
+                  The game has your keyboard while you play, so the card cannot
+                  hear a key press on its own.
                 </p>
-              </li>
 
-              <li className={styles.step}>
-                <h3 className={styles.stepTitle}>
-                  Give Show and Hide the same hotkey
-                </h3>
-                <p className={styles.text}>
-                  In <strong>Settings, Hotkeys</strong>, find Show and Hide for
-                  the source under your scene. Press the key once to hide the
-                  card, and again to bring it back with a new hero. Switching to
-                  another scene and back rolls one too.
-                </p>
+                <div className={styles.field}>
+                  <label
+                    className={styles.selectLabel}
+                    htmlFor={`${groupId}-method`}
+                  >
+                    Pick a way to roll a new hero
+                  </label>
+                  <select
+                    id={`${groupId}-method`}
+                    className={styles.select}
+                    value={rollMethod}
+                    onChange={(e) => {
+                      if (isRollMethod(e.target.value)) {
+                        handleRollMethod(e.target.value);
+                      }
+                    }}
+                  >
+                    {ROLL_METHODS.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={styles.method}>
+                  {rollMethod === "refresh" && (
+                    <>
+                      <p className={styles.text}>
+                        In OBS, open <strong>Settings, Hotkeys</strong>, scroll
+                        to the browser source&apos;s own name and give{" "}
+                        <strong>Refresh cache of current page</strong> a key.
+                      </p>
+                      <p className={styles.text}>
+                        OBS hears the key while you are in the game. Each press
+                        loads the card again with a new hero.
+                      </p>
+                    </>
+                  )}
+
+                  {rollMethod === "toggle" && (
+                    <>
+                      <p className={styles.text}>
+                        For a card that is hidden between rolls. In the
+                        source&apos;s properties in OBS, tick{" "}
+                        <strong>Shutdown source when not visible</strong>.
+                        Without it, the previous hero shows for a moment before
+                        each new one.
+                      </p>
+                      <p className={styles.text}>
+                        In OBS, open <strong>Settings, Hotkeys</strong>, find
+                        Show and Hide for the source under your scene and give
+                        both the same key. Press it once to hide the card, and
+                        again to bring it back with a new hero. Switching to
+                        another scene and back rolls one too.
+                      </p>
+                    </>
+                  )}
+
+                  {rollMethod === "companion" && (
+                    <>
+                      {companionOn ? (
+                        <p className={styles.text}>
+                          Open the companion page from step 2 on a second
+                          screen, a phone or a tablet, and press{" "}
+                          <strong>New hero</strong>. There are no hotkeys to set
+                          up; the card only has to be showing in OBS.
+                        </p>
+                      ) : (
+                        <p className={styles.text}>
+                          The companion page has a <strong>New hero</strong>{" "}
+                          button. To use it, choose{" "}
+                          <strong>On my phone or another screen</strong> in step
+                          2, then copy the overlay link into OBS again.
+                        </p>
+                      )}
+                      <p className={styles.text}>
+                        With OBS itself on a second screen, you can also select
+                        the browser source and click <strong>Refresh</strong> in
+                        the toolbar under the preview.
+                      </p>
+                    </>
+                  )}
+
+                  {rollMethod === "link" &&
+                    (companionOn ? (
+                      <>
+                        <p className={styles.text}>
+                          Have a Stream Deck button, or a script, request this
+                          link in the background. Each request rolls a new hero
+                          while the card is showing in OBS.
+                        </p>
+                        <SecretLink
+                          label="Roll link"
+                          value={rollLink}
+                          secret="roll_link"
+                          copied={rollCopy.copied}
+                          manual={rollCopy.manual}
+                          onCopy={rollCopy.copy}
+                          inputRef={rollCopy.inputRef}
+                        />
+                      </>
+                    ) : (
+                      <p className={styles.text}>
+                        The roll link reaches the card through the companion. In
+                        step 2, choose{" "}
+                        <strong>On my phone or another screen</strong>, then
+                        copy the overlay link into OBS again.
+                      </p>
+                    ))}
+                </div>
               </li>
             </ol>
           </div>

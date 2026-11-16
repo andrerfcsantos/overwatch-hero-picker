@@ -4,7 +4,7 @@
 .sheet {
   position: fixed;
   inset: 0 0 0 auto;
-  width: min(31rem, 100vw);
+  width: min(38rem, 100vw);
   max-width: none;
   height: 100vh;
   height: 100dvh;
@@ -39,7 +39,7 @@
 }
 
 .body {
-  padding: 1.25rem 1.5rem 3rem;
+  padding: 1.5rem 2rem 3rem;
 }
 
 .head {
@@ -221,6 +221,73 @@
 .seg input:focus-visible + span {
   outline: 3px solid var(--hp-focus);
   outline-offset: 2px;
+}
+
+/* A plain select, for a choice whose options are too long for a segmented
+   control. The arrow is drawn so it matches the panel in every browser. */
+.selectLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 2.5rem 0 0.75rem;
+  border: 1px solid var(--hp-line);
+  border-radius: var(--hp-radius);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23a9b6c5' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat right 0.9rem center,
+    var(--hp-page);
+  color: var(--hp-text);
+  font: inherit;
+  font-weight: 500;
+  appearance: none;
+  cursor: pointer;
+}
+
+.select:hover {
+  border-color: var(--hp-muted);
+}
+
+.select:focus-visible {
+  outline: 3px solid var(--hp-focus);
+  outline-offset: 2px;
+}
+
+/* The menu itself is drawn by the browser; keep it readable in dark. */
+.select option {
+  background: var(--hp-rail);
+  color: var(--hp-text);
+}
+
+/* A setting of the card that is a yes or no, such as hiding perks. */
+.option {
+  align-items: flex-start;
+  margin-top: 0.9rem;
+  font-weight: 600;
+}
+
+.option input {
+  margin-top: 0.2rem;
+}
+
+.option small {
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--hp-muted);
+}
+
+/* The steps for the way of rolling picked just above. */
+.method {
+  margin-top: 0.9rem;
+}
+
+.method .secret {
+  margin-top: 0.75rem;
 }
 
 /* -------------------------------------------------- Where the roll shows */
@@ -412,12 +479,15 @@
 
 /* The action the step exists for. Dark on orange: white on it would be 3.2:1
    at this size. */
+/* The same orange and white as the page's roll button. White on this orange
+   is 3.2:1, so the label is set bold and large enough to count as large type. */
 .copy,
 .copy:hover {
   border-color: var(--hp-orange);
   background: var(--hp-orange);
-  color: #16110b;
-  font-weight: 600;
+  color: #fff;
+  font-size: 1.1875rem;
+  font-weight: 700;
 }
 
 .copy:hover {

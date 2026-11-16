@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, test, vi } from "vite-plus/test";
 
 import { getAllHeroes } from "@/data/heroes";
-import { generateRoomSecret, viewIdFor } from "@/lib/rooms/protocol";
+import {
+  controlKeyFor,
+  generateRoomSecret,
+  viewIdFor,
+} from "@/lib/rooms/protocol";
 import { encodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
 import {
@@ -12,6 +16,7 @@ import {
   LAST_HERO_STORAGE_KEY,
   companionUrl,
   nextOverlayHero,
+  overlayPicker,
   parseOverlayScale,
   parseShortcut,
   readLastOverlayHero,
@@ -236,6 +241,36 @@ describe("readOverlayConfig", () => {
     const url = new URL(companionUrl(view), "https://example.com");
     expect(url.pathname).toBe("/overlay/companion");
     expect(url.searchParams.get("view")).toBe(view);
+    expect(url.searchParams.has("control")).toBe(false);
+  });
+
+  test("a companion link that can roll carries the control key", async () => {
+    const secret = generateRoomSecret();
+    const view = await viewIdFor(secret);
+    const control = await controlKeyFor(secret);
+    const url = new URL(
+      companionUrl(view, "refresh", control),
+      "https://example.com",
+    );
+    expect(url.searchParams.get("view")).toBe(view);
+    expect(url.searchParams.get("control")).toBe(control);
+    expect(url.searchParams.get("look")).toBe("refresh");
+  });
+
+  test("hiding perks keeps them off the card and leaves the rest alone", () => {
+    const withPerks = { ...picker, showPerks: true };
+    expect(overlayPicker(withPerks, false)).toEqual(withPerks);
+    const hidden = overlayPicker(withPerks, true);
+    expect(hidden).toEqual({ ...withPerks, showPerks: false });
+    const url = new URL(overlayUrl(hidden), "https://example.com");
+    expect(readOverlayConfig(url.search)).toMatchObject({
+      ok: true,
+      picker: { showPerks: false, selected: withPerks.selected },
+    });
+    // Perks that are already off stay off either way.
+    expect(
+      overlayPicker({ ...picker, showPerks: false }, false).showPerks,
+    ).toBe(false);
   });
 
   test("sizes the error card for a broken link too", () => {

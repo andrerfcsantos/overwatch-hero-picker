@@ -78,7 +78,7 @@ type EventMap = {
   hero_randomized: {
     source: "picker" | "shared_result" | "overlay";
     /** Overlay only: what asked for the roll. */
-    trigger?: "obs_load" | "obs_hidden" | "keyboard";
+    trigger?: "obs_load" | "obs_hidden" | "keyboard" | "remote";
     hero_key: string;
     hero_role: HeroRole;
     non_repeating: boolean;
@@ -188,6 +188,8 @@ type EventMap = {
     companion: boolean;
     /** The card design the link asks for. */
     card_design: Design;
+    /** Whether the streamer chose to keep perks off the card. */
+    perks_hidden: boolean;
   };
   overlay_link_opened: {
     hero_count: number;
@@ -199,17 +201,29 @@ type EventMap = {
    * Copying works without it, so this says how often hiding gets in the way.
    */
   overlay_secret_revealed: {
-    secret: "overlay_link" | "companion_link" | "companion_qr";
+    secret: "overlay_link" | "companion_link" | "companion_qr" | "roll_link";
   };
   /** Someone opened a shared roll and asked to see what it was. */
   shared_result_revealed: { share_type: "hero_result" | "squad_result" };
   overlay_companion_toggled: { enabled: boolean };
+  /** The streamer chose whether the overlay's card shows perks. */
+  overlay_perks_toggled: { hidden: boolean };
+  /** A way of rolling was picked in the overlay setup, to read its steps. */
+  overlay_roll_method_viewed: {
+    method: "refresh" | "toggle" | "companion" | "link";
+  };
+  /** The link a Stream Deck or macro requests to roll a new hero. */
+  roll_link_copied: { method: "clipboard" | "fallback" };
+  /** The companion page's button asked the overlay for a new hero. */
+  companion_roll_requested: Record<string, never>;
   companion_link_copied: { method: "clipboard" | "fallback" };
   companion_link_opened: Record<string, never>;
   companion_link_reset: Record<string, never>;
   companion_opened: {
     /** False when the link's view id is missing or malformed. */
     valid: boolean;
+    /** Whether the link can also ask the overlay for a new hero. */
+    can_roll: boolean;
   };
   overlay_opened: {
     /** False when the link's filters could not be decoded. */
@@ -292,9 +306,10 @@ function sampleFor(event: keyof EventMap): SampleProps | null | undefined {
  *
  * The overlay's companion room travels the same way and is worse to leak:
  * `room` is the secret that lets a page post rolls to a streamer's companion
- * view, and `view` lets anyone watch it.
+ * view, `view` lets anyone watch it, and `control` lets its holder make the
+ * overlay roll.
  */
-const SECRET_PARAMS = ["d", "room", "view"];
+const SECRET_PARAMS = ["d", "room", "view", "control"];
 const URL_SECRETS = new RegExp(
   `([?&](?:${SECRET_PARAMS.join("|")})=)[^&#]+`,
   "g",

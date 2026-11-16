@@ -12,7 +12,11 @@ import {
   readOverlayConfig,
 } from "@/lib/overlay";
 import { openRoomSocket, RoomSocket } from "@/lib/rooms/client";
-import { generateRollId, publisherRollMessage } from "@/lib/rooms/protocol";
+import {
+  generateRollId,
+  isRerollMessage,
+  publisherRollMessage,
+} from "@/lib/rooms/protocol";
 import { PickerPreset } from "@/lib/share/types";
 import { Hero, PerkPick } from "@/types/hero";
 import OverlayCard from "./OverlayCard";
@@ -29,7 +33,7 @@ function poolFor(picker: PickerPreset): Hero[] {
   return selected.length > 0 ? selected : allHeroes;
 }
 
-type Trigger = "obs_load" | "obs_hidden" | "keyboard";
+type Trigger = "obs_load" | "obs_hidden" | "keyboard" | "remote";
 
 interface Roll {
   /** Identifies this roll to the companion room across reconnects. */
@@ -48,11 +52,19 @@ const OBS_VISIBLE_EVENT = "obsSourceVisibleChanged";
 
 /**
  * Overwatch has keyboard focus while the streamer plays, so the page cannot
- * hear key presses. Instead the streamer binds one OBS hotkey to both Show and
- * Hide for this source.
+ * hear key presses. The setup offers three ways around that:
  *
- * The setup steps ask for "Shutdown source when not visible", so each show is
- * a fresh page load: the card fades in with a new hero, from an empty source.
+ * - One key: OBS gives every browser source a "Refresh cache of current page"
+ *   hotkey. It reloads the page, and every load rolls a hero.
+ * - Remote: with a companion room in the link, the room passes on roll
+ *   requests from the companion page's button or a Stream Deck's roll link.
+ * - Show and hide: one OBS hotkey bound to both Show and Hide for this
+ *   source, pressed twice per hero, for streamers who want the card gone
+ *   between rolls.
+ *
+ * The show and hide steps ask for "Shutdown source when not visible", so each
+ * show is a fresh page load: the card fades in with a new hero, from an empty
+ * source.
  * Without that option OBS keeps the hidden page's last frame and draws it for
  * a moment when the source comes back, showing the previous hero before the
  * new one — nothing the page does can repaint while it is hidden. For that
@@ -130,8 +142,15 @@ export default function OverlayContent() {
   // it so the streamer can see the hero on another screen. The latest roll is
   // re-sent on each (re)connect, so a dropped connection catches up. Nothing
   // here can break the overlay itself: the socket swallows its own failures.
+  // The room also passes on requests for a new hero, from the companion's
+  // button or a roll link.
   const latestRollMessage = useRef<string | null>(null);
   const roomSocket = useRef<RoomSocket | null>(null);
+  // The socket outlives any one `reroll`, which changes with the filters.
+  const rerollRef = useRef(reroll);
+  useEffect(() => {
+    rerollRef.current = reroll;
+  }, [reroll]);
 
   useEffect(() => {
     if (!room) return;
@@ -139,6 +158,9 @@ export default function OverlayContent() {
       target: { role: "publisher", secret: room },
       onOpen: (send) => {
         if (latestRollMessage.current) send(latestRollMessage.current);
+      },
+      onMessage: (data) => {
+        if (isRerollMessage(data)) rerollRef.current("remote");
       },
     });
     roomSocket.current = socket;

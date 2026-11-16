@@ -6,22 +6,30 @@ import { DESIGNS, type Design, isDesign } from "@/lib/design";
 import { OVERLAY_SIZES, OverlaySize } from "@/lib/overlay";
 import {
   DESIGN_LABELS,
+  ROLL_METHODS,
   SOURCE_SIZES,
+  isRollMethod,
   useOverlaySetup,
 } from "@/hooks/useOverlaySetup";
 import QrCode from "./QrCode";
 
 interface OverlaySetupProps {
   /** Built on every render so the link always matches the current filters. */
-  buildUrl: (size: OverlaySize, room: string | null, design: Design) => string;
+  buildUrl: (
+    size: OverlaySize,
+    room: string | null,
+    design: Design,
+    hidePerks: boolean,
+  ) => string;
   /** How many heroes the link's filters select, for analytics. */
   heroCount: number;
 }
 
 /**
  * The "Stream overlay" button and the panel it opens: the overlay link for the
- * current filters, how to wire it into OBS so a hotkey rolls a new hero, and
- * the optional companion view that shows each new hero on another screen.
+ * current filters, the ways to roll a new hero once it is in OBS, and the
+ * optional companion view that shows each new hero on another screen and can
+ * roll one too.
  */
 export default function OverlaySetup({
   buildUrl,
@@ -34,12 +42,18 @@ export default function OverlaySetup({
     setCardDesign,
     size,
     handleSize,
+    hidePerks,
+    handleHidePerks,
+    rollMethod,
+    handleRollMethod,
     companionOn,
     handleCompanion,
     handleNewCompanionLink,
     url,
     previewUrl,
     companionLink,
+    rollLink,
+    rollCopy: { copied: rollCopied, copy: copyRoll, inputRef: rollInputRef },
     overlayCopy: {
       copied: overlayCopied,
       copy: copyOverlay,
@@ -108,6 +122,19 @@ export default function OverlaySetup({
             </select>
           </div>
 
+          <label className="overlay-setup-check">
+            <input
+              type="checkbox"
+              checked={hidePerks}
+              onChange={(e) => handleHidePerks(e.target.checked)}
+            />
+            <span>
+              <strong>Hide perks on the card</strong> — for when you are not
+              playing the random perks. Otherwise the card shows them whenever
+              perks are on in your options.
+            </span>
+          </label>
+
           <div className="overlay-setup-link">
             <input
               ref={overlayInputRef}
@@ -135,6 +162,25 @@ export default function OverlaySetup({
             </a>
           </div>
 
+          <div className="overlay-setup-size">
+            <label htmlFor={`${panelId}-method`}>Roll a new hero with</label>
+            <select
+              id={`${panelId}-method`}
+              value={rollMethod}
+              onChange={(e) => {
+                if (isRollMethod(e.target.value)) {
+                  handleRollMethod(e.target.value);
+                }
+              }}
+            >
+              {ROLL_METHODS.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <ol className="overlay-setup-steps">
             <li>
               In OBS, add a <strong>Browser</strong> source and paste the link
@@ -142,25 +188,102 @@ export default function OverlaySetup({
               {SOURCE_SIZES[size].height} fits the card at this size; place it
               anywhere on your scene.
             </li>
-            <li>
-              In the same source&apos;s properties, tick{" "}
-              <strong>Shutdown source when not visible</strong>. Without it, the
-              previous hero flashes for a moment when the overlay reappears.
-            </li>
-            <li>
-              Open <strong>Settings → Hotkeys</strong>, find{" "}
-              <strong>Show</strong> and <strong>Hide</strong> for that source
-              under your scene, and give both the <em>same</em> key.
-            </li>
-            <li>
-              Press the key once to hide the overlay, and again to bring it back
-              with a new hero.
-            </li>
-          </ol>
 
-          <p className="overlay-setup-note">
-            Switching to another scene and back also rolls a new hero.
-          </p>
+            {rollMethod === "refresh" && (
+              <>
+                <li>
+                  In OBS, open <strong>Settings → Hotkeys</strong> and scroll to
+                  the browser source&apos;s own name. Give{" "}
+                  <strong>Refresh cache of current page</strong> a key.
+                </li>
+                <li>
+                  Press the key for a new hero. OBS hears it while you are in
+                  the game.
+                </li>
+              </>
+            )}
+
+            {rollMethod === "toggle" && (
+              <>
+                <li>
+                  For a card that is hidden between rolls. In the source&apos;s
+                  properties in OBS, tick{" "}
+                  <strong>Shutdown source when not visible</strong>. Without it,
+                  the previous hero flashes for a moment when the overlay
+                  reappears.
+                </li>
+                <li>
+                  In OBS, open <strong>Settings → Hotkeys</strong>, find{" "}
+                  <strong>Show</strong> and <strong>Hide</strong> for that
+                  source under your scene, and give both the <em>same</em> key.
+                </li>
+                <li>
+                  Press the key once to hide the overlay, and again to bring it
+                  back with a new hero. Switching to another scene and back also
+                  rolls one.
+                </li>
+              </>
+            )}
+
+            {rollMethod === "companion" && (
+              <>
+                <li>
+                  {companionOn ? (
+                    <>
+                      Open the companion view below on a second screen, a phone
+                      or a tablet, and press <strong>New hero</strong>. There
+                      are no hotkeys to set up; the overlay only has to be
+                      showing in OBS.
+                    </>
+                  ) : (
+                    <>
+                      Turn on <strong>Companion view</strong> below, then copy
+                      the overlay link above into OBS. The companion shows each
+                      hero on a second screen, a phone or a tablet, and has a{" "}
+                      <strong>New hero</strong> button.
+                    </>
+                  )}
+                </li>
+                <li>
+                  With OBS itself on a second screen, you can also select the
+                  browser source and click <strong>Refresh</strong> in the
+                  toolbar under the preview.
+                </li>
+              </>
+            )}
+
+            {rollMethod === "link" &&
+              (companionOn ? (
+                <li>
+                  Have a Stream Deck button, or a script, request this link in
+                  the background. Each request rolls a new hero while the
+                  overlay is showing in OBS.
+                  <div className="overlay-setup-link">
+                    <input
+                      ref={rollInputRef}
+                      type="text"
+                      readOnly
+                      value={rollLink}
+                      onFocus={(e) => e.currentTarget.select()}
+                      aria-label="Roll link"
+                    />
+                    <button
+                      className="action-button btn-share"
+                      onClick={() => copyRoll(rollLink)}
+                      disabled={!rollLink}
+                    >
+                      {rollCopied ? "Copied!" : "Copy link"}
+                    </button>
+                  </div>
+                </li>
+              ) : (
+                <li>
+                  The roll link reaches the overlay through the companion. Turn
+                  on <strong>Companion view</strong> below, then copy the
+                  overlay link above into OBS.
+                </li>
+              ))}
+          </ol>
 
           <div className="overlay-companion">
             <label className="overlay-companion-toggle">
@@ -220,8 +343,8 @@ export default function OverlaySetup({
                     </a>
                   </div>
                   <p className="overlay-setup-note">
-                    Anyone with this link sees your rolls but cannot change
-                    them.{" "}
+                    Anyone with this link sees your rolls and can roll a new
+                    hero, but cannot choose it.{" "}
                     <button
                       type="button"
                       className="overlay-companion-reset"

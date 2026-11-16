@@ -294,6 +294,7 @@ a:hover {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.overlay-setup-check,
 .overlay-companion-toggle {
   display: flex;
   align-items: flex-start;
@@ -302,6 +303,20 @@ a:hover {
   color: rgba(255, 255, 255, 0.85);
 }
 
+.overlay-setup-check {
+  margin-top: 0.5rem;
+}
+
+/* The steps follow the way of rolling picked just above them. */
+.overlay-setup-size + .overlay-setup-steps {
+  margin-top: 0.5rem;
+}
+
+.overlay-setup-steps .overlay-setup-link {
+  margin-top: 0.4rem;
+}
+
+.overlay-setup-check input,
 .overlay-companion-toggle input {
   margin-top: 0.25rem;
   flex-shrink: 0;

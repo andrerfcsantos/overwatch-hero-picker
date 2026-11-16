@@ -54,3 +54,18 @@ export function admitSocket(
     ? "accept"
     : "replace-oldest-publisher";
 }
+
+/**
+ * Shortest gap between two roll requests a room passes on to its overlay.
+ * Each one makes the overlay post a roll, which spends one of the overlay's
+ * own tokens; staying under its refill rate means requests from a companion
+ * or a roll link can never get the overlay's socket closed for flooding.
+ */
+export const REROLL_MIN_INTERVAL_MS = Math.ceil(
+  1000 / ROLL_REFILL_PER_SECOND + 100,
+);
+
+export function isRerollDue(lastAt: number, now: number): boolean {
+  // A clock that went backwards must not block rolls until it catches up.
+  return now < lastAt || now - lastAt >= REROLL_MIN_INTERVAL_MS;
+}

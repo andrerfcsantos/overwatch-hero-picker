@@ -90,6 +90,13 @@ describe("redactUrl", () => {
     expect(
       redactUrl("https://owheropicker.com/overlay/companion?view=Zz9_-abc#top"),
     ).toBe("https://owheropicker.com/overlay/companion?view=REDACTED#top");
+    expect(
+      redactUrl(
+        "https://owheropicker.com/overlay/companion?view=Zz9_-abc&control=Qq1_-xyz",
+      ),
+    ).toBe(
+      "https://owheropicker.com/overlay/companion?view=REDACTED&control=REDACTED",
+    );
   });
 
   test("leaves look-alike params alone", () => {

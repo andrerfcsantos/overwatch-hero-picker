@@ -161,6 +161,41 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* Asks the overlay for a new hero. Big enough to hit without looking. */
+.roll {
+  min-width: min(16rem, 100%);
+  min-height: 3.5rem;
+  padding: 0 2rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #f99e1a;
+  color: #0f1923;
+  font-family: "Big Noodle Titling", Arial, Helvetica, sans-serif;
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: opacity 0.12s ease;
+}
+
+.roll:hover {
+  background: #ffb347;
+}
+
+.roll:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+.roll:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.roll:disabled:hover {
+  background: #f99e1a;
+}
+
 /* The new design (`look=refresh` in the link): the site's flat panel colour
    and UI face, and perks named instead of colour-coded. */
 .refresh {
@@ -214,4 +249,21 @@
   font-family: inherit;
   font-size: 1.125rem;
   color: #a9b6c5;
+}
+
+/* The site's roll button: its orange, with white display type. */
+.refresh .roll,
+.refresh .roll:disabled:hover {
+  background: #f06414;
+  color: #fff;
+}
+
+.refresh .roll:hover {
+  background: #f47a33;
+}
+
+.refresh .roll {
+  border-radius: 0.375rem;
+  font-family:
+    "Big Noodle Titling", "Arial Narrow", Arial, Helvetica, sans-serif;
 }

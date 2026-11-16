@@ -89,13 +89,24 @@ second screen) needs one live piece: a small Worker with a Durable Object in
   posts each roll to the room with it.
 - The companion link carries the room's **view id** (`view=`), the SHA-256 of
   the secret. It can watch the room but not post to it.
+- The companion link also carries a **control key** (`control=`), a second
+  hash of the secret. With it the companion's **New hero** button can ask the
+  overlay for a roll; the overlay still picks the hero from its own filters.
+  The same two keys make the **roll link** (`/v1/overlay/roll`), a plain web address
+  a Stream Deck or macro can request to do the same. The room learns its
+  control key from the overlay's handshake, so a companion link without the
+  key stays view-only.
 - The room remembers only the last roll, and forgets it after a week unused.
   The wire protocol is in `src/lib/rooms/protocol.ts`, shared by both sides.
 
 It is deployed separately from the site on purpose: Cloudflare does not create
 preview URLs for Workers that implement a Durable Object, and the site's pull
 request previews depend on them. If the relay is down, the overlay keeps
-working; only the companion stops updating.
+working; the companion stops updating and its button and the roll link stop
+rolling, while OBS hotkeys carry on.
+
+Deploy the relay before a site release that changes the protocol: a newer
+companion page talking to an older relay is cut off when it asks for a roll.
 
 | Command                | What it does                                                        |
 | ---------------------- | ------------------------------------------------------------------- |
