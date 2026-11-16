@@ -159,7 +159,11 @@ const REROLL_RESPONSES: Record<RerollOutcome, [body: string, status: number]> =
   {
     sent: ["Rolling a new hero.", 200],
     denied: ["Invalid roll link.", 403],
-    offline: ["The overlay is not open in OBS.", 409],
+    // A room whose link was replaced has no overlay either, so say so.
+    offline: [
+      "The overlay is not open in OBS, or this link was replaced by a new one.",
+      409,
+    ],
     busy: ["Too many rolls. Try again in a moment.", 429],
   };
 

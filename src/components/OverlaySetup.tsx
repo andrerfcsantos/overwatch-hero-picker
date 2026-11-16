@@ -9,6 +9,7 @@ import {
   ROLL_METHODS,
   SOURCE_SIZES,
   isRollMethod,
+  secretFieldProps,
   useOverlaySetup,
 } from "@/hooks/useOverlaySetup";
 import QrCode from "./QrCode";
@@ -36,6 +37,9 @@ export default function OverlaySetup({
   heroCount,
 }: OverlaySetupProps) {
   const [open, setOpen] = useState(false);
+  // The companion's code and links can roll the streamer's hero, so they stay
+  // hidden until asked for, in case this page is on stream.
+  const [linksShown, setLinksShown] = useState(false);
   const panelId = useId();
   const {
     cardDesign,
@@ -69,8 +73,26 @@ export default function OverlaySetup({
 
   const toggle = useCallback(() => {
     if (!open) track("overlay_setup_opened", {});
+    else setLinksShown(false);
     setOpen(!open);
   }, [open]);
+
+  const showLinksButton = (
+    <button
+      type="button"
+      className="action-button"
+      aria-pressed={linksShown}
+      disabled={!companionLink}
+      onClick={() => {
+        if (!linksShown) {
+          track("overlay_secret_revealed", { secret: "companion_link" });
+        }
+        setLinksShown(!linksShown);
+      }}
+    >
+      {linksShown ? "Hide" : "Show"}
+    </button>
+  );
 
   return (
     <>
@@ -249,6 +271,11 @@ export default function OverlaySetup({
                   browser source and click <strong>Refresh</strong> in the
                   toolbar under the preview.
                 </li>
+                <li>
+                  To show the card in more than one scene, add this same source
+                  to each with <strong>Add Existing</strong> rather than a copy:
+                  the button rolls one overlay.
+                </li>
               </>
             )}
 
@@ -257,16 +284,13 @@ export default function OverlaySetup({
                 <li>
                   Have a Stream Deck button, or a script, request this link in
                   the background. Each request rolls a new hero while the
-                  overlay is showing in OBS. Keep it out of chats: a chat
-                  previewing the link rolls too.
+                  overlay is showing in OBS, in one browser source (add it to
+                  more scenes with <strong>Add Existing</strong>). Keep it out
+                  of chats: a chat previewing the link rolls too.
                   <div className="overlay-setup-link">
                     <input
                       ref={rollInputRef}
-                      type="text"
-                      readOnly
-                      value={rollLink}
-                      onFocus={(e) => e.currentTarget.select()}
-                      aria-label="Roll link"
+                      {...secretFieldProps(rollLink, linksShown, "Roll link")}
                     />
                     <button
                       className="action-button btn-share"
@@ -275,6 +299,7 @@ export default function OverlaySetup({
                     >
                       {rollCopied ? "Copied!" : "Copy link"}
                     </button>
+                    {showLinksButton}
                   </div>
                 </li>
               ) : (
@@ -301,7 +326,7 @@ export default function OverlaySetup({
 
             {companionOn && (
               <div className="overlay-companion-body">
-                {companionLink ? (
+                {companionLink && linksShown ? (
                   <QrCode
                     value={companionLink}
                     label="QR code that opens the companion view"
@@ -319,11 +344,11 @@ export default function OverlaySetup({
                   <div className="overlay-setup-link">
                     <input
                       ref={companionInputRef}
-                      type="text"
-                      readOnly
-                      value={companionLink}
-                      onFocus={(e) => e.currentTarget.select()}
-                      aria-label="Companion link"
+                      {...secretFieldProps(
+                        companionLink,
+                        linksShown,
+                        "Companion link",
+                      )}
                     />
                     <button
                       className="action-button btn-share"
@@ -342,10 +367,13 @@ export default function OverlaySetup({
                     >
                       Open in new tab
                     </a>
+                    {showLinksButton}
                   </div>
                   <p className="overlay-setup-note">
                     Anyone with this link sees your rolls and can roll a new
-                    hero, but cannot choose it.{" "}
+                    hero, but cannot choose it. The code and links stay hidden
+                    in case this page is on your stream; copying works while
+                    they are hidden.{" "}
                     <button
                       type="button"
                       className="overlay-companion-reset"
@@ -353,7 +381,8 @@ export default function OverlaySetup({
                     >
                       Make a new link
                     </button>{" "}
-                    if it gets out — then copy both links again.
+                    if it gets out — then copy every link again, including any
+                    Stream Deck roll link.
                   </p>
                 </div>
               </div>

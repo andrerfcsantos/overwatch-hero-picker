@@ -85,6 +85,35 @@ export function isRollMethod(value: unknown): value is RollMethod {
   return ROLL_METHODS.some((method) => method.id === value);
 }
 
+/**
+ * A link with everything after its "?" replaced by dots. The address of the
+ * site is no secret, and seeing it tells the streamer which link this is.
+ */
+export function maskLink(link: string): string {
+  const query = link.indexOf("?");
+  return query === -1 ? link : `${link.slice(0, query + 1)}${"•".repeat(20)}`;
+}
+
+/**
+ * Props for a read-only field holding a link that may be hidden. A streamer
+ * may have the setup on stream, and the companion and roll links let anyone
+ * roll their hero. Hidden or not, copying gives the real link.
+ */
+export function secretFieldProps(value: string, shown: boolean, label: string) {
+  return {
+    type: "text",
+    readOnly: true,
+    value: shown ? value : maskLink(value),
+    "aria-label": shown ? label : `${label}, hidden`,
+    onFocus: (e: React.FocusEvent<HTMLInputElement>) =>
+      e.currentTarget.select(),
+    onCopy: (e: React.ClipboardEvent<HTMLInputElement>) => {
+      e.clipboardData.setData("text/plain", value);
+      e.preventDefault();
+    },
+  } as const;
+}
+
 export type CopyMethod = "clipboard" | "fallback";
 
 /**

@@ -9,6 +9,7 @@ import {
   ROLL_METHODS,
   SOURCE_SIZES,
   isRollMethod,
+  maskLink,
   useOverlaySetup,
 } from "@/hooks/useOverlaySetup";
 import { Hero } from "@/types/hero";
@@ -39,15 +40,6 @@ interface OverlaySheetProps {
   heroCount: number;
   totalHeroes: number;
   preview: OverlayPreview;
-}
-
-/**
- * A link with everything after its "?" replaced by dots. The address of the
- * site is no secret, and seeing it tells the streamer which link this is.
- */
-function maskLink(link: string): string {
-  const query = link.indexOf("?");
-  return query === -1 ? link : `${link.slice(0, query + 1)}${"•".repeat(20)}`;
 }
 
 type Secret = "overlay_link" | "companion_link" | "companion_qr" | "roll_link";
@@ -631,6 +623,11 @@ export default function OverlaySheet({
                         the browser source and click <strong>Refresh</strong> in
                         the toolbar under the preview.
                       </p>
+                      <p className={styles.fine}>
+                        To show the card in more than one scene, add this same
+                        source to each with <strong>Add Existing</strong> rather
+                        than a copy: the button rolls one overlay.
+                      </p>
                     </>
                   )}
 
@@ -640,8 +637,10 @@ export default function OverlaySheet({
                         <p className={styles.text}>
                           Have a Stream Deck button, or a script, request this
                           link in the background. Each request rolls a new hero
-                          while the card is showing in OBS. Keep it out of
-                          chats: a chat previewing the link rolls too.
+                          while the card is showing in OBS, in one browser
+                          source (add it to more scenes with{" "}
+                          <strong>Add Existing</strong>). Keep it out of chats:
+                          a chat previewing the link rolls too.
                         </p>
                         <SecretLink
                           label="Roll link"
