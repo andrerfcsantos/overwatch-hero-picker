@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 import { describe, expect, test } from "vite-plus/test";
 
 import { getAllHeroes } from "@/data/heroes";
@@ -7,13 +10,21 @@ import {
   MAX_PUBLISHERS,
   MAX_VIEWERS,
   ROLL_BURST,
+  ROLL_REFILL_PER_SECOND,
   admitSocket,
+  isRerollDue,
   takeRollToken,
 } from "../../../workers/rooms/src/rateLimit";
 import {
   MAX_MESSAGE_BYTES,
+  REROLL_BUTTON_REST_MS,
+  REROLL_MESSAGE,
+  REROLL_MIN_INTERVAL_MS,
+  controlKeyFor,
   generateRollId,
   generateRoomSecret,
+  isControlKey,
+  isRerollMessage,
   isRoomSecret,
   isViewId,
   parsePublisherMessage,
@@ -39,6 +50,22 @@ describe("room ids", () => {
     expect(isRoomSecret(view)).toBe(true); // 43 chars fits the secret shape…
     expect(await viewIdFor(view)).not.toBe(view); // …but hashes to another room.
     expect(isViewId(secret)).toBe(false);
+  });
+
+  test("the control key is a second hash that neither key gives away", async () => {
+    const secret = generateRoomSecret();
+    const control = await controlKeyFor(secret);
+    const view = await viewIdFor(secret);
+    expect(await controlKeyFor(secret)).toBe(control);
+    expect(isControlKey(control)).toBe(true);
+    expect(control).not.toBe(view);
+    // Holding the view id (a plain companion link) is not enough to roll.
+    expect(await controlKeyFor(view)).not.toBe(control);
+    expect(await viewIdFor(view)).not.toBe(control);
+    // And the control key does not name the room.
+    expect(await viewIdFor(control)).not.toBe(view);
+    expect(isControlKey("short")).toBe(false);
+    expect(isControlKey(null)).toBe(false);
   });
 
   test("known SHA-256 vector", async () => {
@@ -253,6 +280,67 @@ describe("isOriginAllowed", () => {
     ]) {
       expect(isOriginAllowed(origin, allowed), String(origin)).toBe(false);
     }
+  });
+});
+
+describe("roll requests", () => {
+  test("only a reroll message is one", () => {
+    expect(isRerollMessage(REROLL_MESSAGE)).toBe(true);
+    // Extra fields cannot name a hero: the overlay never reads them.
+    expect(isRerollMessage('{"type":"reroll","heroKey":"ana"}')).toBe(true);
+    for (const raw of [
+      "",
+      "reroll",
+      "null",
+      "[]",
+      '{"type":"roll"}',
+      '{"type":"ping"}',
+      publisherRollMessage("roll-id-1", "ana", null),
+      `{"type":"reroll","pad":"${"x".repeat(MAX_MESSAGE_BYTES)}"}`,
+    ]) {
+      expect(isRerollMessage(raw)).toBe(false);
+    }
+  });
+
+  test("are spaced so the overlay's replies never outrun its allowance", () => {
+    expect(isRerollDue(0, 10_000)).toBe(true);
+    expect(isRerollDue(10_000, 10_000)).toBe(false);
+    expect(isRerollDue(10_000, 10_000 + REROLL_MIN_INTERVAL_MS - 1)).toBe(
+      false,
+    );
+    expect(isRerollDue(10_000, 10_000 + REROLL_MIN_INTERVAL_MS)).toBe(true);
+    // Each passed-on request makes the overlay post a roll, which spends one
+    // of its socket's tokens…
+    expect(REROLL_MIN_INTERVAL_MS).toBeGreaterThan(
+      1000 / ROLL_REFILL_PER_SECOND,
+    );
+    // …and counts against the per-address limit on overlay messages. Rolling
+    // as fast as allowed must leave at least half of it for everything else.
+    const config = readFileSync(
+      path.resolve(
+        import.meta.dirname,
+        "../../../workers/rooms/wrangler.jsonc",
+      ),
+      "utf8",
+    );
+    const rolls = /"name": "ROLLS",[^}]*"limit": (\d+), "period": (\d+)/.exec(
+      config,
+    );
+    expect(rolls).not.toBeNull();
+    const perMinute = (Number(rolls![1]) * 60) / Number(rolls![2]);
+    expect(60_000 / REROLL_MIN_INTERVAL_MS).toBeLessThanOrEqual(perMinute / 2);
+  });
+
+  test("the companion's button rests longer than the room's gap", () => {
+    // Presses arrive with network jitter; a later press travelling faster
+    // must still land after the gap.
+    expect(
+      REROLL_BUTTON_REST_MS - REROLL_MIN_INTERVAL_MS,
+    ).toBeGreaterThanOrEqual(300);
+  });
+
+  test("a clock going backwards does not block rolls", () => {
+    expect(isRerollDue(10_000, 5_000)).toBe(true);
   });
 });
 

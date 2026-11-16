@@ -21,6 +21,7 @@ interface HeroPoolProps {
     size: OverlaySize,
     room: string | null,
     design: Design,
+    hidePerks: boolean,
   ) => string;
   /** The roll on the page, which the overlay's setup previews as a card. */
   overlayPreview: OverlayPreview;

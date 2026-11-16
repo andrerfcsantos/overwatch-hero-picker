@@ -4,15 +4,24 @@ import {
   PING_MESSAGE,
   PONG_MESSAGE,
   REPLACED_CLOSE_CODE,
+  REROLL_MESSAGE,
+  ROLL_REQUEST_PATH,
+  ROOM_CONTROL_PARAM,
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
-  isRoomSecret,
+  isControlKey,
   isViewId,
   parsePublisherMessage,
-  viewIdFor,
   type RoomRoll,
   type ViewerMessage,
 } from "../../../src/lib/rooms/protocol";
+import {
+  companionControl,
+  readHandshake,
+  rerollOutcome,
+  type RerollOutcome,
+  type Role,
+} from "./access";
 import { isOriginAllowed } from "./origins";
 import {
   ROLL_BURST,
@@ -21,21 +30,35 @@ import {
   type RollAllowance,
 } from "./rateLimit";
 
-type Role = "publisher" | "viewer";
-
 /** Header the entry Worker uses to tell the room who is connecting. */
 const ROLE_HEADER = "X-Room-Role";
+/** Role of a plain HTTP roll request, which opens no socket. */
+const ROLL_REQUEST_ROLE = "roll";
+/**
+ * Header carrying a control key into the room: the room's own, worked out
+ * from the secret when the overlay connects, or the one a companion or a
+ * roll request claims to hold.
+ */
+const CONTROL_HEADER = "X-Room-Control";
 
 /** A room nobody has used for this long forgets its last roll. */
 const IDLE_CLEANUP_MS = 7 * 24 * 60 * 60 * 1000;
 
 const ROLL_KEY = "roll";
+/** The room's control key, learned from its overlay. */
+const CONTROL_KEY = "control";
 
 /** URL of the request the entry Worker forwards to a room. Never public. */
 const ROOM_URL = "https://room.internal/connect";
 
 interface Attachment extends RollAllowance {
   role: Role;
+  /**
+   * The control key a companion connected with, or null. One the room knew
+   * to be wrong is already dropped; one it could not check yet (no overlay
+   * has told it its key) is checked again on each roll request.
+   */
+  control: string | null;
   connectedAt: number;
   /** Client IP, for the per-address roll limit shared by all rooms. */
   ip: string;
@@ -55,6 +78,9 @@ export default {
     if (url.pathname === "/") {
       return text("Overwatch Hero Picker rooms relay.", 200);
     }
+    if (url.pathname === ROLL_REQUEST_PATH) {
+      return requestRoll(request, env, url);
+    }
     if (url.pathname !== "/v1/ws") return text("Not found.", 404);
     if (request.method !== "GET") return text("Method not allowed.", 405);
     if (request.headers.get("Upgrade")?.toLowerCase() !== "websocket") {
@@ -69,22 +95,13 @@ export default {
     const { success } = await env.HANDSHAKES.limit({ key: ip });
     if (!success) return text("Too many connections.", 429);
 
-    // Exactly one of the two: the publish secret (overlay) or the view id
-    // (companion). The overlay's room is named by the hash of its secret, so
-    // both land in the same room without the view id revealing the secret.
-    const secret = url.searchParams.get(ROOM_PUBLISH_PARAM);
-    const view = url.searchParams.get(ROOM_VIEW_PARAM);
-    let roomName: string;
-    let role: Role;
-    if (secret !== null && view === null && isRoomSecret(secret)) {
-      roomName = await viewIdFor(secret);
-      role = "publisher";
-    } else if (view !== null && secret === null && isViewId(view)) {
-      roomName = view;
-      role = "viewer";
-    } else {
-      return text("Invalid room.", 400);
-    }
+    const handshake = await readHandshake({
+      secret: url.searchParams.get(ROOM_PUBLISH_PARAM),
+      view: url.searchParams.get(ROOM_VIEW_PARAM),
+      control: url.searchParams.get(ROOM_CONTROL_PARAM),
+    });
+    if (!handshake) return text("Invalid room.", 400);
+    const { roomName, role, control } = handshake;
 
     // The room only needs the handshake headers and the role. Its request URL
     // is a fixed internal one, so the publish secret in the public URL goes
@@ -93,9 +110,62 @@ export default {
     const stub = env.ROOMS.get(env.ROOMS.idFromName(roomName));
     const headers = new Headers(request.headers);
     headers.set(ROLE_HEADER, role);
+    // Never trust a control header from outside; only what was read above.
+    headers.delete(CONTROL_HEADER);
+    if (control) headers.set(CONTROL_HEADER, control);
     return stub.fetch(new Request(ROOM_URL, { headers }));
   },
 } satisfies ExportedHandler<Env>;
+
+/**
+ * Asks a room's overlay for a new hero over plain HTTP, so a Stream Deck
+ * button or a macro can roll without a page open. The link's control key is
+ * the whole of its authority, so there is no Origin to check: tools that
+ * request a URL do not send one.
+ */
+async function requestRoll(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  // GET because that is what "open this URL" buttons send.
+  if (request.method !== "GET" && request.method !== "POST") {
+    return text("Method not allowed.", 405);
+  }
+  // Its own budget, so a busy Stream Deck cannot use up the handshakes the
+  // overlay and companion on the same address need to reconnect.
+  const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+  const { success } = await env.ROLL_REQUESTS.limit({ key: ip });
+  if (!success) return text("Too many requests.", 429);
+
+  const view = url.searchParams.get(ROOM_VIEW_PARAM);
+  const control = url.searchParams.get(ROOM_CONTROL_PARAM);
+  if (!isViewId(view) || !isControlKey(control)) {
+    return text("Invalid roll link.", 400);
+  }
+
+  const stub = env.ROOMS.get(env.ROOMS.idFromName(view));
+  return stub.fetch(
+    new Request(ROOM_URL, {
+      headers: {
+        [ROLE_HEADER]: ROLL_REQUEST_ROLE,
+        [CONTROL_HEADER]: control,
+      },
+    }),
+  );
+}
+
+const REROLL_RESPONSES: Record<RerollOutcome, [body: string, status: number]> =
+  {
+    sent: ["Rolling a new hero.", 200],
+    denied: ["Invalid roll link.", 403],
+    // A room whose link was replaced has no overlay either, so say so.
+    offline: [
+      "The overlay is not open in OBS, or this link was replaced by a new one.",
+      409,
+    ],
+    busy: ["Too many rolls. Try again in a moment.", 429],
+  };
 
 /**
  * One room per overlay. Holds the overlay's socket and any companion sockets,
@@ -108,6 +178,18 @@ export default {
  * duration; pings are answered by the runtime without waking the room.
  */
 export class Room extends DurableObject<Env> {
+  /**
+   * When a roll request was last passed on. In memory only: a room that
+   * hibernated has been quiet for far longer than the gap this enforces.
+   */
+  private lastRerollAt = 0;
+  /**
+   * The room's control key once read from storage, so roll requests do not
+   * each cost a read. Undefined until read; lost on hibernation and read
+   * again on the next request that needs it.
+   */
+  private controlKey: string | null | undefined = undefined;
+
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ctx.setWebSocketAutoResponse(
@@ -117,6 +199,11 @@ export class Room extends DurableObject<Env> {
 
   async fetch(request: Request): Promise<Response> {
     const role = request.headers.get(ROLE_HEADER);
+    const control = request.headers.get(CONTROL_HEADER);
+    if (role === ROLL_REQUEST_ROLE) {
+      const outcome = await this.reroll(control);
+      return text(...REROLL_RESPONSES[outcome]);
+    }
     if (role !== "publisher" && role !== "viewer") {
       return text("Invalid role.", 400);
     }
@@ -142,6 +229,10 @@ export class Room extends DurableObject<Env> {
     const now = Date.now();
     const attachment: Attachment = {
       role,
+      control:
+        role === "viewer"
+          ? companionControl(control, await this.storedControlKey())
+          : null,
       tokens: ROLL_BURST,
       refilledAt: now,
       connectedAt: now,
@@ -157,6 +248,12 @@ export class Room extends DurableObject<Env> {
         overlayOnline: this.publishers().length > 0,
       });
     } else {
+      // The overlay is the only one that knows the secret, so its connection
+      // is what teaches the room its control key.
+      if (control && (await this.storedControlKey()) !== control) {
+        await this.ctx.storage.put(CONTROL_KEY, control);
+        this.controlKey = control;
+      }
       this.broadcastPresence();
     }
 
@@ -165,10 +262,13 @@ export class Room extends DurableObject<Env> {
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer) {
     const attachment = ws.deserializeAttachment() as Attachment | null;
-    // Companions only listen. Their pings are answered by the runtime without
-    // reaching this handler, so anything that does arrive is a misbehaving
-    // client waking the room for nothing.
-    if (attachment?.role !== "publisher") {
+    // Companions without a control key only listen. Their pings are answered
+    // by the runtime without reaching this handler, so anything that does
+    // arrive is a misbehaving client waking the room for nothing.
+    if (
+      !attachment ||
+      (attachment.role !== "publisher" && !attachment.control)
+    ) {
       ws.close(1008, "Companions cannot send messages.");
       return;
     }
@@ -182,6 +282,29 @@ export class Room extends DurableObject<Env> {
       return;
     }
     ws.serializeAttachment({ ...attachment, ...next });
+
+    if (attachment.role === "viewer") {
+      // Counted per address across rooms before anything else, as overlay
+      // messages are below: a script holding many sockets with made-up keys
+      // cannot keep rooms awake. A budget of its own, because the roll this
+      // leads to is counted against the overlay's address when it is posted.
+      const { success } = await this.env.ROLL_REQUESTS.limit({
+        key: attachment.ip,
+      });
+      if (!success) {
+        ws.close(1008, "Too many messages from this address.");
+        return;
+      }
+      // A roll request is the only thing a companion can say, and the page
+      // says it exactly like this: nothing larger is parsed.
+      if (message !== REROLL_MESSAGE) {
+        ws.close(1008, "Invalid message.");
+        return;
+      }
+      const outcome = await this.reroll(attachment.control);
+      if (outcome === "denied") ws.close(1008, "Invalid control key.");
+      return;
+    }
 
     // Every overlay message wakes a room and may cost a storage write, and the
     // account's daily allowances are shared by every room. The per-socket
@@ -240,6 +363,50 @@ export class Room extends DurableObject<Env> {
     // Someone came back; the last of them to leave restarts the idle clock.
     if (this.openSockets().length > 0) return;
     await this.ctx.storage.deleteAll();
+    this.controlKey = null;
+  }
+
+  /**
+   * Passes a request for a new hero on to the overlay, if the key is the
+   * room's and the overlay is there to hear it.
+   */
+  private async reroll(claimed: string | null): Promise<RerollOutcome> {
+    // A request without a key is refused before it costs a read.
+    const expected = claimed ? await this.storedControlKey() : null;
+    // Read after the last await, with nothing awaited from here to updating
+    // lastRerollAt: requests whose earlier checks finish out of order must
+    // still be spaced by when they are passed on, not when they arrived.
+    const now = Date.now();
+    const publishers = this.publishers();
+    const outcome = rerollOutcome({
+      claimed,
+      expected,
+      publishers: publishers.length,
+      lastRerollAt: this.lastRerollAt,
+      now,
+    });
+    if (outcome !== "sent") return outcome;
+    this.lastRerollAt = now;
+    // Only the newest overlay, as when a new one replaces the oldest: with two
+    // open (a duplicated source, or the link in a browser tab), each would
+    // roll its own hero, and the companion would show whichever came last.
+    const newest = publishers.reduce((a, b) =>
+      connectedAt(b) > connectedAt(a) ? b : a,
+    );
+    try {
+      newest.send(REROLL_MESSAGE);
+    } catch {
+      // Closed since the check; its close handler takes care of the rest.
+    }
+    return "sent";
+  }
+
+  private async storedControlKey(): Promise<string | null> {
+    if (this.controlKey === undefined) {
+      this.controlKey =
+        (await this.ctx.storage.get<string>(CONTROL_KEY)) ?? null;
+    }
+    return this.controlKey;
   }
 
   private async onSocketGone(ws: WebSocket) {

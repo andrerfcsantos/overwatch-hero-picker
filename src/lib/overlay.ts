@@ -9,6 +9,7 @@ import { encodeShare, tryDecodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
 import { SHARE_PARAM } from "@/lib/share/urls";
 import {
+  ROOM_CONTROL_PARAM,
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
   isRoomSecret,
@@ -111,12 +112,27 @@ export function overlayUrl(
 export function companionUrl(
   viewId: string,
   design: Design = "classic",
+  /** The room's control key, for a companion that can also roll a new hero. */
+  control: string | null = null,
 ): string {
   const designParam =
     design === "classic" ? "" : `&${OVERLAY_DESIGN_PARAM}=${design}`;
+  const controlParam = control ? `&${ROOM_CONTROL_PARAM}=${control}` : "";
   return absolute(
-    `${COMPANION_PATH}?${ROOM_VIEW_PARAM}=${viewId}${designParam}`,
+    `${COMPANION_PATH}?${ROOM_VIEW_PARAM}=${viewId}${designParam}${controlParam}`,
   );
+}
+
+/**
+ * The filters and options an overlay link carries. They are the picker's,
+ * except that the streamer can keep perks off the card while still rolling
+ * them for themselves on the site.
+ */
+export function overlayPicker(
+  picker: PickerPreset,
+  hidePerks: boolean,
+): PickerPreset {
+  return hidePerks ? { ...picker, showPerks: false } : picker;
 }
 
 /** Absolute link for copying. Client-only; falls back to a relative path. */

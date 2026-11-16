@@ -7,6 +7,11 @@
  * SHA-256 of that secret, so a companion link can be shared — with a second
  * screen, a phone, a moderator — without letting anyone post fake rolls.
  *
+ * A third key, the *control key*, is a different hash of the secret. Whoever
+ * holds it next to the view id can ask the overlay for a new hero — from the
+ * companion page's button, or a Stream Deck requesting the roll link — and
+ * nothing more: the overlay still picks the hero itself, from its own filters.
+ *
  * This module is imported by the Worker too, so it must stay free of path
  * aliases and of browser- or Node-only APIs (Web Crypto is in both).
  */
@@ -15,12 +20,19 @@
 export const ROOM_PUBLISH_PARAM = "room";
 /** Companion link parameter carrying the view id. */
 export const ROOM_VIEW_PARAM = "view";
+/** Companion and roll link parameter carrying the control key. */
+export const ROOM_CONTROL_PARAM = "control";
+
+/** Where the room takes a roll request over plain HTTP, for macro tools. */
+export const ROLL_REQUEST_PATH = "/v1/overlay/roll";
 
 /** 24 random bytes, base64url: 32 characters. Longer secrets are accepted. */
 const SECRET_BYTES = 24;
 const SECRET_PATTERN = /^[A-Za-z0-9_-]{32,64}$/;
 /** A SHA-256 digest in unpadded base64url is always 43 characters. */
 const VIEW_ID_PATTERN = /^[A-Za-z0-9_-]{43}$/;
+/** Prefix that keeps the control key's hash apart from the view id's. */
+const CONTROL_KEY_PREFIX = "control:";
 
 /** Random per roll, so a re-sent roll is recognised as the same one. */
 const ROLL_ID_BYTES = 9;
@@ -70,6 +82,29 @@ export type PublisherMessage = {
   roll: Pick<RoomRoll, "id" | "heroKey" | "perks">;
 };
 
+/**
+ * Companion → room, and room → overlay: roll a new hero. It names no hero, so
+ * the control key cannot be used to put a chosen one on stream.
+ */
+export const REROLL_MESSAGE = '{"type":"reroll"}';
+
+/**
+ * Shortest gap between two roll requests a room passes on to its overlay. The
+ * companion's button rests this long after a press, since a faster one would
+ * be dropped. Each request makes the overlay post a roll, which counts
+ * against the relay's per-address limit on overlay messages (60 a minute, see
+ * workers/rooms/wrangler.jsonc): at most 30 requests a minute leaves the rest
+ * for reconnects, hotkey rolls and a second overlay on the same address.
+ */
+export const REROLL_MIN_INTERVAL_MS = 2_000;
+
+/**
+ * How long the companion's button rests after a press. A little longer than
+ * the room's gap, which it measures between arrivals: a press that travels
+ * faster than the one before it would otherwise land early and be dropped.
+ */
+export const REROLL_BUTTON_REST_MS = REROLL_MIN_INTERVAL_MS + 400;
+
 /** Room → companion. */
 export type ViewerMessage =
   | { type: "state"; roll: RoomRoll | null; overlayOnline: boolean }
@@ -112,6 +147,16 @@ export async function viewIdFor(secret: string): Promise<string> {
     new TextEncoder().encode(secret),
   );
   return base64Url(new Uint8Array(digest));
+}
+
+/** A control key is a SHA-256 digest too, so it looks like a view id. */
+export function isControlKey(value: unknown): value is string {
+  return isViewId(value);
+}
+
+/** The control key for a publish secret. Cannot be worked out from a view id. */
+export async function controlKeyFor(secret: string): Promise<string> {
+  return viewIdFor(`${CONTROL_KEY_PREFIX}${secret}`);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -172,6 +217,12 @@ export function parsePublisherMessage(raw: string): PublisherMessage | null {
   if (!isRecord(value) || value.type !== "roll") return null;
   const roll = readRollBody(value.roll);
   return roll ? { type: "roll", roll } : null;
+}
+
+/** Whether a message is a request for a new hero. */
+export function isRerollMessage(raw: string): boolean {
+  const value = parseJson(raw);
+  return isRecord(value) && value.type === "reroll";
 }
 
 /** Validates a message from the room. Returns null when it is not one. */

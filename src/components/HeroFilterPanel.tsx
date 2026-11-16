@@ -17,6 +17,7 @@ interface HeroFilterPanelProps {
     size: OverlaySize,
     room: string | null,
     design: Design,
+    hidePerks: boolean,
   ) => string;
 }
 

@@ -2,6 +2,8 @@ import {
   PING_MESSAGE,
   PONG_MESSAGE,
   REPLACED_CLOSE_CODE,
+  ROLL_REQUEST_PATH,
+  ROOM_CONTROL_PARAM,
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
 } from "./protocol";
@@ -26,7 +28,12 @@ export type RoomConnectionStatus =
 
 export type RoomTarget =
   | { role: "publisher"; secret: string }
-  | { role: "viewer"; viewId: string };
+  | {
+      role: "viewer";
+      viewId: string;
+      /** Lets this viewer ask the overlay for a new hero. */
+      control?: string | null;
+    };
 
 export interface RoomSocketOptions {
   target: RoomTarget;
@@ -68,7 +75,27 @@ export function roomSocketUrl(target: RoomTarget, base = ROOMS_URL): string {
     url.searchParams.set(ROOM_PUBLISH_PARAM, target.secret);
   } else {
     url.searchParams.set(ROOM_VIEW_PARAM, target.viewId);
+    if (target.control) {
+      url.searchParams.set(ROOM_CONTROL_PARAM, target.control);
+    }
   }
+  return url.toString();
+}
+
+/**
+ * Link that rolls a new hero when requested, with no page behind it: for a
+ * Stream Deck button or any macro tool that can open a URL.
+ */
+export function rollRequestUrl(
+  viewId: string,
+  control: string,
+  base = ROOMS_URL,
+): string {
+  const url = new URL(ROLL_REQUEST_PATH, base);
+  // The relay's address is configured as a WebSocket one.
+  url.protocol = url.protocol === "ws:" ? "http:" : "https:";
+  url.searchParams.set(ROOM_VIEW_PARAM, viewId);
+  url.searchParams.set(ROOM_CONTROL_PARAM, control);
   return url.toString();
 }
 

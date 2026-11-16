@@ -16,7 +16,9 @@ import {
   companionUrl,
   isOverlaySize,
 } from "@/lib/overlay";
+import { rollRequestUrl } from "@/lib/rooms/client";
 import {
+  controlKeyFor,
   generateRoomSecret,
   isRoomSecret,
   viewIdFor,
@@ -26,6 +28,8 @@ import {
 const SIZE_STORAGE_KEY = "overlaySize";
 /** The card design the streamer picked here, when they picked one. */
 const CARD_DESIGN_STORAGE_KEY = "overlayCardDesign";
+/** Whether the streamer keeps perks off the overlay's card. */
+const HIDE_PERKS_STORAGE_KEY = "overlayHidePerks";
 /** Whether the overlay link includes the companion room. */
 const COMPANION_STORAGE_KEY = "overlayCompanion";
 /**
@@ -56,6 +60,59 @@ export const DESIGN_LABELS: Record<Design, string> = {
   classic: "Classic",
   refresh: "New",
 };
+
+/**
+ * The ways to roll a new hero while the game has the keyboard, the default
+ * first:
+ * - `companion`: a click on another screen or device, on the companion
+ *   page's button or in OBS itself. Nothing to set up in OBS.
+ * - `refresh`: one OBS hotkey that reloads the browser source.
+ * - `toggle`: one OBS hotkey on both Show and Hide, pressed twice per hero.
+ * - `link`: a link a Stream Deck or a script requests.
+ */
+export const ROLL_METHODS = [
+  { id: "companion", label: "A button on a second screen or device" },
+  { id: "refresh", label: "An OBS hotkey" },
+  { id: "toggle", label: "An OBS hotkey that hides and shows the card" },
+  { id: "link", label: "A Stream Deck button or a script" },
+] as const;
+
+export type RollMethod = (typeof ROLL_METHODS)[number]["id"];
+
+export const DEFAULT_ROLL_METHOD: RollMethod = ROLL_METHODS[0].id;
+
+export function isRollMethod(value: unknown): value is RollMethod {
+  return ROLL_METHODS.some((method) => method.id === value);
+}
+
+/**
+ * A link with everything after its "?" replaced by dots. The address of the
+ * site is no secret, and seeing it tells the streamer which link this is.
+ */
+export function maskLink(link: string): string {
+  const query = link.indexOf("?");
+  return query === -1 ? link : `${link.slice(0, query + 1)}${"•".repeat(20)}`;
+}
+
+/**
+ * Props for a read-only field holding a link that may be hidden. A streamer
+ * may have the setup on stream, and the companion and roll links let anyone
+ * roll their hero. Hidden or not, copying gives the real link.
+ */
+export function secretFieldProps(value: string, shown: boolean, label: string) {
+  return {
+    type: "text",
+    readOnly: true,
+    value: shown ? value : maskLink(value),
+    "aria-label": shown ? label : `${label}, hidden`,
+    onFocus: (e: React.FocusEvent<HTMLInputElement>) =>
+      e.currentTarget.select(),
+    onCopy: (e: React.ClipboardEvent<HTMLInputElement>) => {
+      e.clipboardData.setData("text/plain", value);
+      e.preventDefault();
+    },
+  } as const;
+}
 
 export type CopyMethod = "clipboard" | "fallback";
 
@@ -101,7 +158,12 @@ export function useCopy(onCopied: (method: CopyMethod) => void) {
 
 interface OverlaySetupOptions {
   /** Built on every render so the link always matches the current filters. */
-  buildUrl: (size: OverlaySize, room: string | null, design: Design) => string;
+  buildUrl: (
+    size: OverlaySize,
+    room: string | null,
+    design: Design,
+    hidePerks: boolean,
+  ) => string;
   /** How many heroes the link's filters select, for analytics. */
   heroCount: number;
   /** Links are only built while the setup is on screen. */
@@ -133,13 +195,17 @@ export function useOverlaySetup({
   const [designOverride, setDesignOverride] = useState<Design | null>(null);
   const cardDesign = designOverride ?? siteDesign;
   const [size, setSize] = useState<OverlaySize>(DEFAULT_OVERLAY_SIZE);
+  const [hidePerks, setHidePerks] = useState(false);
+  // Not remembered: it only picks which instructions are on screen.
+  const [rollMethod, setRollMethod] = useState<RollMethod>(DEFAULT_ROLL_METHOD);
   const [companionOn, setCompanionOn] = useState(false);
   const [roomSecret, setRoomSecret] = useState<string | null>(null);
-  // Remembers which secret the view id was hashed from, so a stale id is
-  // never shown for a different secret, or after the secret is cleared.
+  // Remembers which secret the view id and control key were hashed from, so
+  // stale ones are never shown for a different secret, or after it is cleared.
   const [derivedView, setDerivedView] = useState<{
     secret: string;
     id: string | null;
+    control: string | null;
   } | null>(null);
 
   const newRoomSecret = useCallback(() => {
@@ -156,6 +222,7 @@ export function useOverlaySetup({
     if (isDesign(savedDesign)) setDesignOverride(savedDesign);
     const savedSecret = getJsonFromLS<string>(ROOM_SECRET_STORAGE_KEY);
     if (isRoomSecret(savedSecret)) setRoomSecret(savedSecret);
+    setHidePerks(getBoolFromLS(HIDE_PERKS_STORAGE_KEY, false));
     setCompanionOn(getBoolFromLS(COMPANION_STORAGE_KEY, companionByDefault));
   }, [companionByDefault]);
 
@@ -172,13 +239,16 @@ export function useOverlaySetup({
     else newRoomSecret();
   }, [open, companionOn, roomSecret, newRoomSecret]);
 
-  // The companion link carries the hash of the secret, never the secret.
+  // The companion link carries hashes of the secret, never the secret.
   useEffect(() => {
     if (!roomSecret) return;
     let current = true;
-    viewIdFor(roomSecret).then(
-      (id) => current && setDerivedView({ secret: roomSecret, id }),
-      () => current && setDerivedView({ secret: roomSecret, id: null }),
+    Promise.all([viewIdFor(roomSecret), controlKeyFor(roomSecret)]).then(
+      ([id, control]) =>
+        current && setDerivedView({ secret: roomSecret, id, control }),
+      () =>
+        current &&
+        setDerivedView({ secret: roomSecret, id: null, control: null }),
     );
     return () => {
       current = false;
@@ -186,14 +256,19 @@ export function useOverlaySetup({
   }, [roomSecret]);
 
   const room = companionOn ? roomSecret : null;
-  const url = open ? buildUrl(size, room, cardDesign) : "";
+  const url = open ? buildUrl(size, room, cardDesign, hidePerks) : "";
   // The preview never joins the companion room: it rolls its own hero, which
   // would otherwise replace the one OBS is showing on the streamer's phone.
-  const previewUrl = open ? buildUrl(size, null, cardDesign) : "";
-  const viewId =
-    roomSecret && derivedView?.secret === roomSecret ? derivedView.id : null;
+  const previewUrl = open ? buildUrl(size, null, cardDesign, hidePerks) : "";
+  const derived =
+    roomSecret && derivedView?.secret === roomSecret ? derivedView : null;
+  const viewId = derived?.id ?? null;
+  const control = derived?.control ?? null;
   const companionLink =
-    companionOn && viewId ? companionUrl(viewId, cardDesign) : "";
+    companionOn && viewId ? companionUrl(viewId, cardDesign, control) : "";
+  // For a Stream Deck or macro: requesting it rolls, with no page to open.
+  const rollLink =
+    companionOn && viewId && control ? rollRequestUrl(viewId, control) : "";
 
   const overlayCopy = useCopy(
     useCallback(
@@ -204,8 +279,9 @@ export function useOverlaySetup({
           size,
           companion: room !== null,
           card_design: cardDesign,
+          perks_hidden: hidePerks,
         }),
-      [heroCount, size, room, cardDesign],
+      [heroCount, size, room, cardDesign, hidePerks],
     ),
   );
   const companionCopy = useCopy(
@@ -214,6 +290,24 @@ export function useOverlaySetup({
       [],
     ),
   );
+
+  const rollCopy = useCopy(
+    useCallback(
+      (method: CopyMethod) => track("roll_link_copied", { method }),
+      [],
+    ),
+  );
+
+  const handleHidePerks = useCallback((hidden: boolean) => {
+    setHidePerks(hidden);
+    setBoolToLS(HIDE_PERKS_STORAGE_KEY, hidden);
+    track("overlay_perks_toggled", { hidden });
+  }, []);
+
+  const handleRollMethod = useCallback((method: RollMethod) => {
+    setRollMethod(method);
+    track("overlay_roll_method_viewed", { method });
+  }, []);
 
   const handleSize = useCallback((value: string) => {
     if (!isOverlaySize(value)) return;
@@ -253,14 +347,20 @@ export function useOverlaySetup({
     setCardDesign: handleCardDesign,
     size,
     handleSize,
+    hidePerks,
+    handleHidePerks,
+    rollMethod,
+    handleRollMethod,
     companionOn,
     handleCompanion,
     handleNewCompanionLink,
     url,
     previewUrl,
     companionLink,
+    rollLink,
     overlayCopy,
     companionCopy,
+    rollCopy,
     trackPreviewOpened,
   };
 }

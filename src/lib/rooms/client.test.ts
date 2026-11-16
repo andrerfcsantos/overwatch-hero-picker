@@ -7,7 +7,12 @@ import {
   vi,
 } from "vite-plus/test";
 
-import { openRoomSocket, retryDelay, roomSocketUrl } from "./client";
+import {
+  openRoomSocket,
+  retryDelay,
+  rollRequestUrl,
+  roomSocketUrl,
+} from "./client";
 import { PING_MESSAGE, PONG_MESSAGE, REPLACED_CLOSE_CODE } from "./protocol";
 
 /** Just enough of a WebSocket for the client: listeners, send, close. */
@@ -84,6 +89,32 @@ describe("roomSocketUrl", () => {
     expect(
       roomSocketUrl({ role: "viewer", viewId: "v1ew" }, "ws://127.0.0.1:8787"),
     ).toBe("ws://127.0.0.1:8787/v1/ws?view=v1ew");
+  });
+
+  test("a companion that can roll adds its control key", () => {
+    expect(
+      roomSocketUrl(
+        { role: "viewer", viewId: "v1ew", control: "c0ntrol" },
+        "wss://rooms.example",
+      ),
+    ).toBe("wss://rooms.example/v1/ws?view=v1ew&control=c0ntrol");
+    expect(
+      roomSocketUrl(
+        { role: "viewer", viewId: "v1ew", control: null },
+        "wss://rooms.example",
+      ),
+    ).toBe("wss://rooms.example/v1/ws?view=v1ew");
+  });
+});
+
+describe("rollRequestUrl", () => {
+  test("is a plain web link on the relay, for tools that open URLs", () => {
+    expect(rollRequestUrl("v1ew", "c0ntrol", "wss://rooms.example")).toBe(
+      "https://rooms.example/v1/overlay/roll?view=v1ew&control=c0ntrol",
+    );
+    expect(rollRequestUrl("v1ew", "c0ntrol", "ws://127.0.0.1:8787")).toBe(
+      "http://127.0.0.1:8787/v1/overlay/roll?view=v1ew&control=c0ntrol",
+    );
   });
 });
 

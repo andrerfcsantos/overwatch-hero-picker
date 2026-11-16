@@ -34,11 +34,21 @@
     {
       // Overlay messages per client IP across all sockets and rooms. Each
       // wakes a room and a new roll is a storage write, both against the
-      // account's daily allowances; a streamer rerolls a few times a minute
-      // at most.
+      // account's daily allowances. Roll requests from a companion or a roll
+      // link are passed on at most every 2 seconds (REROLL_MIN_INTERVAL_MS),
+      // so a streamer rolling as fast as the button allows uses half of this.
       "name": "ROLLS",
       "namespace_id": "4281",
-      "simple": { "limit": 30, "period": 60 },
+      "simple": { "limit": 60, "period": 60 },
+    },
+    {
+      // Roll requests per client IP, from companion sockets and the roll
+      // link, across all rooms. Kept apart from HANDSHAKES so a busy Stream
+      // Deck cannot stop the overlay and companion from reconnecting, and
+      // checked before a room reads anything.
+      "name": "ROLL_REQUESTS",
+      "namespace_id": "4282",
+      "simple": { "limit": 60, "period": 60 },
     },
   ],
   "durable_objects": {
