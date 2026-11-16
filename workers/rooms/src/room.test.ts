@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, test, vi } from "vite-plus/test";
 
+// Lives beside the Worker, not in src/: it imports the Room, which needs the
+// Workers runtime types that only `npm run rooms:check` loads.
+
 // The Room runs on the Workers runtime. Only the pieces it touches here are
 // stood in for: the base class, the ping auto-response and the socket API.
 vi.mock("cloudflare:workers", () => ({
@@ -20,9 +23,9 @@ vi.stubGlobal(
   },
 );
 
-const { Room } = await import("../../../workers/rooms/src/index");
+const { Room } = await import("./index");
 const { REROLL_MESSAGE, controlKeyFor, generateRoomSecret } =
-  await import("./protocol");
+  await import("../../../src/lib/rooms/protocol");
 
 const OPEN = 1;
 
