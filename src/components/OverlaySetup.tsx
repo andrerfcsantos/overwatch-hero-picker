@@ -257,7 +257,8 @@ export default function OverlaySetup({
                 <li>
                   Have a Stream Deck button, or a script, request this link in
                   the background. Each request rolls a new hero while the
-                  overlay is showing in OBS.
+                  overlay is showing in OBS. Keep it out of chats: a chat
+                  previewing the link rolls too.
                   <div className="overlay-setup-link">
                     <input
                       ref={rollInputRef}

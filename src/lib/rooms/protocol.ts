@@ -88,6 +88,16 @@ export type PublisherMessage = {
  */
 export const REROLL_MESSAGE = '{"type":"reroll"}';
 
+/**
+ * Shortest gap between two roll requests a room passes on to its overlay. The
+ * companion's button rests this long after a press, since a faster one would
+ * be dropped. Each request makes the overlay post a roll, which counts
+ * against the relay's per-address limit on overlay messages (60 a minute, see
+ * workers/rooms/wrangler.jsonc): at most 30 requests a minute leaves the rest
+ * for reconnects, hotkey rolls and a second overlay on the same address.
+ */
+export const REROLL_MIN_INTERVAL_MS = 2_000;
+
 /** Room → companion. */
 export type ViewerMessage =
   | { type: "state"; roll: RoomRoll | null; overlayOnline: boolean }

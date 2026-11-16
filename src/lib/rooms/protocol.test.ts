@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 import { describe, expect, test } from "vite-plus/test";
 
 import { getAllHeroes } from "@/data/heroes";
@@ -6,7 +9,6 @@ import { isOriginAllowed } from "../../../workers/rooms/src/origins";
 import {
   MAX_PUBLISHERS,
   MAX_VIEWERS,
-  REROLL_MIN_INTERVAL_MS,
   ROLL_BURST,
   ROLL_REFILL_PER_SECOND,
   admitSocket,
@@ -16,6 +18,7 @@ import {
 import {
   MAX_MESSAGE_BYTES,
   REROLL_MESSAGE,
+  REROLL_MIN_INTERVAL_MS,
   controlKeyFor,
   generateRollId,
   generateRoomSecret,
@@ -305,10 +308,26 @@ describe("roll requests", () => {
       false,
     );
     expect(isRerollDue(10_000, 10_000 + REROLL_MIN_INTERVAL_MS)).toBe(true);
-    // Each passed-on request costs the overlay one token.
+    // Each passed-on request makes the overlay post a roll, which spends one
+    // of its socket's tokens…
     expect(REROLL_MIN_INTERVAL_MS).toBeGreaterThan(
       1000 / ROLL_REFILL_PER_SECOND,
     );
+    // …and counts against the per-address limit on overlay messages. Rolling
+    // as fast as allowed must leave at least half of it for everything else.
+    const config = readFileSync(
+      path.resolve(
+        import.meta.dirname,
+        "../../../workers/rooms/wrangler.jsonc",
+      ),
+      "utf8",
+    );
+    const rolls = /"name": "ROLLS",[^}]*"limit": (\d+), "period": (\d+)/.exec(
+      config,
+    );
+    expect(rolls).not.toBeNull();
+    const perMinute = (Number(rolls![1]) * 60) / Number(rolls![2]);
+    expect(60_000 / REROLL_MIN_INTERVAL_MS).toBeLessThanOrEqual(perMinute / 2);
   });
 
   test("a clock going backwards does not block rolls", () => {

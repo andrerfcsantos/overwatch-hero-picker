@@ -5,6 +5,8 @@
  * companions on a stale hero, while a closed overlay reconnects and re-sends
  * its current roll.
  */
+import { REROLL_MIN_INTERVAL_MS } from "../../../src/lib/rooms/protocol";
+
 export const ROLL_BURST = 10;
 export const ROLL_REFILL_PER_SECOND = 2;
 
@@ -55,16 +57,7 @@ export function admitSocket(
     : "replace-oldest-publisher";
 }
 
-/**
- * Shortest gap between two roll requests a room passes on to its overlay.
- * Each one makes the overlay post a roll, which spends one of the overlay's
- * own tokens; staying under its refill rate means requests from a companion
- * or a roll link can never get the overlay's socket closed for flooding.
- */
-export const REROLL_MIN_INTERVAL_MS = Math.ceil(
-  1000 / ROLL_REFILL_PER_SECOND + 100,
-);
-
+/** Whether a roll request is far enough from the last one passed on. */
 export function isRerollDue(lastAt: number, now: number): boolean {
   // A clock that went backwards must not block rolls until it catches up.
   return now < lastAt || now - lastAt >= REROLL_MIN_INTERVAL_MS;

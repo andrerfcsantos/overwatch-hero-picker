@@ -9,26 +9,27 @@ import {
   ROOM_CONTROL_PARAM,
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
-  controlKeyFor,
   isControlKey,
   isRerollMessage,
-  isRoomSecret,
   isViewId,
   parsePublisherMessage,
-  viewIdFor,
   type RoomRoll,
   type ViewerMessage,
 } from "../../../src/lib/rooms/protocol";
+import {
+  companionControl,
+  readHandshake,
+  rerollOutcome,
+  type RerollOutcome,
+  type Role,
+} from "./access";
 import { isOriginAllowed } from "./origins";
 import {
   ROLL_BURST,
   admitSocket,
-  isRerollDue,
   takeRollToken,
   type RollAllowance,
 } from "./rateLimit";
-
-type Role = "publisher" | "viewer";
 
 /** Header the entry Worker uses to tell the room who is connecting. */
 const ROLE_HEADER = "X-Room-Role";
@@ -54,9 +55,9 @@ const ROOM_URL = "https://room.internal/connect";
 interface Attachment extends RollAllowance {
   role: Role;
   /**
-   * The control key a companion connected with, or null. Checked against the
-   * room's when it asks for a roll, not when it connects: a companion may be
-   * open before the overlay has ever told the room its key.
+   * The control key a companion connected with, or null. One the room knew
+   * to be wrong is already dropped; one it could not check yet (no overlay
+   * has told it its key) is checked again on each roll request.
    */
   control: string | null;
   connectedAt: number;
@@ -95,37 +96,13 @@ export default {
     const { success } = await env.HANDSHAKES.limit({ key: ip });
     if (!success) return text("Too many connections.", 429);
 
-    // Exactly one of the two: the publish secret (overlay) or the view id
-    // (companion). The overlay's room is named by the hash of its secret, so
-    // both land in the same room without the view id revealing the secret.
-    // A companion may add the control key, which lets it ask for a roll.
-    const secret = url.searchParams.get(ROOM_PUBLISH_PARAM);
-    const view = url.searchParams.get(ROOM_VIEW_PARAM);
-    const claimed = url.searchParams.get(ROOM_CONTROL_PARAM);
-    let roomName: string;
-    let role: Role;
-    let control: string | null;
-    if (
-      secret !== null &&
-      view === null &&
-      claimed === null &&
-      isRoomSecret(secret)
-    ) {
-      roomName = await viewIdFor(secret);
-      role = "publisher";
-      control = await controlKeyFor(secret);
-    } else if (
-      view !== null &&
-      secret === null &&
-      isViewId(view) &&
-      (claimed === null || isControlKey(claimed))
-    ) {
-      roomName = view;
-      role = "viewer";
-      control = claimed;
-    } else {
-      return text("Invalid room.", 400);
-    }
+    const handshake = await readHandshake({
+      secret: url.searchParams.get(ROOM_PUBLISH_PARAM),
+      view: url.searchParams.get(ROOM_VIEW_PARAM),
+      control: url.searchParams.get(ROOM_CONTROL_PARAM),
+    });
+    if (!handshake) return text("Invalid room.", 400);
+    const { roomName, role, control } = handshake;
 
     // The room only needs the handshake headers and the role. Its request URL
     // is a fixed internal one, so the publish secret in the public URL goes
@@ -156,8 +133,10 @@ async function requestRoll(
   if (request.method !== "GET" && request.method !== "POST") {
     return text("Method not allowed.", 405);
   }
+  // Its own budget, so a busy Stream Deck cannot use up the handshakes the
+  // overlay and companion on the same address need to reconnect.
   const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
-  const { success } = await env.HANDSHAKES.limit({ key: ip });
+  const { success } = await env.ROLL_REQUESTS.limit({ key: ip });
   if (!success) return text("Too many requests.", 429);
 
   const view = url.searchParams.get(ROOM_VIEW_PARAM);
@@ -176,8 +155,6 @@ async function requestRoll(
     }),
   );
 }
-
-type RerollOutcome = "sent" | "denied" | "offline" | "busy";
 
 const REROLL_RESPONSES: Record<RerollOutcome, [body: string, status: number]> =
   {
@@ -203,6 +180,12 @@ export class Room extends DurableObject<Env> {
    * hibernated has been quiet for far longer than the gap this enforces.
    */
   private lastRerollAt = 0;
+  /**
+   * The room's control key once read from storage, so roll requests do not
+   * each cost a read. Undefined until read; lost on hibernation and read
+   * again on the next request that needs it.
+   */
+  private controlKey: string | null | undefined = undefined;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -243,7 +226,10 @@ export class Room extends DurableObject<Env> {
     const now = Date.now();
     const attachment: Attachment = {
       role,
-      control: role === "viewer" ? control : null,
+      control:
+        role === "viewer"
+          ? companionControl(control, await this.storedControlKey())
+          : null,
       tokens: ROLL_BURST,
       refilledAt: now,
       connectedAt: now,
@@ -261,11 +247,9 @@ export class Room extends DurableObject<Env> {
     } else {
       // The overlay is the only one that knows the secret, so its connection
       // is what teaches the room its control key.
-      if (
-        control &&
-        (await this.ctx.storage.get<string>(CONTROL_KEY)) !== control
-      ) {
+      if (control && (await this.storedControlKey()) !== control) {
         await this.ctx.storage.put(CONTROL_KEY, control);
+        this.controlKey = control;
       }
       this.broadcastPresence();
     }
@@ -297,13 +281,24 @@ export class Room extends DurableObject<Env> {
     ws.serializeAttachment({ ...attachment, ...next });
 
     if (attachment.role === "viewer") {
-      // The only thing a companion can say. The roll it leads to is counted
-      // against the overlay's address below, when the overlay posts it.
+      // Counted per address across rooms before anything else, as overlay
+      // messages are below: a script holding many sockets with made-up keys
+      // cannot keep rooms awake. A budget of its own, because the roll this
+      // leads to is counted against the overlay's address when it is posted.
+      const { success } = await this.env.ROLL_REQUESTS.limit({
+        key: attachment.ip,
+      });
+      if (!success) {
+        ws.close(1008, "Too many messages from this address.");
+        return;
+      }
+      // A roll request is the only thing a companion can say.
       if (typeof message !== "string" || !isRerollMessage(message)) {
         ws.close(1008, "Invalid message.");
         return;
       }
-      await this.reroll(attachment.control, now);
+      const outcome = await this.reroll(attachment.control, now);
+      if (outcome === "denied") ws.close(1008, "Invalid control key.");
       return;
     }
 
@@ -364,6 +359,7 @@ export class Room extends DurableObject<Env> {
     // Someone came back; the last of them to leave restarts the idle clock.
     if (this.openSockets().length > 0) return;
     await this.ctx.storage.deleteAll();
+    this.controlKey = null;
   }
 
   /**
@@ -371,14 +367,20 @@ export class Room extends DurableObject<Env> {
    * room's and the overlay is there to hear it.
    */
   private async reroll(
-    control: string | null,
+    claimed: string | null,
     now: number,
   ): Promise<RerollOutcome> {
-    const expected = await this.ctx.storage.get<string>(CONTROL_KEY);
-    if (!control || !expected || control !== expected) return "denied";
+    // A request without a key is refused before it costs a read.
+    const expected = claimed ? await this.storedControlKey() : null;
     const publishers = this.publishers();
-    if (publishers.length === 0) return "offline";
-    if (!isRerollDue(this.lastRerollAt, now)) return "busy";
+    const outcome = rerollOutcome({
+      claimed,
+      expected,
+      publishers: publishers.length,
+      lastRerollAt: this.lastRerollAt,
+      now,
+    });
+    if (outcome !== "sent") return outcome;
     this.lastRerollAt = now;
     for (const publisher of publishers) {
       try {
@@ -388,6 +390,14 @@ export class Room extends DurableObject<Env> {
       }
     }
     return "sent";
+  }
+
+  private async storedControlKey(): Promise<string | null> {
+    if (this.controlKey === undefined) {
+      this.controlKey =
+        (await this.ctx.storage.get<string>(CONTROL_KEY)) ?? null;
+    }
+    return this.controlKey;
   }
 
   private async onSocketGone(ws: WebSocket) {

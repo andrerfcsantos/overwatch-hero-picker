@@ -13,6 +13,7 @@ import {
 } from "@/lib/rooms/client";
 import {
   REROLL_MESSAGE,
+  REROLL_MIN_INTERVAL_MS,
   ROOM_CONTROL_PARAM,
   ROOM_VIEW_PARAM,
   RoomRoll,
@@ -40,12 +41,6 @@ type ViewState =
       /** Whether the link carries the key that lets this page ask for a roll. */
       canRoll: boolean;
     };
-
-/**
- * How long the roll button rests after a press. The room passes on at most
- * one request in about this long, so a faster second press would be dropped.
- */
-const ROLL_COOLDOWN_MS = 1_000;
 
 const BASE_TITLE = "Stream companion | Overwatch Hero Picker";
 
@@ -197,11 +192,17 @@ export default function CompanionContent() {
   }, []);
 
   const requestRoll = () => {
+    // The room passes on one request in this long, so a faster press would
+    // be dropped without a word.
+    if (resting) return;
     if (!socketRef.current?.send(REROLL_MESSAGE)) return;
     track("companion_roll_requested", {});
     setResting(true);
     if (restTimer.current) clearTimeout(restTimer.current);
-    restTimer.current = setTimeout(() => setResting(false), ROLL_COOLDOWN_MS);
+    restTimer.current = setTimeout(
+      () => setResting(false),
+      REROLL_MIN_INTERVAL_MS,
+    );
   };
 
   // Keeps "rolled 2 min ago" honest.
@@ -329,10 +330,11 @@ export default function CompanionContent() {
           type="button"
           className={styles.roll}
           onClick={requestRoll}
-          // The overlay rolls, not this page: without it there is no one to ask.
-          disabled={
-            resting || view.connection !== "open" || !view.overlayOnline
-          }
+          // The overlay rolls, not this page: without it there is no one to
+          // ask. The rest after a press is only announced, not a disabled
+          // button, so keyboard focus stays on it.
+          disabled={view.connection !== "open" || !view.overlayOnline}
+          aria-disabled={resting || undefined}
         >
           New hero
         </button>

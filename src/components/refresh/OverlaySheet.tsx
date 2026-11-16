@@ -640,7 +640,8 @@ export default function OverlaySheet({
                         <p className={styles.text}>
                           Have a Stream Deck button, or a script, request this
                           link in the background. Each request rolls a new hero
-                          while the card is showing in OBS.
+                          while the card is showing in OBS. Keep it out of
+                          chats: a chat previewing the link rolls too.
                         </p>
                         <SecretLink
                           label="Roll link"
