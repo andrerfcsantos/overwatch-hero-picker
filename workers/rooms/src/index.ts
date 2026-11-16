@@ -201,7 +201,7 @@ export class Room extends DurableObject<Env> {
     const role = request.headers.get(ROLE_HEADER);
     const control = request.headers.get(CONTROL_HEADER);
     if (role === ROLL_REQUEST_ROLE) {
-      const outcome = await this.reroll(control, Date.now());
+      const outcome = await this.reroll(control);
       return text(...REROLL_RESPONSES[outcome]);
     }
     if (role !== "publisher" && role !== "viewer") {
@@ -301,7 +301,7 @@ export class Room extends DurableObject<Env> {
         ws.close(1008, "Invalid message.");
         return;
       }
-      const outcome = await this.reroll(attachment.control, now);
+      const outcome = await this.reroll(attachment.control);
       if (outcome === "denied") ws.close(1008, "Invalid control key.");
       return;
     }
@@ -370,12 +370,13 @@ export class Room extends DurableObject<Env> {
    * Passes a request for a new hero on to the overlay, if the key is the
    * room's and the overlay is there to hear it.
    */
-  private async reroll(
-    claimed: string | null,
-    now: number,
-  ): Promise<RerollOutcome> {
+  private async reroll(claimed: string | null): Promise<RerollOutcome> {
     // A request without a key is refused before it costs a read.
     const expected = claimed ? await this.storedControlKey() : null;
+    // Read after the last await, with nothing awaited from here to updating
+    // lastRerollAt: requests whose earlier checks finish out of order must
+    // still be spaced by when they are passed on, not when they arrived.
+    const now = Date.now();
     const publishers = this.publishers();
     const outcome = rerollOutcome({
       claimed,
