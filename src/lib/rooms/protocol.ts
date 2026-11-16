@@ -98,6 +98,13 @@ export const REROLL_MESSAGE = '{"type":"reroll"}';
  */
 export const REROLL_MIN_INTERVAL_MS = 2_000;
 
+/**
+ * How long the companion's button rests after a press. A little longer than
+ * the room's gap, which it measures between arrivals: a press that travels
+ * faster than the one before it would otherwise land early and be dropped.
+ */
+export const REROLL_BUTTON_REST_MS = REROLL_MIN_INTERVAL_MS + 400;
+
 /** Room → companion. */
 export type ViewerMessage =
   | { type: "state"; roll: RoomRoll | null; overlayOnline: boolean }

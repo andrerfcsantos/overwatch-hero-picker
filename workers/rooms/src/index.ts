@@ -10,7 +10,6 @@ import {
   ROOM_PUBLISH_PARAM,
   ROOM_VIEW_PARAM,
   isControlKey,
-  isRerollMessage,
   isViewId,
   parsePublisherMessage,
   type RoomRoll,
@@ -292,8 +291,9 @@ export class Room extends DurableObject<Env> {
         ws.close(1008, "Too many messages from this address.");
         return;
       }
-      // A roll request is the only thing a companion can say.
-      if (typeof message !== "string" || !isRerollMessage(message)) {
+      // A roll request is the only thing a companion can say, and the page
+      // says it exactly like this: nothing larger is parsed.
+      if (message !== REROLL_MESSAGE) {
         ws.close(1008, "Invalid message.");
         return;
       }
@@ -382,12 +382,16 @@ export class Room extends DurableObject<Env> {
     });
     if (outcome !== "sent") return outcome;
     this.lastRerollAt = now;
-    for (const publisher of publishers) {
-      try {
-        publisher.send(REROLL_MESSAGE);
-      } catch {
-        // Closed since the check; its close handler takes care of the rest.
-      }
+    // Only the newest overlay, as when a new one replaces the oldest: with two
+    // open (a duplicated source, or the link in a browser tab), each would
+    // roll its own hero, and the companion would show whichever came last.
+    const newest = publishers.reduce((a, b) =>
+      connectedAt(b) > connectedAt(a) ? b : a,
+    );
+    try {
+      newest.send(REROLL_MESSAGE);
+    } catch {
+      // Closed since the check; its close handler takes care of the rest.
     }
     return "sent";
   }

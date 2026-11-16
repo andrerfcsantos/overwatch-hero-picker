@@ -187,13 +187,11 @@
   outline-offset: 3px;
 }
 
-.roll:disabled,
 .roll[aria-disabled="true"] {
   opacity: 0.45;
   cursor: default;
 }
 
-.roll:disabled:hover,
 .roll[aria-disabled="true"]:hover {
   background: #f99e1a;
 }
@@ -255,7 +253,6 @@
 
 /* The site's roll button: its orange, with white display type. */
 .refresh .roll,
-.refresh .roll:disabled:hover,
 .refresh .roll[aria-disabled="true"]:hover {
   background: #f06414;
   color: #fff;

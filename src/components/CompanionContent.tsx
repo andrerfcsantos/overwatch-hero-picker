@@ -12,8 +12,8 @@ import {
   openRoomSocket,
 } from "@/lib/rooms/client";
 import {
+  REROLL_BUTTON_REST_MS,
   REROLL_MESSAGE,
-  REROLL_MIN_INTERVAL_MS,
   ROOM_CONTROL_PARAM,
   ROOM_VIEW_PARAM,
   RoomRoll,
@@ -191,17 +191,24 @@ export default function CompanionContent() {
     };
   }, []);
 
+  // The overlay rolls, not this page: without it there is no one to ask.
+  const canRoll =
+    view.status === "ready" &&
+    view.canRoll &&
+    view.connection === "open" &&
+    view.overlayOnline;
+
   const requestRoll = () => {
-    // The room passes on one request in this long, so a faster press would
+    // The room passes on one request every so often, so a faster press would
     // be dropped without a word.
-    if (resting) return;
+    if (!canRoll || resting) return;
     if (!socketRef.current?.send(REROLL_MESSAGE)) return;
     track("companion_roll_requested", {});
     setResting(true);
     if (restTimer.current) clearTimeout(restTimer.current);
     restTimer.current = setTimeout(
       () => setResting(false),
-      REROLL_MIN_INTERVAL_MS,
+      REROLL_BUTTON_REST_MS,
     );
   };
 
@@ -330,11 +337,9 @@ export default function CompanionContent() {
           type="button"
           className={styles.roll}
           onClick={requestRoll}
-          // The overlay rolls, not this page: without it there is no one to
-          // ask. The rest after a press is only announced, not a disabled
-          // button, so keyboard focus stays on it.
-          disabled={view.connection !== "open" || !view.overlayOnline}
-          aria-disabled={resting || undefined}
+          // Announced rather than a disabled button, so keyboard focus stays
+          // on it while the overlay reloads or the relay reconnects.
+          aria-disabled={!canRoll || resting || undefined}
         >
           New hero
         </button>

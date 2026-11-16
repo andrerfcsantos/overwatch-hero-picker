@@ -17,6 +17,7 @@ import {
 } from "../../../workers/rooms/src/rateLimit";
 import {
   MAX_MESSAGE_BYTES,
+  REROLL_BUTTON_REST_MS,
   REROLL_MESSAGE,
   REROLL_MIN_INTERVAL_MS,
   controlKeyFor,
@@ -328,6 +329,14 @@ describe("roll requests", () => {
     expect(rolls).not.toBeNull();
     const perMinute = (Number(rolls![1]) * 60) / Number(rolls![2]);
     expect(60_000 / REROLL_MIN_INTERVAL_MS).toBeLessThanOrEqual(perMinute / 2);
+  });
+
+  test("the companion's button rests longer than the room's gap", () => {
+    // Presses arrive with network jitter; a later press travelling faster
+    // must still land after the gap.
+    expect(
+      REROLL_BUTTON_REST_MS - REROLL_MIN_INTERVAL_MS,
+    ).toBeGreaterThanOrEqual(300);
   });
 
   test("a clock going backwards does not block rolls", () => {

@@ -477,9 +477,7 @@
   flex: 1 1 auto;
 }
 
-/* The action the step exists for. Dark on orange: white on it would be 3.2:1
-   at this size. */
-/* The same orange and white as the page's roll button. White on this orange
+/* The action the step exists for, in the same orange and white as the page's roll button. White on this orange
    is 3.2:1, so the label is set bold and large enough to count as large type. */
 .copy,
 .copy:hover {
