@@ -70,7 +70,7 @@ export default function SharedSquadRefresh({
         : null,
     squad.randomizePerks ? "Perks rolled with the heroes" : null,
     squad.slots.slice(0, squad.size).some((slot) => slot !== null)
-      ? "Some players roll from their own pool"
+      ? "Some players roll from their own selection"
       : null,
   ].filter((fact): fact is string => fact !== null);
 
@@ -119,7 +119,7 @@ export default function SharedSquadRefresh({
           <a
             className={ui.btn}
             href={shared.presetHref}
-            title="Open the squad generator with these players, pools and settings"
+            title="Open the squad generator with these players, selections and settings"
           >
             Open this setup in the generator
           </a>

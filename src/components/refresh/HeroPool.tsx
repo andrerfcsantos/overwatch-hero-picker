@@ -56,10 +56,10 @@ export default function HeroPool({
 
   const summary =
     count === 0
-      ? "Nobody is in the pool, so rolls use every hero."
+      ? "No heroes are selected, so rolls use every hero."
       : count === total
-        ? `All ${total} heroes are in the pool.`
-        : `${count} of ${total} heroes are in the pool.`;
+        ? `All ${total} heroes are selected.`
+        : `${count} of ${total} heroes are selected.`;
 
   const setRole = (role: HeroRole, inPool: boolean) => {
     if (inPool) selectByRole(role);
@@ -80,7 +80,7 @@ export default function HeroPool({
       <div className={styles.head}>
         <div className={styles.title}>
           <h2 id="hero-pool-heading" className={styles.heading}>
-            Hero pool
+            Hero selection
           </h2>
           <div className={styles.summary}>
             {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a live count, not the result of a form */}
@@ -94,7 +94,7 @@ export default function HeroPool({
                   track("hero_filters_changed", { action: "select_all" });
                 }}
               >
-                Add everyone
+                Select all
               </button>
             )}
             {count > 0 && (
@@ -106,7 +106,7 @@ export default function HeroPool({
                   track("hero_filters_changed", { action: "unselect_all" });
                 }}
               >
-                Clear the pool
+                Clear selection
               </button>
             )}
           </div>
@@ -118,9 +118,9 @@ export default function HeroPool({
           buildUrl={buildPresetUrl}
           shareType="picker_preset"
           shareSource="picker"
-          label="Share this pool"
-          copiedLabel="Pool link copied"
-          title="Copy a link that sets up this pool and these roll settings"
+          label="Share selection"
+          copiedLabel="Selection link copied"
+          title="Copy a link that selects these heroes, with these roll settings"
         />
         <OverlaySheet
           buildUrl={buildOverlayUrl}
@@ -134,7 +134,8 @@ export default function HeroPool({
       {applied && isDirty && (
         <div className={styles.dirty} aria-live="polite">
           <span>
-            You changed the pool after applying the preset “{applied.name}”.
+            You changed the selection after applying the preset “{applied.name}
+            ”.
           </span>
           <span className={styles.dirtyActions}>
             <button
@@ -148,10 +149,10 @@ export default function HeroPool({
             <button
               type="button"
               className={ui.btn}
-              title="Put the pool back to the applied preset"
+              title="Put the selection back to the applied preset"
               onClick={revert}
             >
-              Revert the pool
+              Revert selection
             </button>
           </span>
         </div>

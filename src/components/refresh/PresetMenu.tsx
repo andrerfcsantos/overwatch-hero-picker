@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useHeroes } from "@/context/HeroContext";
 import { usePresets } from "@/context/PresetContext";
+import { clearPanel, readPanel, writePanel } from "@/lib/panels";
 import { shortcutForIndex } from "@/lib/presets/types";
 import PresetNameField from "@/components/PresetNameField";
 import PresetSheet from "./PresetSheet";
@@ -51,6 +52,13 @@ export default function PresetMenu() {
     returnFocus.current = false;
     buttonRef.current?.focus();
   }, [open]);
+
+  // A link that names the manager opens it, so a copied address brings
+  // whoever follows it to the same place.
+  useEffect(() => {
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the URL is only read after mount
+    if (readPanel(window.location.search) === "presets") setManaging(true);
+  }, []);
 
   // A small popover, so it closes the way popovers are expected to.
   useEffect(() => {
@@ -142,8 +150,8 @@ export default function PresetMenu() {
             </ul>
           ) : (
             <p className={styles.empty}>
-              No presets yet. Save the pool you have now to roll from it again
-              later.
+              No presets yet. Save the heroes you selected to roll from them
+              again later.
             </p>
           )}
 
@@ -169,7 +177,7 @@ export default function PresetMenu() {
                 className={ui.link}
                 onClick={() => setSaving(true)}
               >
-                Save this pool as a preset
+                Save selection as a preset
               </button>
             )}
             {applied && (
@@ -192,6 +200,7 @@ export default function PresetMenu() {
               onClick={() => {
                 close(false);
                 setManaging(true);
+                writePanel("presets");
               }}
             >
               Manage presets
@@ -204,6 +213,7 @@ export default function PresetMenu() {
         open={managing}
         onClose={() => {
           setManaging(false);
+          clearPanel("presets");
           // The button that opened the sheet went away with the panel, so
           // focus returns to the one that opens the panel.
           buttonRef.current?.focus();

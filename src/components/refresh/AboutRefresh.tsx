@@ -1,31 +1,9 @@
-import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
 import ui from "./ui.module.css";
 import styles from "./AboutRefresh.module.css";
 
 const DISCORD_URL = "https://discord.gg/rwQMrCa";
 const DONATE_URL = "https://www.buymeacoffee.com/heropickers";
-
-type FaceState = "in" | "out" | "rolled";
-
-/**
- * The site's idea drawn in its own terms: a pool with some heroes in and some
- * left out, and the roll landing on one of the heroes that are in.
- */
-const EXAMPLE_POOL: { key: string; state: FaceState }[] = [
-  { key: "reinhardt", state: "in" },
-  { key: "tracer", state: "out" },
-  { key: "ana", state: "in" },
-  { key: "kiriko", state: "rolled" },
-  { key: "genji", state: "out" },
-  { key: "winston", state: "in" },
-];
-
-const LEGEND: { state: FaceState; label: string }[] = [
-  { state: "in", label: "In your pool" },
-  { state: "out", label: "Left out" },
-  { state: "rolled", label: "The roll" },
-];
 
 /**
  * The about page in the new design. Unlike the picker it has nothing to keep
@@ -41,69 +19,39 @@ export default function AboutRefresh() {
         <FeedbackBanner />
 
         <header className={styles.intro}>
-          <h1 className={styles.title}>
-            <span className={styles.eyebrow}>About this site</span>
-            <span className={styles.thesis}>
-              A random hero, from the ones you want to play
-            </span>
-          </h1>
-
-          <figure className={styles.figure}>
-            <div
-              className={styles.pool}
-              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- six slices of a sprite sheet that make one picture
-              role="img"
-              aria-label="A pool of six heroes. Four are in it and two are left out. One of the four has been rolled."
-            >
-              {EXAMPLE_POOL.map(({ key, state }) => (
-                <span key={key} className={`${styles.face} ${styles[state]}`}>
-                  <SpriteIcon
-                    heroKey={key}
-                    type="icon"
-                    alt=""
-                    className={styles.faceImage}
-                  />
-                </span>
-              ))}
-            </div>
-            <figcaption className={styles.legend}>
-              {LEGEND.map(({ state, label }) => (
-                <span key={state} className={styles.legendItem}>
-                  <span
-                    className={`${styles.swatch} ${styles[state]}`}
-                    aria-hidden="true"
-                  />
-                  {label}
-                </span>
-              ))}
-            </figcaption>
-          </figure>
+          <h1 className={styles.title}>About this site</h1>
+          <p className={styles.subtitle}>
+            A fan-made random hero picker for Overwatch.
+          </p>
         </header>
 
         <section className={styles.section} aria-labelledby="about-what">
           <h2 id="about-what" className={styles.heading}>
-            What it&apos;s for
+            What is it for?
           </h2>
           <p>
-            Everyone who plays Overwatch knows the moment: the match is about to
-            start, and you still don&apos;t know who to play.
+            In Overwatch, there are moments when you don&apos;t know which hero
+            you want to play. At those moments, sometimes you wish a hero could
+            be chosen for you at random. But even when you don&apos;t know what
+            you want to play, you often have a good idea of what you{" "}
+            <em>don&apos;t</em> want to play.
           </p>
           <p>
-            You could leave it to chance. But a hero drawn from the whole roster
-            is often one you have no wish to play, so the choice should only be
-            random among the heroes you&apos;d be happy with.
+            This site was built to help you in those moments. It allows you to
+            get a random hero to play, but only from a selection of heroes you
+            actually want to play with. It&apos;s Mystery Heroes, but with your
+            own rules.
           </p>
           <p>
-            That is what this site does. Put the heroes you want in the pool and
-            roll, and you get one of them. It also works as a way to find
-            someone new to try or to get better at, a bit like the Mystery
-            Heroes game mode.
+            Use it to encourage you to practice new heroes, diversify the heroes
+            you play in a session, or just to make every game mode be Mystery
+            Heroes.
           </p>
         </section>
 
         <section className={styles.section} aria-labelledby="about-why">
           <h2 id="about-why" className={styles.heading}>
-            Why another hero picker
+            Why another hero picker?
           </h2>
           <p>
             There are other random hero pickers for Overwatch. Most of the ones
@@ -113,42 +61,40 @@ export default function AboutRefresh() {
           </p>
         </section>
 
-        <section className={styles.section} aria-labelledby="about-reach">
-          <h2 id="about-reach" className={styles.heading}>
-            Get in touch, or help out
+        <section className={styles.section} aria-labelledby="about-contact">
+          <h2 id="about-contact" className={styles.heading}>
+            Get in touch
           </h2>
-          <div className={styles.cards}>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Feedback</h3>
-              <p>
-                Ideas and bug reports are welcome on Discord, or by email at
-                heropickers [at] gmail [dot] com.
-              </p>
-              <a
-                className={ui.btn}
-                href={DISCORD_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Join the Discord
-              </a>
-            </div>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitle}>Support</h3>
-              <p>
-                The site is free and has no ads. Donations cover what it costs
-                to keep it up, as a one-time gift or a monthly one.
-              </p>
-              <a
-                className={ui.btn}
-                href={DONATE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Buy me a coffee
-              </a>
-            </div>
-          </div>
+          <p>
+            Feedback, ideas and bug reports are welcome on Discord, or by email
+            at heropickers [at] gmail [dot] com.
+          </p>
+          <a
+            className={`${ui.btn} ${styles.action}`}
+            href={DISCORD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Join the Discord
+          </a>
+        </section>
+
+        <section className={styles.section} aria-labelledby="about-support">
+          <h2 id="about-support" className={styles.heading}>
+            Support us
+          </h2>
+          <p>
+            The site is free and has no ads. Donations cover what it costs to
+            keep it up, as a one-time gift or a monthly one.
+          </p>
+          <a
+            className={`${ui.btn} ${styles.action}`}
+            href={DONATE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Buy me a coffee
+          </a>
         </section>
 
         <section className={styles.section} aria-labelledby="about-others">

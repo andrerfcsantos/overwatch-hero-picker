@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
+import { clearPanel, readPanel, writePanel } from "@/lib/panels";
 import { DESIGNS, type Design, isDesign } from "@/lib/design";
 import { OVERLAY_SIZES, OverlaySize } from "@/lib/overlay";
 import {
@@ -72,10 +73,25 @@ export default function OverlaySetup({
   } = useOverlaySetup({ buildUrl, heroCount, open });
 
   const toggle = useCallback(() => {
-    if (!open) track("overlay_setup_opened", {});
-    else setLinksShown(false);
+    if (!open) {
+      track("overlay_setup_opened", { via: "button" });
+      writePanel("overlay");
+    } else {
+      setLinksShown(false);
+      clearPanel("overlay");
+    }
     setOpen(!open);
   }, [open]);
+
+  // A link that names the overlay opens its panel and brings it into view.
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (readPanel(window.location.search) !== "overlay") return;
+    track("overlay_setup_opened", { via: "link" });
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the URL is only read after mount
+    setOpen(true);
+    buttonRef.current?.scrollIntoView({ block: "start" });
+  }, []);
 
   const showLinksButton = (
     <button
@@ -97,6 +113,7 @@ export default function OverlaySetup({
   return (
     <>
       <button
+        ref={buttonRef}
         className="action-button"
         onClick={toggle}
         aria-expanded={open}

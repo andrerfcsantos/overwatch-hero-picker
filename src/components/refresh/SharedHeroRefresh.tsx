@@ -185,12 +185,12 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
         <div className={styles.head}>
           <div className={styles.headText}>
             <h2 id="shared-pool-heading" className={styles.title}>
-              {sealed ? "It is one of these" : "The pool it came from"}
+              {sealed ? "It is one of these" : "The heroes it came from"}
             </h2>
             <p className={styles.summary}>
               {shared.everyHero
-                ? `Every hero was in the pool, all ${pool.length} of them.`
-                : `${pool.length} ${pool.length === 1 ? "hero was" : "heroes were"} in the pool.`}
+                ? `Every hero was selected, all ${pool.length} of them.`
+                : `${pool.length} ${pool.length === 1 ? "hero was" : "heroes were"} selected.`}
               {picker.nonRepeating
                 ? " Rolling again never gives the same hero twice in a row."
                 : ""}
@@ -201,12 +201,12 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
           <a
             className={ui.btn}
             href={shared.presetHref}
-            title="Open the picker with this pool and these roll settings"
+            title="Open the picker with these heroes selected and these roll settings"
           >
-            Open this pool in the picker
+            Open this selection in the picker
           </a>
           <Link className={ui.btn} href="/" prefetch={false}>
-            Use your own pool
+            Use your own selection
           </Link>
         </div>
 

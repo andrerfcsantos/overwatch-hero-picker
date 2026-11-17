@@ -1,6 +1,6 @@
 /* One column at a reading measure, centred in the window. The picker's rail
-   and side are for keeping controls in reach while the pool changes; a page
-   that is only read has no use for them. */
+   and side are for keeping controls in reach while the selection changes; a
+   page that is only read has no use for them. */
 
 .app {
   padding: 2rem 1.5rem 4rem;
@@ -11,111 +11,24 @@
   margin: 0 auto;
 }
 
-/* What the site is, said once in the display type, over the idea drawn. */
+/* A plain title, and what the site is in a line. */
 .intro {
-  padding: 1rem 0 2.5rem;
+  padding: 0.5rem 0 1.75rem;
   border-bottom: 1px solid var(--hp-line-soft);
 }
 
 .title {
   margin: 0;
-  font-weight: 400;
-}
-
-.eyebrow {
-  display: block;
-  font-family: var(--hp-font-ui);
-  font-size: 1.125rem;
-  font-weight: 500;
-  line-height: 1.35;
-  color: var(--hp-muted);
-}
-
-.thesis {
-  display: block;
-  margin-top: 0.5rem;
   font-family: var(--hp-font-display);
-  font-size: 4.5rem;
-  line-height: 0.92;
-  text-wrap: balance;
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1;
 }
 
-.figure {
-  margin: 2rem 0 0;
-}
-
-/* The same three states the roster uses: in the pool, left out, and rolled. */
-.pool {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0.5rem;
-  max-width: 30rem;
-}
-
-.face {
-  display: block;
-  aspect-ratio: 95 / 85;
-  border: 1px solid transparent;
-  border-radius: 0.25rem;
-  background: var(--hp-tile);
-  overflow: hidden;
-}
-
-.faceImage {
-  width: 100%;
-  height: 100%;
-}
-
-.out {
-  border: 1px dashed var(--hp-line);
-  background: transparent;
-}
-
-.out .faceImage {
-  filter: grayscale(1);
-  opacity: 0.4;
-}
-
-.rolled {
-  border: 2px solid var(--hp-orange);
-}
-
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
-  margin-top: 0.75rem;
-  font-size: 1rem;
+.subtitle {
+  margin: 0.4rem 0 0;
+  font-family: inherit;
   color: var(--hp-muted);
-}
-
-.legendItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.swatch {
-  display: inline-block;
-  width: 1rem;
-  height: 0.9rem;
-  border-radius: 0.15rem;
-}
-
-/* Drawn the way the faces above are, at the size of a letter. */
-.swatch.in {
-  border: 1px solid var(--hp-line);
-  background: var(--hp-tile-hi);
-}
-
-.swatch.out {
-  border: 1px dashed var(--hp-line);
-  background: transparent;
-}
-
-.swatch.rolled {
-  border: 2px solid var(--hp-orange);
-  background: var(--hp-tile-hi);
 }
 
 /* The reading. Headings sit over their text, as in any article. */
@@ -143,8 +56,8 @@
   text-wrap: balance;
 }
 
-.section > p a:link,
-.section > p a:visited {
+.section p a:link,
+.section p a:visited {
   color: var(--hp-text);
   font-weight: 500;
   text-decoration: underline;
@@ -152,42 +65,15 @@
   text-underline-offset: 0.2em;
 }
 
-.section > p a:hover {
+.section p a:hover {
   color: var(--hp-text);
   text-decoration-color: var(--hp-orange);
 }
 
-/* The two things to do from here, side by side as tiles like the picker's. */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+/* A section's one thing to do, under what it says. */
+.action {
   margin-top: 0.25rem;
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1.1rem 1.25rem 1.25rem;
-  border-radius: var(--hp-radius);
-  background: var(--hp-rail);
-}
-
-.card p {
-  flex: 1;
-  margin: 0 0 1rem;
-  font-size: 1.0625rem;
-  line-height: 1.45;
-  color: var(--hp-muted);
-}
-
-.cardTitle {
-  margin: 0 0 0.35rem;
-  font-family: var(--hp-font-display);
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1;
+  font-size: 1.125rem;
 }
 
 /* The notices nobody reads but that have to be there, set small. */
@@ -225,12 +111,8 @@
     padding: 1.25rem 1rem 3rem;
   }
 
-  .thesis {
-    font-size: 3.25rem;
-  }
-
-  .cards {
-    grid-template-columns: minmax(0, 1fr);
+  .title {
+    font-size: 2.5rem;
   }
 
   .section {

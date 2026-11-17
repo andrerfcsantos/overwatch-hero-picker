@@ -47,8 +47,8 @@ export function PresetIntro({ className }: { className?: string }) {
   return (
     <div className={className}>
       <p>
-        A preset is a hero pool saved under a name, in this browser. Applying
-        one sets the pool to its heroes.
+        A preset is a selection of heroes saved under a name, in this browser.
+        Applying one selects its heroes.
       </p>
       <p className={styles.keysNote}>
         The first ten also answer to the number keys, in the order they are
@@ -361,7 +361,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     focusNext.current = { id: NEWEST, control: "name" };
     setOpenId(null);
     savePreset(heroCount(getSelected().length));
-    setStatus("Saved the current pool as a preset. Name it.");
+    setStatus("Saved the current selection as a preset. Name it.");
   };
 
   const setHeroes = (preset: SavedPreset, keys: Set<string>) => {
@@ -417,7 +417,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     <div className={styles.manager}>
       {presets.length === 0 && !deleted && (
         <p className={styles.empty}>
-          No presets yet. Save the pool you have now to roll from it again
+          No presets yet. Save the heroes you selected to roll from them again
           later.
         </p>
       )}
@@ -486,7 +486,9 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
                     <div className={styles.actions}>
                       {applied && (
                         <span className={styles.state}>
-                          {following ? "Applied" : "Applied, pool edited since"}
+                          {following
+                            ? "Applied"
+                            : "Applied, selection changed since"}
                         </span>
                       )}
                       {!following && (
@@ -495,7 +497,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
                           className={ui.btn}
                           data-control="apply"
                           aria-label={`Apply ${preset.name}`}
-                          title="Set the pool to this preset's heroes"
+                          title="Select this preset's heroes"
                           onClick={() => apply(preset)}
                         >
                           Apply
@@ -560,7 +562,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
                         : count === total
                           ? `All ${total} heroes are in this preset.`
                           : `${count} of ${total} heroes are in this preset.`}
-                      {following && " The pool follows your changes."}
+                      {following && " The selection follows your changes."}
                     </span>
                     {count < total && (
                       <button
@@ -608,7 +610,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
 
       <div className={styles.tools}>
         <button type="button" className={ui.link} onClick={saveCurrent}>
-          Save the current pool as a preset
+          Save the current selection as a preset
         </button>
         {missingDefaults > 0 && (
           <button

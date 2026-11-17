@@ -180,7 +180,10 @@ type EventMap = {
   design_feedback_clicked: Record<string, never>;
   /** The banner asking for feedback on the new design was closed. */
   design_feedback_dismissed: Record<string, never>;
-  overlay_setup_opened: Record<string, never>;
+  overlay_setup_opened: {
+    /** "link" means it opened by itself, from a link that named it. */
+    via: "button" | "link";
+  };
   overlay_link_copied: {
     /** "fallback" means the clipboard failed and the link was selected instead. */
     method: "clipboard" | "fallback";

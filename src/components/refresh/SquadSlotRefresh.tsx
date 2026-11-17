@@ -50,7 +50,7 @@ export default function SquadSlotRefresh({
   const inCount = ALL_HEROES.filter(
     (candidate) => !disabledHeroes.has(candidate.key),
   ).length;
-  const poolLabel = `Pool: ${inCount === total ? `all ${total}` : `${inCount} of ${total}`}`;
+  const poolLabel = `Selected: ${inCount === total ? `all ${total}` : `${inCount} of ${total}`}`;
   const roleLabel = hero
     ? (ROLES.find((role) => role.key === hero.role)?.label ?? "")
     : "";
@@ -167,7 +167,7 @@ export default function SquadSlotRefresh({
           <div className={styles.poolHead}>
             <span>
               {inCount === 0
-                ? `Nobody is in ${player}'s pool, so they can be given any hero.`
+                ? `No heroes are selected for ${player}, so they can be given any hero.`
                 : `${player} can be given ${inCount === total ? `any of the ${total} heroes` : `${inCount} of ${total} heroes`}.`}
             </span>
             {inCount < total && (
@@ -176,7 +176,7 @@ export default function SquadSlotRefresh({
                 className={ui.link}
                 onClick={() => onResetFilters(index)}
               >
-                Add everyone
+                Select all
               </button>
             )}
           </div>
