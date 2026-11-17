@@ -158,7 +158,9 @@ type EventMap = {
       | "moved"
       | "reverted"
       | "unselected"
-      | "restored_defaults";
+      | "restored_defaults"
+      | "heroes_edited"
+      | "delete_undone";
   };
   keyboard_shortcut_used: { key: string };
   /**

@@ -1,20 +1,20 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import Link from "next/link";
 import { useHeroes } from "@/context/HeroContext";
 import { usePresets } from "@/context/PresetContext";
 import { shortcutForIndex } from "@/lib/presets/types";
 import PresetNameField from "@/components/PresetNameField";
+import PresetSheet from "./PresetSheet";
 import ui from "./ui.module.css";
 import styles from "./PresetMenu.module.css";
 
 /**
  * Presets behind one button. A few percent of visitors use them, so they no
  * longer hold a row of the page open; the button names the applied preset, and
- * the panel applies one, saves the current pool as a new one, or leads to the
- * manage page for everything done once in a preset's life (renaming,
- * reordering, deleting, copying its link).
+ * the panel applies one, saves the current pool as a new one, or opens the
+ * manager for everything done once in a preset's life (renaming, reordering,
+ * changing its heroes, deleting, copying its link).
  */
 export default function PresetMenu() {
   const { getSelected } = useHeroes();
@@ -29,6 +29,7 @@ export default function PresetMenu() {
   } = usePresets();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [managing, setManaging] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelId = useId();
@@ -184,12 +185,30 @@ export default function PresetMenu() {
                 Stop following {applied.name}
               </button>
             )}
-            <Link className={ui.link} href="/presets" prefetch={false}>
+            <button
+              type="button"
+              className={ui.link}
+              aria-haspopup="dialog"
+              onClick={() => {
+                close(false);
+                setManaging(true);
+              }}
+            >
               Manage presets
-            </Link>
+            </button>
           </div>
         </div>
       )}
+
+      <PresetSheet
+        open={managing}
+        onClose={() => {
+          setManaging(false);
+          // The button that opened the sheet went away with the panel, so
+          // focus returns to the one that opens the panel.
+          buttonRef.current?.focus();
+        }}
+      />
     </div>
   );
 }

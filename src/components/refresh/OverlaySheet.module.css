@@ -1,68 +1,4 @@
-/* The stream overlay's setup: a sheet on the right edge, over the pool. It is
-   a modal <dialog>, so the browser handles focus, Escape and the backdrop. */
-
-.sheet {
-  position: fixed;
-  inset: 0 0 0 auto;
-  width: min(38rem, 100vw);
-  max-width: none;
-  height: 100vh;
-  height: 100dvh;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-left: 1px solid var(--hp-line-soft);
-  background: var(--hp-rail);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.sheet[open] {
-  animation: slideIn 0.2s ease-out;
-}
-
-.sheet::backdrop {
-  background: rgb(10 15 20 / 0.6);
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(1.5rem);
-  }
-}
-
-/* The page behind stays where it was while the sheet is read. */
-:global(html):has(.sheet[open]) {
-  overflow: hidden;
-}
-
-.body {
-  padding: 1.5rem 2rem 3rem;
-}
-
-.head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.title {
-  margin: 0;
-  font-family: var(--hp-font-display);
-  font-size: 2.25rem;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.intro {
-  max-width: 26rem;
-  margin: 0.5rem 0 0;
-  font-family: inherit;
-  color: var(--hp-muted);
-}
+/* The stream overlay's setup. The sheet it opens in is Sheet.module.css. */
 
 /* The steps are a real sequence, so they are numbered; the number sits in
    the margin and the step's content hangs from it. */
@@ -516,10 +452,6 @@
 }
 
 @media (max-width: 30rem) {
-  .body {
-    padding: 1rem 1rem 3rem;
-  }
-
   .step {
     padding-left: 2rem;
   }
@@ -542,10 +474,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sheet[open] {
-    animation: none;
-  }
-
   .seg span {
     transition: none;
   }

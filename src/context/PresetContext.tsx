@@ -36,6 +36,13 @@ interface PresetContextValue {
   renamePreset: (id: string, name: string) => void;
   duplicatePreset: (id: string) => void;
   deletePreset: (id: string) => void;
+  /** Puts a deleted preset back at `index`, which is how a delete is undone. */
+  insertPreset: (preset: SavedPreset, index: number, applied: boolean) => void;
+  /**
+   * Changes which heroes a preset holds, without going through the pool. A
+   * pool that still matches the applied preset follows it.
+   */
+  setPresetHeroes: (id: string, heroes: string[]) => void;
   /** Moves a preset by `offset` places, which is how the order is edited. */
   movePreset: (id: string, offset: number) => void;
   /** Puts the filters back to the applied preset. */
@@ -188,6 +195,37 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
     [appliedId],
   );
 
+  const insertPreset = useCallback(
+    (preset: SavedPreset, index: number, applied: boolean) => {
+      setPresets((current) => {
+        if (current.some((existing) => existing.id === preset.id)) {
+          return current;
+        }
+        const next = [...current];
+        next.splice(Math.min(Math.max(index, 0), next.length), 0, preset);
+        return next;
+      });
+      if (applied) setAppliedId(preset.id);
+      track("preset_managed", { action: "delete_undone" });
+    },
+    [],
+  );
+
+  const setPresetHeroes = useCallback(
+    (id: string, heroes: string[]) => {
+      // Someone following a preset expects the pool to be that preset, so
+      // editing it edits the pool too. A pool they have since changed by hand
+      // is theirs, and is left alone.
+      if (id === appliedId && !isDirty) setSelected(heroes);
+      setPresets((current) =>
+        current.map((preset) =>
+          preset.id === id ? { ...preset, heroes } : preset,
+        ),
+      );
+    },
+    [appliedId, isDirty, setSelected],
+  );
+
   const movePreset = useCallback((id: string, offset: number) => {
     track("preset_managed", { action: "moved" });
     setPresets((current) => {
@@ -235,6 +273,8 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       renamePreset,
       duplicatePreset,
       deletePreset,
+      insertPreset,
+      setPresetHeroes,
       movePreset,
       revert,
       clearApplied,
@@ -251,6 +291,8 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       renamePreset,
       duplicatePreset,
       deletePreset,
+      insertPreset,
+      setPresetHeroes,
       movePreset,
       revert,
       clearApplied,

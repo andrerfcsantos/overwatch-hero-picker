@@ -102,11 +102,6 @@
   border-top: 1px solid var(--hp-line-soft);
 }
 
-.foot a:link,
-.foot a:visited {
-  color: var(--hp-text);
-}
-
 @media (max-width: 63.99rem) {
   /* No keyboard, so no key to advertise. */
   .itemKey {

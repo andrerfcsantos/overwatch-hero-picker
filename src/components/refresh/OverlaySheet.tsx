@@ -16,6 +16,7 @@ import { Hero } from "@/types/hero";
 import OverlayCard from "@/components/OverlayCard";
 import QrCode from "@/components/QrCode";
 import overlay from "@/components/OverlayContent.module.css";
+import sheet from "./Sheet.module.css";
 import ui from "./ui.module.css";
 import styles from "./OverlaySheet.module.css";
 
@@ -217,7 +218,7 @@ export default function OverlaySheet({
       {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- a click on the backdrop closes the sheet; the keyboard has Escape and the Close button */}
       <dialog
         ref={dialogRef}
-        className={`${ui.page} ${styles.sheet} ph-no-capture`}
+        className={`${ui.page} ${sheet.sheet} ph-no-capture`}
         aria-labelledby={titleId}
         onClose={() => {
           setOpen(false);
@@ -229,9 +230,9 @@ export default function OverlaySheet({
         }}
       >
         {open && (
-          <div className={styles.body}>
-            <header className={styles.head}>
-              <h2 id={titleId} className={styles.title}>
+          <div className={sheet.body}>
+            <header className={sheet.head}>
+              <h2 id={titleId} className={sheet.title}>
                 Stream overlay
               </h2>
               <button
@@ -242,7 +243,7 @@ export default function OverlaySheet({
                 Close
               </button>
             </header>
-            <p className={styles.intro}>
+            <p className={sheet.intro}>
               A card on your stream that shows a new random hero each time you
               press a hotkey in OBS, or a button on another screen.
             </p>

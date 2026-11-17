@@ -1,0 +1,305 @@
+/* The preset manager. It is shown in a sheet and on a page of its own, which
+   are different widths in the same window, so its layout answers to the room
+   it is given rather than to the window. */
+
+.manager {
+  container-type: inline-size;
+}
+
+/* No keyboard below this width, so no keys to explain. */
+.keysNote {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .keysNote {
+    display: block;
+  }
+}
+
+.list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Every row keeps the edge the applied one colours, so names line up. */
+.slot {
+  border-left: 3px solid transparent;
+  border-radius: var(--hp-radius);
+  background: var(--hp-tile);
+}
+
+.applied {
+  border-left-color: var(--hp-orange);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0 0.6rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.35rem;
+}
+
+/* Position in the list: the arrows change it, and the key between them is
+   what that position is worth. */
+.order {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.move {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: none;
+  color: var(--hp-muted);
+  cursor: pointer;
+}
+
+.move:hover:not(:disabled) {
+  background: var(--hp-tile-hi);
+  color: var(--hp-text);
+}
+
+.move:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.key {
+  display: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--hp-muted);
+  border-radius: 0.2rem;
+  color: var(--hp-text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (min-width: 64rem) {
+  .key {
+    display: grid;
+  }
+}
+
+.main {
+  min-width: 0;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+}
+
+/* Reads as a heading until it is pointed at. */
+.name {
+  flex: 1 1 9rem;
+  min-width: 0;
+  height: 2.25rem;
+  margin-left: -0.4rem;
+  padding: 0.15rem 0.4rem 0;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--hp-text);
+  font-family: var(--hp-font-display);
+  font-size: 1.75rem;
+  line-height: 1;
+  text-overflow: ellipsis;
+}
+
+.name:hover {
+  border-color: var(--hp-muted);
+}
+
+.name:focus {
+  border-color: var(--hp-muted);
+  background: var(--hp-rail);
+}
+
+.count {
+  flex: none;
+  color: var(--hp-muted);
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.actions button {
+  min-height: 2.25rem;
+}
+
+.state {
+  font-weight: 600;
+}
+
+.roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.9rem;
+  margin: 0.35rem 0 0.1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.rosterRole {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.rosterCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-right: 0.2rem;
+  color: var(--hp-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.face {
+  display: block;
+  height: 1.5rem;
+  aspect-ratio: 95 / 85;
+  border-radius: 0.2rem;
+  overflow: hidden;
+}
+
+.faceImage {
+  width: 100%;
+  height: 100%;
+}
+
+/* Left out of the preset, drawn as the roster draws a hero left out. */
+.faceOut {
+  outline: 1px dashed var(--hp-muted);
+  outline-offset: -1px;
+}
+
+.faceOut .faceImage {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.none,
+.empty {
+  margin: 0;
+  font-family: inherit;
+  color: var(--hp-muted);
+}
+
+.none {
+  margin-top: 0.35rem;
+}
+
+.empty {
+  margin-bottom: 0.75rem;
+}
+
+/* A preset opened for editing: what can be done to it, then who is in it. */
+.panel {
+  padding: 0.5rem 1rem 1rem;
+  border-top: 1px solid var(--hp-tile);
+  border-radius: 0 0 var(--hp-radius) 0;
+  background: var(--hp-rail);
+  /* The tile shows as a frame, so the panel still reads as part of its row
+     where the page behind is the same colour as the panel. */
+  margin: 0 1px 1px 0;
+}
+
+.panelActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1.25rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--hp-line-soft);
+}
+
+.panelActions :global(.share-fallback-input) {
+  flex-basis: 100%;
+  max-width: none;
+  margin: 0 0 0.5rem;
+}
+
+.danger {
+  margin-left: auto;
+  color: var(--hp-danger);
+}
+
+.panelHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  margin: 0.5rem 0 0.75rem;
+  color: var(--hp-muted);
+}
+
+/* Where a deleted preset was, with the way to get it back. */
+.gone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  padding: 0.15rem 0.9rem;
+  border: 1px dashed var(--hp-line);
+  border-radius: var(--hp-radius);
+  color: var(--hp-muted);
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.tools button {
+  white-space: normal;
+  text-align: left;
+}
+
+/* Tight on room: the name takes a line of its own, and the arrows grow into
+   the targets a thumb needs. */
+@container (max-width: 26rem) {
+  .name {
+    flex-basis: 100%;
+  }
+
+  .actions {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
+  .panel {
+    padding-inline: 0.75rem;
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .move {
+    height: 2.25rem;
+  }
+}
