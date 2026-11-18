@@ -33,6 +33,12 @@ interface PoolEditorProps {
   label?: string;
   /** Tighter spacing, for a pool edited inside something else. */
   compact?: boolean;
+  /**
+   * For a roster that has a page's width to itself: where there is room, each
+   * role's name and its controls stand beside its heroes instead of above
+   * them, which is three rows the page gets back.
+   */
+  rail?: boolean;
 }
 
 /**
@@ -51,9 +57,12 @@ export default function PoolEditor({
   currentHeroKey = null,
   label,
   compact = false,
+  rail = false,
 }: PoolEditorProps) {
   return (
-    <div className={compact ? styles.compact : undefined}>
+    <div
+      className={`${compact ? styles.compact : ""} ${rail ? styles.rail : ""}`}
+    >
       {ROLE_GROUPS.map(({ key, label: roleLabel, heroes }) => {
         const inCount = heroes.filter((hero) => isIn(hero.key)).length;
         const all = inCount === heroes.length;

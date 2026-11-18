@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type ReactNode,
   useEffect,
   useId,
   useLayoutEffect,
@@ -12,14 +13,15 @@ import { track } from "@/lib/analytics";
 import { ROLES, getAllHeroes, getHeroesByRole } from "@/data/heroes";
 import { useHeroes } from "@/context/HeroContext";
 import { usePresets } from "@/context/PresetContext";
+import { useShareLink } from "@/hooks/useShareLink";
 import { buildDefaultPresets } from "@/lib/presets/defaults";
 import { presetShareUrl } from "@/lib/presets/share";
 import { SavedPreset, shortcutForIndex } from "@/lib/presets/types";
 import { HeroRole } from "@/types/hero";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
-import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import PoolEditor from "./PoolEditor";
+import TipButton from "./TipButton";
 import ui from "./ui.module.css";
 import styles from "./PresetManager.module.css";
 
@@ -122,9 +124,14 @@ interface PresetNameProps {
  * The name is its own text field, so renaming needs no mode: point at it and
  * type. Enter or leaving the field saves, Escape puts the old name back, and
  * an empty name is never saved.
+ *
+ * It reads as a heading until it is pointed at, so a pencil at the end of
+ * the name says it can be changed. The pencil is part of the field: pressing
+ * it selects the name, ready to be typed over.
  */
 function PresetName({ preset, position, onRename }: PresetNameProps) {
   const [draft, setDraft] = useState(preset.name);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const commit = () => {
     const name = draft.trim();
@@ -137,43 +144,44 @@ function PresetName({ preset, position, onRename }: PresetNameProps) {
   };
 
   return (
-    <input
-      className={styles.name}
-      type="text"
-      data-control="name"
-      value={draft}
-      aria-label={`Name of preset ${position}`}
-      // A browser's saved text is other fields' answers, not preset names.
-      autoComplete="off"
-      spellCheck={false}
-      onChange={(e) => setDraft(e.target.value)}
-      onBlur={commit}
-      onKeyDown={(e) => {
-        // Saves and stays put: blurring here would drop focus to the page.
-        if (e.key === "Enter") commit();
-        // Only while there is something to take back. Otherwise Escape is
-        // left alone, and closes the sheet the field may be in.
-        if (e.key === "Escape" && draft !== preset.name) {
-          e.preventDefault();
-          setDraft(preset.name);
-        }
-      }}
-    />
-  );
-}
-
-function Chevron({ up = false }: { up?: boolean }) {
-  return (
-    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-      <path
-        d={up ? "M3 10.5l5-5 5 5" : "M3 5.5l5 5 5-5"}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+    // The label makes the pencil and the space around the name part of the
+    // field: a press anywhere in it lands in the name.
+    <label className={styles.nameBox}>
+      <input
+        ref={inputRef}
+        className={styles.name}
+        type="text"
+        data-control="name"
+        value={draft}
+        // As wide as the name, so the pencil sits at its end. Browsers that
+        // size a field to its text do that exactly; this is for the rest.
+        size={Math.max(draft.length, 3)}
+        aria-label={`Name of preset ${position}`}
+        // A browser's saved text is other fields' answers, not preset names.
+        autoComplete="off"
+        spellCheck={false}
+        maxLength={60}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          // Saves and stays put: blurring here would drop focus to the page.
+          if (e.key === "Enter") commit();
+          // Only while there is something to take back. Otherwise Escape is
+          // left alone, and closes the sheet the field may be in.
+          if (e.key === "Escape" && draft !== preset.name) {
+            e.preventDefault();
+            setDraft(preset.name);
+          }
+        }}
       />
-    </svg>
+      {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- the field itself is what the keyboard reaches; this only selects its text for a pointer */}
+      <span
+        className={styles.pencil}
+        onClick={() => inputRef.current?.select()}
+      >
+        <PencilIcon />
+      </span>
+    </label>
   );
 }
 
@@ -181,6 +189,331 @@ const NEWEST = Symbol("newest preset");
 
 /** A control inside a preset's row, as the manager asks for it to be focused. */
 type Control = "up" | "down" | "name" | "apply" | "edit";
+
+interface PresetRowProps {
+  preset: SavedPreset;
+  index: number;
+  /** How many presets there are, which is where the list ends. */
+  listLength: number;
+  applied: boolean;
+  /** Applied, and the selection still matches it. */
+  following: boolean;
+  open: boolean;
+  /** The picker's selection, offered to a preset with nobody in it yet. */
+  selectedKeys: string[];
+  rowRef: (node: HTMLLIElement | null) => void;
+  onMove: (offset: number) => void;
+  onRename: (name: string) => void;
+  onApply: () => void;
+  onToggleOpen: () => void;
+  onDuplicate: () => void;
+  onDelete: () => void;
+  onSetHeroes: (keys: Set<string>) => void;
+  /** Says what an action did, for anyone who cannot see it happen. */
+  announce: (message: string) => void;
+}
+
+/**
+ * One preset. Everything done to it is on its row: its place in the list at
+ * the left, its name to type over, applying it and changing its heroes
+ * beside that, and the rest (duplicate, copy a link, delete) as a row of
+ * icons, each saying what it is when pointed at. Nothing waits behind a
+ * menu. A press anywhere else on the row opens its heroes too, so the whole
+ * card is the way in, not only the button.
+ */
+function PresetRow({
+  preset,
+  index,
+  listLength,
+  applied,
+  following,
+  open,
+  selectedKeys,
+  rowRef,
+  onMove,
+  onRename,
+  onApply,
+  onToggleOpen,
+  onDuplicate,
+  onDelete,
+  onSetHeroes,
+  announce,
+}: PresetRowProps) {
+  const panelId = useId();
+  const { copied, fallbackUrl, copy } = useShareLink({
+    buildUrl: () => presetShareUrl(preset.heroes),
+    shareType: "preset",
+    shareSource: "manage_page",
+  });
+
+  const shortcut = shortcutForIndex(index);
+  const count = preset.heroes.length;
+  const total = ALL_HEROES.length;
+
+  const toggleHero = (heroKey: string) => {
+    const next = new Set(preset.heroes);
+    if (next.has(heroKey)) next.delete(heroKey);
+    else next.add(heroKey);
+    onSetHeroes(next);
+  };
+
+  const setRole = (role: HeroRole, inPreset: boolean) => {
+    const next = new Set(preset.heroes);
+    for (const hero of ALL_HEROES) {
+      if (hero.role !== role) continue;
+      if (inPreset) next.add(hero.key);
+      else next.delete(hero.key);
+    }
+    onSetHeroes(next);
+  };
+
+  const onlyRole = (role: HeroRole) => {
+    onSetHeroes(
+      new Set(
+        ALL_HEROES.filter((hero) => hero.role === role).map((hero) => hero.key),
+      ),
+    );
+  };
+
+  // Worth offering only where it differs from the two links beside it:
+  // an empty selection is "clear", and a full one is "add everyone".
+  const canCopySelection =
+    count === 0 && selectedKeys.length > 0 && selectedKeys.length < total;
+
+  return (
+    <li
+      ref={rowRef}
+      className={`${styles.slot} ${applied ? styles.applied : ""}`}
+    >
+      {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a pointer's shortcut to "Edit heroes", which is the control the keyboard and screen readers use */}
+      <div
+        className={styles.row}
+        onClick={(event) => {
+          // A press on a control in the row is for that control.
+          if ((event.target as HTMLElement).closest("button, label, input")) {
+            return;
+          }
+          onToggleOpen();
+        }}
+      >
+        <div className={styles.order}>
+          <button
+            type="button"
+            className={styles.move}
+            data-control="up"
+            disabled={index === 0}
+            aria-label={`Move ${preset.name} up`}
+            title="Move up"
+            onClick={() => onMove(-1)}
+          >
+            <Chevron up />
+          </button>
+          {shortcut && (
+            <kbd
+              className={styles.key}
+              title={`Press ${shortcut} on the picker to apply`}
+            >
+              {shortcut}
+            </kbd>
+          )}
+          <button
+            type="button"
+            className={styles.move}
+            data-control="down"
+            disabled={index === listLength - 1}
+            aria-label={`Move ${preset.name} down`}
+            title="Move down"
+            onClick={() => onMove(1)}
+          >
+            <Chevron />
+          </button>
+        </div>
+
+        <div className={styles.main}>
+          <div className={styles.top}>
+            <PresetName
+              preset={preset}
+              position={index + 1}
+              onRename={onRename}
+            />
+            <span className={styles.count}>{heroCount(count)}</span>
+            <div className={styles.actions}>
+              {following ? (
+                <span className={styles.state}>
+                  <CheckIcon />
+                  Applied
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  className={ui.btn}
+                  data-control="apply"
+                  aria-label={`${applied ? "Reapply" : "Apply"} ${preset.name}`}
+                  title={
+                    applied
+                      ? "The selection has changed since this preset was applied. Select its heroes again."
+                      : "Select this preset's heroes"
+                  }
+                  onClick={onApply}
+                >
+                  {applied ? "Reapply" : "Apply"}
+                </button>
+              )}
+              <button
+                type="button"
+                className={`${ui.btn} ${ui.caret}`}
+                data-control="edit"
+                aria-expanded={open}
+                aria-controls={panelId}
+                aria-label={`Edit heroes in ${preset.name}`}
+                onClick={onToggleOpen}
+              >
+                Edit heroes
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.bottom}>
+            <Roster preset={preset} />
+            <div className={styles.quick}>
+              <IconAction
+                label="Duplicate"
+                name={`Duplicate ${preset.name}`}
+                onClick={onDuplicate}
+              >
+                <CopyIcon />
+              </IconAction>
+              <IconAction
+                label={copied ? "Link copied" : "Copy link"}
+                name={`Copy a link to ${preset.name}`}
+                onClick={async () => {
+                  const done = await copy();
+                  announce(
+                    done
+                      ? `Copied a link to ${preset.name}.`
+                      : `Could not copy. The link to ${preset.name} is shown instead.`,
+                  );
+                }}
+              >
+                {copied ? <CheckIcon /> : <LinkIcon />}
+              </IconAction>
+              <IconAction
+                label="Delete"
+                name={`Delete ${preset.name}`}
+                danger
+                onClick={onDelete}
+              >
+                <TrashIcon />
+              </IconAction>
+            </div>
+          </div>
+
+          {fallbackUrl && (
+            <input
+              className={`share-fallback-input ${styles.fallback}`}
+              type="text"
+              readOnly
+              value={fallbackUrl}
+              onFocus={(e) => e.currentTarget.select()}
+              aria-label={`Link to ${preset.name}`}
+            />
+          )}
+        </div>
+      </div>
+
+      {open && (
+        <div id={panelId} className={styles.panel}>
+          <div className={styles.panelHead}>
+            <span>
+              {count === 0
+                ? "Nobody is in this preset yet. Choose its heroes below."
+                : count === total
+                  ? `All ${total} heroes are in this preset.`
+                  : `${count} of ${total} heroes are in this preset.`}
+              {following && " The picker's selection follows your changes."}
+            </span>
+            {count < total && (
+              <button
+                type="button"
+                className={ui.link}
+                onClick={() =>
+                  onSetHeroes(new Set(ALL_HEROES.map((hero) => hero.key)))
+                }
+              >
+                Add everyone
+              </button>
+            )}
+            {canCopySelection && (
+              <button
+                type="button"
+                className={ui.link}
+                onClick={() => onSetHeroes(new Set(selectedKeys))}
+              >
+                Copy the picker&rsquo;s selection (
+                {heroCount(selectedKeys.length)})
+              </button>
+            )}
+            {count > 0 && (
+              <button
+                type="button"
+                className={ui.link}
+                onClick={() => onSetHeroes(new Set())}
+              >
+                Clear the preset
+              </button>
+            )}
+          </div>
+
+          <PoolEditor
+            compact
+            label={preset.name}
+            isIn={(heroKey) => preset.heroes.includes(heroKey)}
+            onToggleHero={toggleHero}
+            onSetRole={setRole}
+            onOnlyRole={onlyRole}
+          />
+
+          {/* The button that opened this is a long scroll back up by now. */}
+          <div className={styles.panelFoot}>
+            <button type="button" className={ui.btn} onClick={onToggleOpen}>
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+    </li>
+  );
+}
+
+interface IconActionProps {
+  /** What the icon does, in a word or two, shown when it is pointed at. */
+  label: string;
+  /** The same, with the preset's name, for anyone not looking at the row. */
+  name: string;
+  danger?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}
+
+function IconAction({
+  label,
+  name,
+  danger = false,
+  onClick,
+  children,
+}: IconActionProps) {
+  return (
+    <TipButton
+      className={`${styles.iconAction} ${danger ? styles.danger : ""}`}
+      aria-label={name}
+      tip={label}
+      tipIsName
+      onClick={onClick}
+    >
+      {children}
+    </TipButton>
+  );
+}
 
 interface Deleted {
   preset: SavedPreset;
@@ -195,9 +528,10 @@ interface PresetManagerProps {
 }
 
 /**
- * Everything done to presets once they exist: reordering, renaming, changing
- * who is in them, copying, sharing and deleting. The list is the overview; a
- * preset opens in place for the rest, on the same roster the picker uses.
+ * Everything done to presets as a list: starting a new one, reordering,
+ * renaming, changing who is in them, copying, sharing and deleting. The list
+ * is the overview; a preset opens in place to choose its heroes, on the same
+ * roster the picker uses.
  *
  * Shown in a sheet over the picker, and as the /presets page.
  */
@@ -209,7 +543,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     isDirty,
     isHydrated,
     applyPreset,
-    savePreset,
+    createPreset,
     renamePreset,
     duplicatePreset,
     deletePreset,
@@ -222,7 +556,6 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<Deleted | null>(null);
   const [status, setStatus] = useState("");
-  const panelPrefix = useId();
 
   const rows = useRef(new Map<string, HTMLLIElement>());
   const undoRef = useRef<HTMLButtonElement>(null);
@@ -231,6 +564,8 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
   const focusNext = useRef<{
     id: string | typeof NEWEST;
     control: Control;
+    /** Also brings the row to the top of the view, for one made far below. */
+    reveal?: boolean;
   } | null>(null);
   const knownIds = useRef(new Set<string>());
   const lastTops = useRef(new Map<string, number>());
@@ -243,6 +578,11 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     return buildDefaultPresets().filter((preset) => !present.has(preset.id))
       .length;
   }, [presets]);
+
+  const selectedKeys = useMemo(
+    () => getSelected().map((hero) => hero.key),
+    [getSelected],
+  );
 
   // Rows slide to their new place, so a move, a delete and an undo each show
   // what they did to the order. Measured on every render to have the layout
@@ -285,8 +625,17 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
           row.querySelector<HTMLElement>(
             `[data-control="${target.control}"]:not(:disabled)`,
           ) ?? row.querySelector<HTMLElement>("[data-control]:not(:disabled)");
-        control?.focus();
+        control?.focus({ preventScroll: target.reveal });
         if (control instanceof HTMLInputElement) control.select();
+        if (target.reveal) {
+          const still = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches;
+          row.scrollIntoView({
+            block: "start",
+            behavior: still ? "auto" : "smooth",
+          });
+        }
       }
     }
     knownIds.current = new Set(presets.map((preset) => preset.id));
@@ -299,15 +648,19 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
 
   if (!isHydrated) return null;
 
-  const focusControl = (id: string, control: Control) => {
-    const target = rows.current
-      .get(id)
-      ?.querySelector<HTMLElement>(`[data-control="${control}"]`);
-    target?.focus();
-    if (target instanceof HTMLInputElement) target.select();
+  const createNew = () => {
+    const taken = new Set(presets.map((preset) => preset.name));
+    let name = "New preset";
+    for (let n = 2; taken.has(name); n += 1) name = `New preset ${n}`;
+    const id = createPreset(name);
+    // It opens ready for both things a new preset needs: its name is
+    // selected to type over, and its heroes are below to choose.
+    focusNext.current = { id, control: "name", reveal: true };
+    setOpenId(id);
+    setStatus(
+      "New preset added at the end of the list. Name it, then choose its heroes.",
+    );
   };
-
-  const total = ALL_HEROES.length;
 
   const move = (preset: SavedPreset, index: number, offset: number) => {
     focusNext.current = { id: preset.id, control: offset < 0 ? "up" : "down" };
@@ -336,7 +689,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
       afterId: index > 0 ? presets[index - 1].id : null,
       wasApplied: preset.id === appliedId,
     });
-    setOpenId(null);
+    if (openId === preset.id) setOpenId(null);
     deletePreset(preset.id);
     setStatus(`${preset.name} deleted.`);
   };
@@ -357,13 +710,6 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     setDeleted(null);
   };
 
-  const saveCurrent = () => {
-    focusNext.current = { id: NEWEST, control: "name" };
-    setOpenId(null);
-    savePreset(heroCount(getSelected().length));
-    setStatus("Saved the current selection as a preset. Name it.");
-  };
-
   const setHeroes = (preset: SavedPreset, keys: Set<string>) => {
     if (!edited.current.has(preset.id)) {
       edited.current.add(preset.id);
@@ -372,30 +718,17 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     setPresetHeroes(preset.id, inRosterOrder(keys));
   };
 
-  const toggleHero = (preset: SavedPreset, heroKey: string) => {
-    const next = new Set(preset.heroes);
-    if (next.has(heroKey)) next.delete(heroKey);
-    else next.add(heroKey);
-    setHeroes(preset, next);
-  };
-
-  const setRole = (preset: SavedPreset, role: HeroRole, inPreset: boolean) => {
-    const next = new Set(preset.heroes);
-    for (const hero of ALL_HEROES) {
-      if (hero.role !== role) continue;
-      if (inPreset) next.add(hero.key);
-      else next.delete(hero.key);
+  const toggleOpen = (preset: SavedPreset) => {
+    const closing = openId === preset.id;
+    setOpenId(closing ? null : preset.id);
+    // "Done" is at the foot of the roster and goes with it, so focus returns
+    // to the button that opens it again.
+    if (closing) {
+      rows.current
+        .get(preset.id)
+        ?.querySelector<HTMLElement>('[data-control="edit"]')
+        ?.focus();
     }
-    setHeroes(preset, next);
-  };
-
-  const onlyRole = (preset: SavedPreset, role: HeroRole) => {
-    setHeroes(
-      preset,
-      new Set(
-        ALL_HEROES.filter((hero) => hero.role === role).map((hero) => hero.key),
-      ),
-    );
   };
 
   const undoNotice = deleted && (
@@ -415,204 +748,59 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
 
   return (
     <div className={styles.manager}>
+      <div className={styles.toolbar}>
+        <button
+          type="button"
+          className={`${ui.btn} ${ui.primary}`}
+          onClick={createNew}
+        >
+          <PlusIcon />
+          New preset
+        </button>
+      </div>
+
       {presets.length === 0 && !deleted && (
         <p className={styles.empty}>
-          No presets yet. Save the heroes you selected to roll from them again
-          later.
+          Start one here with “New preset”, or select heroes on the picker and
+          save them from there.
         </p>
       )}
 
       <ol className={styles.list}>
         {deleted?.afterId === null && undoNotice}
         {presets.flatMap((preset, index) => {
-          const shortcut = shortcutForIndex(index);
           const applied = preset.id === appliedId;
-          const following = applied && !isDirty;
-          const open = preset.id === openId;
-          const count = preset.heroes.length;
-          const panelId = `${panelPrefix}-${index}`;
-
           const row = (
-            <li
+            <PresetRow
               key={preset.id}
-              ref={(node) => {
+              preset={preset}
+              index={index}
+              listLength={presets.length}
+              applied={applied}
+              following={applied && !isDirty}
+              open={preset.id === openId}
+              selectedKeys={selectedKeys}
+              rowRef={(node) => {
                 if (node) rows.current.set(preset.id, node);
                 else rows.current.delete(preset.id);
               }}
-              className={`${styles.slot} ${applied ? styles.applied : ""}`}
-            >
-              <div className={styles.row}>
-                <div className={styles.order}>
-                  <button
-                    type="button"
-                    className={styles.move}
-                    data-control="up"
-                    disabled={index === 0}
-                    aria-label={`Move ${preset.name} up`}
-                    title="Move up"
-                    onClick={() => move(preset, index, -1)}
-                  >
-                    <Chevron up />
-                  </button>
-                  {shortcut && (
-                    <kbd
-                      className={styles.key}
-                      title={`Press ${shortcut} on the picker to apply`}
-                    >
-                      {shortcut}
-                    </kbd>
-                  )}
-                  <button
-                    type="button"
-                    className={styles.move}
-                    data-control="down"
-                    disabled={index === presets.length - 1}
-                    aria-label={`Move ${preset.name} down`}
-                    title="Move down"
-                    onClick={() => move(preset, index, 1)}
-                  >
-                    <Chevron />
-                  </button>
-                </div>
-
-                <div className={styles.main}>
-                  <div className={styles.top}>
-                    <PresetName
-                      preset={preset}
-                      position={index + 1}
-                      onRename={(name) => renamePreset(preset.id, name)}
-                    />
-                    <span className={styles.count}>{heroCount(count)}</span>
-                    <div className={styles.actions}>
-                      {applied && (
-                        <span className={styles.state}>
-                          {following
-                            ? "Applied"
-                            : "Applied, selection changed since"}
-                        </span>
-                      )}
-                      {!following && (
-                        <button
-                          type="button"
-                          className={ui.btn}
-                          data-control="apply"
-                          aria-label={`Apply ${preset.name}`}
-                          title="Select this preset's heroes"
-                          onClick={() => apply(preset)}
-                        >
-                          Apply
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        className={`${ui.btn} ${ui.caret}`}
-                        data-control="edit"
-                        aria-expanded={open}
-                        aria-controls={panelId}
-                        aria-label={`Edit ${preset.name}`}
-                        onClick={() => setOpenId(open ? null : preset.id)}
-                      >
-                        Edit
-                      </button>
-                    </div>
-                  </div>
-                  <Roster preset={preset} />
-                </div>
-              </div>
-
-              {open && (
-                <div id={panelId} className={styles.panel}>
-                  <div className={styles.panelActions}>
-                    <button
-                      type="button"
-                      className={ui.link}
-                      onClick={() => focusControl(preset.id, "name")}
-                    >
-                      Rename
-                    </button>
-                    <button
-                      type="button"
-                      className={ui.link}
-                      onClick={() => duplicate(preset)}
-                    >
-                      Duplicate
-                    </button>
-                    <ShareButton
-                      className={ui.link}
-                      buildUrl={() => presetShareUrl(preset.heroes)}
-                      shareType="preset"
-                      shareSource="manage_page"
-                      label="Copy link"
-                      copiedLabel="Link copied"
-                      title="Copy a link that sets up the picker with these heroes"
-                    />
-                    <button
-                      type="button"
-                      className={`${ui.link} ${styles.danger}`}
-                      onClick={() => remove(preset, index)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-
-                  <div className={styles.panelHead}>
-                    <span>
-                      {count === 0
-                        ? "Nobody is in this preset, so rolls use every hero."
-                        : count === total
-                          ? `All ${total} heroes are in this preset.`
-                          : `${count} of ${total} heroes are in this preset.`}
-                      {following && " The selection follows your changes."}
-                    </span>
-                    {count < total && (
-                      <button
-                        type="button"
-                        className={ui.link}
-                        onClick={() =>
-                          setHeroes(
-                            preset,
-                            new Set(ALL_HEROES.map((hero) => hero.key)),
-                          )
-                        }
-                      >
-                        Add everyone
-                      </button>
-                    )}
-                    {count > 0 && (
-                      <button
-                        type="button"
-                        className={ui.link}
-                        onClick={() => setHeroes(preset, new Set())}
-                      >
-                        Clear the preset
-                      </button>
-                    )}
-                  </div>
-
-                  <PoolEditor
-                    compact
-                    label={preset.name}
-                    isIn={(heroKey) => preset.heroes.includes(heroKey)}
-                    onToggleHero={(heroKey) => toggleHero(preset, heroKey)}
-                    onSetRole={(role, inPreset) =>
-                      setRole(preset, role, inPreset)
-                    }
-                    onOnlyRole={(role) => onlyRole(preset, role)}
-                  />
-                </div>
-              )}
-            </li>
+              onMove={(offset) => move(preset, index, offset)}
+              onRename={(name) => renamePreset(preset.id, name)}
+              onApply={() => apply(preset)}
+              onToggleOpen={() => toggleOpen(preset)}
+              onDuplicate={() => duplicate(preset)}
+              onDelete={() => remove(preset, index)}
+              onSetHeroes={(keys) => setHeroes(preset, keys)}
+              announce={setStatus}
+            />
           );
 
           return deleted?.afterId === preset.id ? [row, undoNotice] : [row];
         })}
       </ol>
 
-      <div className={styles.tools}>
-        <button type="button" className={ui.link} onClick={saveCurrent}>
-          Save the current selection as a preset
-        </button>
-        {missingDefaults > 0 && (
+      {missingDefaults > 0 && (
+        <div className={styles.tools}>
           <button
             type="button"
             className={ui.link}
@@ -629,13 +817,76 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
               ? "Restore the built-in preset you deleted"
               : `Restore the ${missingDefaults} built-in presets you deleted`}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- says what each change did, not the result of a form */}
       <p className={ui.vh} role="status">
         {status}
       </p>
     </div>
+  );
+}
+
+function Chevron({ up = false }: { up?: boolean }) {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d={up ? "M3 10.5l5-5 5 5" : "M3 5.5l5 5 5-5"}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** The icons are drawn alike: 16 units square, one line weight, no fill. */
+function Icon({ d }: { d: string }) {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d={d}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return <Icon d="M8 3v10M3 8h10" />;
+}
+
+function CheckIcon() {
+  return <Icon d="M3 8.5l3.25 3.25L13 5" />;
+}
+
+function PencilIcon() {
+  return (
+    <Icon d="M2.5 13.5l.7-3.1 7.6-7.6a1.4 1.4 0 0 1 2 0l.4.4a1.4 1.4 0 0 1 0 2l-7.6 7.6zM9.6 4l2.4 2.4" />
+  );
+}
+
+function CopyIcon() {
+  return (
+    <Icon d="M6.5 5.5h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1zM3.5 10.5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1" />
+  );
+}
+
+function LinkIcon() {
+  return (
+    <Icon d="M6.9 9.1a3 3 0 0 0 4.25 0l2.1-2.1a3 3 0 0 0-4.25-4.25l-.9.9M9.1 6.9a3 3 0 0 0-4.25 0l-2.1 2.1A3 3 0 0 0 7 13.25l.9-.9" />
+  );
+}
+
+function TrashIcon() {
+  return (
+    <Icon d="M2.75 4.25h10.5M6.25 4.25V3a.75.75 0 0 1 .75-.75h2a.75.75 0 0 1 .75.75v1.25M4 4.25l.6 8.35a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9l.6-8.35M6.75 7v3.75M9.25 7v3.75" />
   );
 }

@@ -148,7 +148,11 @@ type EventMap = {
     hero_count: number;
     source: "chip" | "keyboard" | "manage_page";
   };
-  preset_created: { hero_count: number };
+  preset_created: {
+    hero_count: number;
+    /** Saved from the heroes selected, or started empty in the manager. */
+    source: "selection" | "blank";
+  };
   preset_updated: { preset_kind: PresetKind; hero_count: number };
   preset_deleted: { preset_kind: PresetKind };
   preset_managed: {

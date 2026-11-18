@@ -29,7 +29,7 @@ export default function PresetSheet({ open, onClose }: PresetSheetProps) {
     // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- a click on the backdrop closes the sheet; the keyboard has Escape and the Close button
     <dialog
       ref={dialogRef}
-      className={`${ui.page} ${sheet.sheet}`}
+      className={`${ui.page} ${sheet.sheet} ${sheet.wide}`}
       aria-labelledby={titleId}
       // The picker's shortcuts change the pool and apply presets, which is
       // not what a key pressed in here is for.

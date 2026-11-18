@@ -1,68 +1,21 @@
 .pool {
   min-width: 0;
-  max-width: 76rem;
-  padding: 1.5rem 2rem 4rem;
+  max-width: 80rem;
+  padding: 1.5rem 2rem;
   container: pool / inline-size;
 }
 
-/* The title, the preset beside it, the tools at the far edge, and the
-   summary under all three. The preset's cell is as wide as the preset
-   control can get, with its save and revert buttons and a long name, so
-   which layout applies depends on the width alone: a change to the
-   selection never makes the row wrap. */
+/* One row where there is room: the title, the summary beside it, and the
+   tools at the far edge. The preset has a row of its own below, so nothing
+   here changes size when the selection does. The summary's cell takes the
+   room that is left, so a longer sentence in it never moves the tools. */
 .head {
   display: grid;
-  grid-template-areas:
-    "heading preset tools"
-    "summary summary summary";
-  grid-template-columns: auto minmax(28.5rem, 1fr) auto;
+  grid-template-areas: "heading summary tools";
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.2rem 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.preset {
-  grid-area: preset;
-}
-
-.tools {
-  display: flex;
-  grid-area: tools;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-/* Not room for all three in a row: the buttons go under the summary. */
-@container pool (max-width: 61rem) {
-  .head {
-    grid-template-areas:
-      "heading heading"
-      "summary summary"
-      "preset tools";
-    grid-template-columns: minmax(28.5rem, 1fr) auto;
-  }
-
-  .preset,
-  .tools {
-    margin-top: 0.5rem;
-  }
-}
-
-/* Not even for the preset and the tools: one row each. */
-@container pool (max-width: 48rem) {
-  .head {
-    grid-template-areas:
-      "heading"
-      "summary"
-      "preset"
-      "tools";
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .tools {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
+  gap: 0.2rem 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .heading {
@@ -80,8 +33,17 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0 1rem;
-  margin-top: 0.2rem;
+  /* The display face sits high in its line, so text set beside it is nudged
+     down to share its baseline. */
+  padding-top: 0.2rem;
   color: var(--hp-muted);
+}
+
+.tools {
+  display: flex;
+  grid-area: tools;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .tools :global(.share-fallback-input) {
@@ -90,24 +52,35 @@
   margin: 0;
 }
 
-/* Naming a new preset happens in the line of links, at their height. */
-.summary :global(.preset-name-edit) {
-  min-height: 2.25rem;
+/* Not room for all three in a row: the summary goes under the title. */
+@container pool (max-width: 62rem) {
+  .head {
+    grid-template-areas:
+      "heading tools"
+      "summary summary";
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .summary {
+    padding-top: 0;
+  }
 }
 
-.summary :global(.preset-name-field) {
-  width: 11rem;
-  height: 2rem;
-  border-color: var(--hp-orange);
-  background: var(--hp-rail);
-  font-size: 1.05rem;
-}
+/* Not even for the title and the tools: one row each. */
+@container pool (max-width: 36rem) {
+  .head {
+    grid-template-areas:
+      "heading"
+      "summary"
+      "tools";
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-.summary :global(.preset-name-action) {
-  width: 2rem;
-  height: 2rem;
-  border-color: var(--hp-line);
-  background: var(--hp-rail);
+  .tools {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
 }
 
 @media (max-width: 63.99rem) {

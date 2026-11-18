@@ -22,6 +22,11 @@ dialog.sheet {
   overscroll-behavior: contain;
 }
 
+/* For a sheet whose rows hold more than a form's worth across. */
+dialog.wide {
+  width: min(41rem, 100vw);
+}
+
 .sheet[open] {
   animation: slideIn 0.2s ease-out;
 }

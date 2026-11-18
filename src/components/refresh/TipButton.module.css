@@ -3,15 +3,17 @@
   display: inline-flex;
 }
 
+/* Put away, the tip is a dot under its button. Hidden at its full size it
+   would still count towards how wide the page is, and one under a button at
+   the right edge would give the page a sideways scroll. */
 .tip {
   position: absolute;
   top: calc(100% + 0.4rem);
-  left: 50%;
+  left: 0;
   z-index: 40;
-  width: max-content;
-  max-width: min(20rem, calc(100vw - 2rem));
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--hp-line);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
   border-radius: var(--hp-radius);
   background: var(--hp-nav);
   box-shadow: 0 0.5rem 1.25rem rgb(0 0 0 / 0.4);
@@ -24,18 +26,22 @@
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transform: translate(-50%, -2px);
-  transition:
-    opacity 0.12s ease,
-    transform 0.12s ease,
-    visibility 0s linear 0.12s;
 }
 
+/* Shown: centred under the button, then moved by --tip-shift, which the
+   button sets to whatever keeps the tip inside the window. Its size is set
+   here rather than above so that it only takes up room while it is seen. */
 .anchor:has(:focus-visible) .tip {
+  left: 50%;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+  height: auto;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--hp-line);
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0);
-  transition-delay: 0s;
+  transform: translateX(calc(-50% + var(--tip-shift, 0px)));
+  animation: appear 0.12s ease;
 }
 
 /* Only where there is a pointer to hover with: a tap would otherwise leave
@@ -43,10 +49,23 @@
    row does not flash every tip on the way. */
 @media (hover: hover) {
   .anchor:hover .tip {
+    left: 50%;
+    width: max-content;
+    max-width: min(20rem, calc(100vw - 2rem));
+    height: auto;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--hp-line);
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, 0);
-    transition-delay: 0.35s;
+    transform: translateX(calc(-50% + var(--tip-shift, 0px)));
+    animation: appear 0.12s ease 0.35s backwards;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 -2px;
   }
 }
 
@@ -57,7 +76,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tip {
-    transition: none;
+  .anchor .tip {
+    animation-duration: 0s;
   }
 }

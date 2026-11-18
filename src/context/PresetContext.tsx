@@ -31,6 +31,11 @@ interface PresetContextValue {
   ) => void;
   /** Saves the current filters as a new preset and applies it. */
   savePreset: (name: string) => void;
+  /**
+   * Adds a preset with nobody in it, to be filled in from the manager, and
+   * returns its id. It is not applied: the selection is left as it is.
+   */
+  createPreset: (name: string) => string;
   /** Points an existing preset at the current filters. */
   updatePreset: (id: string) => void;
   renamePreset: (id: string, name: string) => void;
@@ -138,10 +143,25 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       };
       setPresets((current) => [...current, preset]);
       setAppliedId(preset.id);
-      track("preset_created", { hero_count: selectedKeys.length });
+      track("preset_created", {
+        hero_count: selectedKeys.length,
+        source: "selection",
+      });
     },
     [selectedKeys],
   );
+
+  const createPreset = useCallback((name: string) => {
+    const preset: SavedPreset = {
+      id: newId(),
+      name: name.trim() || "Untitled preset",
+      heroes: [],
+    };
+    // At the end, like a saved one, so no preset's number key changes.
+    setPresets((current) => [...current, preset]);
+    track("preset_created", { hero_count: 0, source: "blank" });
+    return preset.id;
+  }, []);
 
   const updatePreset = useCallback(
     (id: string) => {
@@ -269,6 +289,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       isHydrated,
       applyPreset,
       savePreset,
+      createPreset,
       updatePreset,
       renamePreset,
       duplicatePreset,
@@ -287,6 +308,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       isHydrated,
       applyPreset,
       savePreset,
+      createPreset,
       updatePreset,
       renamePreset,
       duplicatePreset,
