@@ -81,6 +81,13 @@
     justify-content: flex-start;
     margin-top: 0.5rem;
   }
+
+  /* The count on a line of its own and the links on the next, whichever
+     links there are. Sharing a line, "Select all" turning up would push
+     "Clear selection" onto a second one, and the roster down with it. */
+  .summary > [role="status"] {
+    flex-basis: 100%;
+  }
 }
 
 @media (max-width: 63.99rem) {

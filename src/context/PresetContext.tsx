@@ -14,6 +14,7 @@ import {
   DEFAULT_PRESET_ID_PREFIX,
   buildDefaultPresets,
 } from "@/lib/presets/defaults";
+import { insertAfter } from "@/lib/presets/order";
 import { loadPresets, savePresets } from "@/lib/presets/storage";
 import { SavedPreset } from "@/lib/presets/types";
 
@@ -41,8 +42,15 @@ interface PresetContextValue {
   renamePreset: (id: string, name: string) => void;
   duplicatePreset: (id: string) => void;
   deletePreset: (id: string) => void;
-  /** Puts a deleted preset back at `index`, which is how a delete is undone. */
-  insertPreset: (preset: SavedPreset, index: number, applied: boolean) => void;
+  /**
+   * Puts a deleted preset back below `afterId` (the top for null), which is
+   * how a delete is undone. It replaces a restored built-in of the same id.
+   */
+  insertPreset: (
+    preset: SavedPreset,
+    afterId: string | null,
+    applied: boolean,
+  ) => void;
   /**
    * Changes which heroes a preset holds, without going through the pool. A
    * pool that still matches the applied preset follows it.
@@ -216,15 +224,8 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
   );
 
   const insertPreset = useCallback(
-    (preset: SavedPreset, index: number, applied: boolean) => {
-      setPresets((current) => {
-        if (current.some((existing) => existing.id === preset.id)) {
-          return current;
-        }
-        const next = [...current];
-        next.splice(Math.min(Math.max(index, 0), next.length), 0, preset);
-        return next;
-      });
+    (preset: SavedPreset, afterId: string | null, applied: boolean) => {
+      setPresets((current) => insertAfter(current, preset, afterId));
       if (applied) setAppliedId(preset.id);
       track("preset_managed", { action: "delete_undone" });
     },

@@ -245,6 +245,19 @@ function PresetRow({
     shareType: "preset",
     shareSource: "manage_page",
   });
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Each of these links goes away once it has done its job, as "Add
+  // everyone" does when everyone is in. Focus moves to the link that undoes
+  // it, which is always there afterwards, rather than falling to the page.
+  const bulk = (keys: Set<string>, then: "add" | "clear") => {
+    onSetHeroes(keys);
+    requestAnimationFrame(() =>
+      panelRef.current
+        ?.querySelector<HTMLElement>(`[data-bulk="${then}"]`)
+        ?.focus(),
+    );
+  };
 
   const shortcut = shortcutForIndex(index);
   const count = preset.heroes.length;
@@ -422,7 +435,7 @@ function PresetRow({
       </div>
 
       {open && (
-        <div id={panelId} className={styles.panel}>
+        <div id={panelId} ref={panelRef} className={styles.panel}>
           <div className={styles.panelHead}>
             <span>
               {count === 0
@@ -436,8 +449,9 @@ function PresetRow({
               <button
                 type="button"
                 className={ui.link}
+                data-bulk="add"
                 onClick={() =>
-                  onSetHeroes(new Set(ALL_HEROES.map((hero) => hero.key)))
+                  bulk(new Set(ALL_HEROES.map((hero) => hero.key)), "clear")
                 }
               >
                 Add everyone
@@ -447,7 +461,7 @@ function PresetRow({
               <button
                 type="button"
                 className={ui.link}
-                onClick={() => onSetHeroes(new Set(selectedKeys))}
+                onClick={() => bulk(new Set(selectedKeys), "clear")}
               >
                 Copy the picker&rsquo;s selection (
                 {heroCount(selectedKeys.length)})
@@ -457,7 +471,8 @@ function PresetRow({
               <button
                 type="button"
                 className={ui.link}
-                onClick={() => onSetHeroes(new Set())}
+                data-bulk="clear"
+                onClick={() => bulk(new Set(), "add")}
               >
                 Clear the preset
               </button>
@@ -696,13 +711,10 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
 
   const undoDelete = () => {
     if (!deleted) return;
-    const anchor = deleted.afterId
-      ? presets.findIndex((preset) => preset.id === deleted.afterId)
-      : -1;
     focusNext.current = { id: deleted.preset.id, control: "edit" };
     insertPreset(
       deleted.preset,
-      anchor + 1,
+      deleted.afterId,
       // Not if another preset was applied in the meantime.
       deleted.wasApplied && appliedId === null,
     );

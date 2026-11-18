@@ -474,6 +474,18 @@
     padding: 0 0.35rem;
   }
 
+  /* The tray can end up anywhere in a short row, so the names behind it
+     hang from the row instead, as wide as it is, and stay on the page. */
+  .tray {
+    position: static;
+  }
+
+  .changes {
+    right: 0;
+    left: 0;
+    width: auto;
+  }
+
   .name {
     max-width: 8rem;
   }

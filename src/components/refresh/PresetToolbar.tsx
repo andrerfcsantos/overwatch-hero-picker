@@ -5,6 +5,7 @@ import {
   useEffect,
   useEffectEvent,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -56,7 +57,23 @@ export default function PresetToolbar() {
   const pickerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const saveNewRef = useRef<HTMLButtonElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  // The control in the row that last had focus, while it still might.
+  const lastFocused = useRef<HTMLElement | null>(null);
   const panelId = useId();
+
+  // Most of the row's buttons are there only while the selection differs
+  // from the preset, and the selection can change from anywhere: a number
+  // key applies a preset with focus still on the "Revert" it just made
+  // pointless. Focus that went away with its control lands on the name,
+  // which shows what happened, instead of on the page.
+  useLayoutEffect(() => {
+    const last = lastFocused.current;
+    if (!last || last.isConnected) return;
+    lastFocused.current = null;
+    const active = document.activeElement;
+    if (!active || active === document.body) buttonRef.current?.focus();
+  });
 
   // A link that names the manager opens it, so a copied address brings
   // whoever follows it to the same place.
@@ -126,7 +143,22 @@ export default function PresetToolbar() {
 
   return (
     <div className={styles.dock}>
-      <div className={styles.bar} data-changed={changed || undefined}>
+      <div
+        ref={barRef}
+        className={styles.bar}
+        data-changed={changed || undefined}
+        onFocus={(event) => {
+          lastFocused.current = event.target;
+        }}
+        onBlur={(event) => {
+          // Only focus that went somewhere else is let go. Focus that went
+          // nowhere may be a control that was just taken out of the page.
+          const next = event.relatedTarget;
+          if (next && !barRef.current?.contains(next)) {
+            lastFocused.current = null;
+          }
+        }}
+      >
         <div
           className={`${styles.picker} ${applied ? styles.split : ""}`}
           ref={pickerRef}
@@ -349,7 +381,9 @@ function heroCount(count: number): string {
 
 /**
  * Closes a small popover the way popovers are expected to close: a click
- * anywhere outside it, or Escape, which hands focus back to its button.
+ * anywhere outside it, focus moving out of it, or Escape, which hands focus
+ * back to its button. Moving focus out closes it so that two popovers in the
+ * row are never open at once, each waiting on the same Escape.
  */
 function useDismiss(
   open: boolean,
@@ -366,6 +400,10 @@ function useDismiss(
       if (!within.current?.contains(event.target as Node)) onClose();
     }
 
+    function handleFocusIn(event: FocusEvent) {
+      if (!within.current?.contains(event.target as Node)) onClose();
+    }
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
       onClose();
@@ -373,9 +411,11 @@ function useDismiss(
     }
 
     document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("focusin", handleFocusIn);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("focusin", handleFocusIn);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open, within, button]);
