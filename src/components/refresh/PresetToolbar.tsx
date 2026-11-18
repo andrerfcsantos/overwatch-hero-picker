@@ -52,7 +52,9 @@ export default function PresetToolbar() {
   } = usePresets();
   const [open, setOpen] = useState(false);
   const [managing, setManaging] = useState(false);
-  const [naming, setNaming] = useState(false);
+  // The preset (or null for none) a new preset is being named from, while
+  // one is.
+  const [naming, setNaming] = useState<{ from: string | null } | null>(null);
   const [announcement, setAnnouncement] = useState({ text: "", n: 0 });
   const pickerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -93,9 +95,11 @@ export default function PresetToolbar() {
   // moved away from it, when it saves those changes as a preset of their own.
   const canSaveNew = !applied || isDirty;
 
-  // The name field belongs to the offer, and goes when the offer does: a
-  // preset applied from the keyboard must not leave it waiting for later.
-  if (naming && !canSaveNew) setNaming(false);
+  // The name field stays while its heroes change, even back to the preset
+  // they came from: the visitor is still choosing them, and what they typed
+  // is kept. It goes when a different preset is applied, from the keyboard
+  // say, because the name it offered was for the old one.
+  if (naming && naming.from !== appliedId) setNaming(null);
 
   if (!isHydrated) return <div className={styles.dock} />;
 
@@ -250,7 +254,7 @@ export default function PresetToolbar() {
                     className={`${ui.link} ${styles.footSaveNew}`}
                     onClick={() => {
                       setOpen(false);
-                      setNaming(true);
+                      setNaming({ from: appliedId });
                     }}
                   >
                     Save as new preset
@@ -292,7 +296,7 @@ export default function PresetToolbar() {
           </div>
         )}
 
-        {canSaveNew &&
+        {(naming || canSaveNew) &&
           (naming ? (
             <NewPresetForm
               initialName={
@@ -300,11 +304,11 @@ export default function PresetToolbar() {
               }
               onSave={(name) => {
                 savePreset(name);
-                setNaming(false);
+                setNaming(null);
                 settle(`Saved as ${name}, and applied.`);
               }}
               onCancel={() => {
-                setNaming(false);
+                setNaming(null);
                 // Back to the button that opened the field, once it is back,
                 // or to the name where the offer was made from its list.
                 requestAnimationFrame(() => {
@@ -325,7 +329,7 @@ export default function PresetToolbar() {
                   ? `Keep ${applied.name} as it is, and save these heroes under a new name`
                   : "Save these heroes under a name, to select them again in one click"
               }
-              onClick={() => setNaming(true)}
+              onClick={() => setNaming({ from: appliedId })}
             >
               <PlusIcon />
               <span className={applied ? styles.text : undefined}>
@@ -514,19 +518,25 @@ function ChangesTray({ presetName, changes, heroName }: ChangesTrayProps) {
       </TipButton>
 
       {open && (
-        <section
-          id={panelId}
-          className={`${styles.panel} ${styles.changes}`}
-          aria-labelledby={`${panelId}-title`}
-        >
+        <div id={panelId} className={`${styles.panel} ${styles.changes}`}>
           <h3 id={`${panelId}-title`} className={styles.changesTitle}>
             Changed since you applied {presetName}
           </h3>
-          <dl className={styles.changeList}>
-            {list(added, "Added")}
-            {list(removed, "Removed", true)}
-          </dl>
-        </section>
+          {/* A stop of its own for the keyboard, since it scrolls once
+              many heroes have changed and not every browser lets the
+              keyboard scroll a box that has nothing in it to focus. */}
+          <section
+            className={styles.changeScroll}
+            aria-labelledby={`${panelId}-title`}
+            // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrolling region needs a tab stop to be scrolled from the keyboard
+            tabIndex={0}
+          >
+            <dl className={styles.changeList}>
+              {list(added, "Added")}
+              {list(removed, "Removed", true)}
+            </dl>
+          </section>
+        </div>
       )}
     </div>
   );

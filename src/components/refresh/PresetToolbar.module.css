@@ -359,18 +359,24 @@
   padding: 0.6rem 0.75rem 0.7rem;
 }
 
+/* A name can be one long word, so it may break anywhere. */
 .changesTitle {
+  overflow-wrap: anywhere;
   margin: 0 0 0.5rem;
   font-size: 1rem;
   font-weight: 600;
 }
 
+.changeScroll {
+  max-height: min(20rem, 50vh);
+  overflow-y: auto;
+  border-radius: 0.25rem;
+}
+
 .changeList {
   display: grid;
   gap: 0.5rem;
-  max-height: min(20rem, 50vh);
   margin: 0;
-  overflow-y: auto;
 }
 
 .changeRow {

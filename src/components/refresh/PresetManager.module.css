@@ -371,8 +371,10 @@
   margin-top: 1rem;
 }
 
-/* Where a deleted preset was, with the way to get it back. */
+/* Where a deleted preset was, with the way to get it back. A name can be
+   one long word, so it may break anywhere. */
 .gone {
+  overflow-wrap: anywhere;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

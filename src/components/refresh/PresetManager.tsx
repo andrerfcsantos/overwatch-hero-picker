@@ -131,7 +131,16 @@ interface PresetNameProps {
  */
 function PresetName({ preset, position, onRename }: PresetNameProps) {
   const [draft, setDraft] = useState(preset.name);
+  const [saved, setSaved] = useState(preset.name);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // A name changed from outside the field, as an undo does, replaces what
+  // the field shows. Otherwise leaving the field would save the old name
+  // back over it.
+  if (preset.name !== saved) {
+    setSaved(preset.name);
+    setDraft(preset.name);
+  }
 
   const commit = () => {
     const name = draft.trim();
@@ -590,8 +599,9 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
 
   const missingDefaults = useMemo(() => {
     const present = new Set(presets.map((preset) => preset.id));
-    return buildDefaultPresets().filter((preset) => !present.has(preset.id))
-      .length;
+    return buildDefaultPresets()
+      .filter((preset) => !present.has(preset.id))
+      .map((preset) => preset.id);
   }, [presets]);
 
   const selectedKeys = useMemo(
@@ -722,6 +732,35 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     setDeleted(null);
   };
 
+  // A built-in deleted just now comes back the way it was when it was
+  // deleted, in its place, as "Undo" would bring it: restoring it as stock
+  // instead would throw away what the visitor had made of it, and leave an
+  // "Undo" that has nothing left to undo. Any others come back as stock, at
+  // the end of the list.
+  const restoreBuiltIns = () => {
+    const undone =
+      deleted && missingDefaults.includes(deleted.preset.id) ? deleted : null;
+    const stock = missingDefaults.filter((id) => id !== undone?.preset.id);
+    if (undone) undoDelete();
+    restoreDefaults();
+    // The button goes once nothing is left to restore, so focus goes to a
+    // preset it brought back.
+    if (!undone && stock.length > 0) {
+      focusNext.current = { id: stock[0], control: "edit" };
+    }
+    const atEnd =
+      stock.length === 0
+        ? ""
+        : stock.length === 1
+          ? "1 built-in preset is back, at the end of the list."
+          : `${stock.length} built-in presets are back, at the end of the list.`;
+    setStatus(
+      [undone && `${undone.preset.name} is back.`, atEnd]
+        .filter(Boolean)
+        .join(" "),
+    );
+  };
+
   const setHeroes = (preset: SavedPreset, keys: Set<string>) => {
     if (!edited.current.has(preset.id)) {
       edited.current.add(preset.id);
@@ -811,23 +850,12 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
         })}
       </ol>
 
-      {missingDefaults > 0 && (
+      {missingDefaults.length > 0 && (
         <div className={styles.tools}>
-          <button
-            type="button"
-            className={ui.link}
-            onClick={() => {
-              restoreDefaults();
-              setStatus(
-                missingDefaults === 1
-                  ? "The built-in preset is back, at the end of the list."
-                  : `${missingDefaults} built-in presets are back, at the end of the list.`,
-              );
-            }}
-          >
-            {missingDefaults === 1
+          <button type="button" className={ui.link} onClick={restoreBuiltIns}>
+            {missingDefaults.length === 1
               ? "Restore the built-in preset you deleted"
-              : `Restore the ${missingDefaults} built-in presets you deleted`}
+              : `Restore the ${missingDefaults.length} built-in presets you deleted`}
           </button>
         </div>
       )}

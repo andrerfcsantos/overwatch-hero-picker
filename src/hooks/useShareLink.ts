@@ -18,7 +18,9 @@ const COPIED_MS = 1800;
 /**
  * Copying a share link, for any control that offers one. `copied` is true for
  * a moment after a copy, and `fallbackUrl` holds the link when the clipboard
- * refused it, to be shown so it can still be copied by hand.
+ * refused it, to be shown so it can still be copied by hand. It is built
+ * again on every render, so a link left showing follows what it links to
+ * rather than keeping the state it was asked for in.
  */
 export function useShareLink({
   buildUrl,
@@ -26,7 +28,7 @@ export function useShareLink({
   shareSource,
 }: ShareLinkOptions) {
   const [copied, setCopied] = useState(false);
-  const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
+  const [refused, setRefused] = useState(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(
@@ -41,7 +43,7 @@ export function useShareLink({
     const url = buildUrl();
     try {
       await navigator.clipboard.writeText(url);
-      setFallbackUrl(null);
+      setRefused(false);
       setCopied(true);
       track("share_link_copied", {
         share_type: shareType,
@@ -54,7 +56,7 @@ export function useShareLink({
     } catch {
       // The clipboard API needs a secure context and permission. Show the link
       // so it can still be copied by hand.
-      setFallbackUrl(url);
+      setRefused(true);
       track("share_link_copied", {
         share_type: shareType,
         source: shareSource,
@@ -64,5 +66,5 @@ export function useShareLink({
     }
   }, [buildUrl, shareType, shareSource]);
 
-  return { copied, fallbackUrl, copy };
+  return { copied, fallbackUrl: refused ? buildUrl() : null, copy };
 }

@@ -189,7 +189,7 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
             </h2>
             <p className={styles.summary}>
               {shared.everyHero
-                ? `Every hero was selected, all ${pool.length} of them.`
+                ? `It could have been any hero, all ${pool.length} of them.`
                 : `${pool.length} ${pool.length === 1 ? "hero was" : "heroes were"} selected.`}
               {picker.nonRepeating
                 ? " Rolling again never gives the same hero twice in a row."

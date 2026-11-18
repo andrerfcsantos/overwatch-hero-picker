@@ -23,6 +23,8 @@
   line-height: 1.25;
   text-align: center;
   white-space: normal;
+  /* A tip can name a preset, and a name can be one long word. */
+  overflow-wrap: anywhere;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
