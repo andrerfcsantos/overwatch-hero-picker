@@ -95,6 +95,29 @@ export default function PresetToolbar() {
   // moved away from it, when it saves those changes as a preset of their own.
   const canSaveNew = !applied || isDirty;
 
+  // A click on a hero can make the selection differ from the preset, or
+  // match it again, and bring the buttons for that with it. That is said
+  // out loud, as the dot and the buttons show it, except where a button
+  // here did it and has said so already.
+  const lastState = useRef({ id: appliedId, changed });
+  const announced = useRef(false);
+  useEffect(() => {
+    const last = lastState.current;
+    lastState.current = { id: appliedId, changed };
+    if (announced.current) {
+      announced.current = false;
+      return;
+    }
+    if (!applied || last.id !== appliedId || last.changed === changed) return;
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- says what a change made elsewhere on the page did to the preset
+    setAnnouncement((previous) => ({
+      text: changed
+        ? `The selection now differs from ${applied.name}. Save changes and Revert are in the preset row.`
+        : `The selection matches ${applied.name} again.`,
+      n: previous.n + 1,
+    }));
+  }, [applied, appliedId, changed]);
+
   // The name field stays while its heroes change, even back to the preset
   // they came from: the visitor is still choosing them, and what they typed
   // is kept. It goes when a different preset is applied, from the keyboard
@@ -123,12 +146,14 @@ export default function PresetToolbar() {
 
   const save = () => {
     if (!applied) return;
+    announced.current = true;
     updatePreset(applied.id);
     settle(`Saved changes to ${applied.name}.`);
   };
 
   const undo = () => {
     if (!applied) return;
+    announced.current = true;
     revert();
     settle(`Reverted to ${applied.name}.`);
   };

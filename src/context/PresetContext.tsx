@@ -18,6 +18,14 @@ import { insertAfter } from "@/lib/presets/order";
 import { loadPresets, savePresets } from "@/lib/presets/storage";
 import { SavedPreset } from "@/lib/presets/types";
 
+/** The last preset deleted, with what it takes to put it back. */
+export interface DeletedPreset {
+  preset: SavedPreset;
+  /** The preset it sat below, or null for the top of the list. */
+  afterId: string | null;
+  wasApplied: boolean;
+}
+
 interface PresetContextValue {
   presets: SavedPreset[];
   /** The preset the current filters came from, if any. */
@@ -43,14 +51,13 @@ interface PresetContextValue {
   duplicatePreset: (id: string) => void;
   deletePreset: (id: string) => void;
   /**
-   * Puts a deleted preset back below `afterId` (the top for null), which is
-   * how a delete is undone. It replaces a restored built-in of the same id.
+   * The last preset deleted, until it is put back or another is deleted.
+   * It is kept here rather than by whatever deleted it, so the way to undo
+   * a delete outlasts the sheet it was made in being closed.
    */
-  insertPreset: (
-    preset: SavedPreset,
-    afterId: string | null,
-    applied: boolean,
-  ) => void;
+  lastDeleted: DeletedPreset | null;
+  /** Puts the last preset deleted back where it was. */
+  undoDelete: () => void;
   /**
    * Changes which heroes a preset holds, without going through the pool. A
    * pool that still matches the applied preset follows it.
@@ -100,6 +107,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
   const [presets, setPresets] = useState<SavedPreset[]>([]);
   const [appliedId, setAppliedId] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [lastDeleted, setLastDeleted] = useState<DeletedPreset | null>(null);
 
   const selectedKeys = useMemo(
     () => getSelected().map((hero) => hero.key),
@@ -216,21 +224,29 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
 
   const deletePreset = useCallback(
     (id: string) => {
+      const index = presets.findIndex((preset) => preset.id === id);
+      if (index < 0) return;
+      setLastDeleted({
+        preset: presets[index],
+        afterId: index > 0 ? presets[index - 1].id : null,
+        wasApplied: id === appliedId,
+      });
       setPresets((current) => current.filter((preset) => preset.id !== id));
       if (id === appliedId) setAppliedId(null);
       track("preset_deleted", { preset_kind: presetKind(id) });
     },
-    [appliedId],
+    [appliedId, presets],
   );
 
-  const insertPreset = useCallback(
-    (preset: SavedPreset, afterId: string | null, applied: boolean) => {
-      setPresets((current) => insertAfter(current, preset, afterId));
-      if (applied) setAppliedId(preset.id);
-      track("preset_managed", { action: "delete_undone" });
-    },
-    [],
-  );
+  const undoDelete = useCallback(() => {
+    if (!lastDeleted) return;
+    const { preset, afterId, wasApplied } = lastDeleted;
+    setPresets((current) => insertAfter(current, preset, afterId));
+    // Not if another preset was applied in the meantime.
+    if (wasApplied && appliedId === null) setAppliedId(preset.id);
+    setLastDeleted(null);
+    track("preset_managed", { action: "delete_undone" });
+  }, [lastDeleted, appliedId]);
 
   const setPresetHeroes = useCallback(
     (id: string, heroes: string[]) => {
@@ -273,6 +289,11 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
 
   const restoreDefaults = useCallback(() => {
     track("preset_managed", { action: "restored_defaults" });
+    // A built-in that comes back as stock takes the place of the one deleted,
+    // so that one can no longer be put back over it, edits and all.
+    setLastDeleted((last) =>
+      last?.preset.id.startsWith(DEFAULT_PRESET_ID_PREFIX) ? null : last,
+    );
     setPresets((current) => {
       const present = new Set(current.map((preset) => preset.id));
       const missing = buildDefaultPresets().filter(
@@ -295,7 +316,8 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       renamePreset,
       duplicatePreset,
       deletePreset,
-      insertPreset,
+      lastDeleted,
+      undoDelete,
       setPresetHeroes,
       movePreset,
       revert,
@@ -314,7 +336,8 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       renamePreset,
       duplicatePreset,
       deletePreset,
-      insertPreset,
+      lastDeleted,
+      undoDelete,
       setPresetHeroes,
       movePreset,
       revert,

@@ -539,13 +539,6 @@ function IconAction({
   );
 }
 
-interface Deleted {
-  preset: SavedPreset;
-  /** The preset it sat below, or null for the top of the list. */
-  afterId: string | null;
-  wasApplied: boolean;
-}
-
 interface PresetManagerProps {
   /** Runs after a preset is applied, to go and look at the pool it set. */
   onApplied?: () => void;
@@ -571,18 +564,21 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     renamePreset,
     duplicatePreset,
     deletePreset,
-    insertPreset,
+    lastDeleted: deleted,
+    undoDelete: undoDeleted,
     setPresetHeroes,
     movePreset,
     restoreDefaults,
   } = usePresets();
 
   const [openId, setOpenId] = useState<string | null>(null);
-  const [deleted, setDeleted] = useState<Deleted | null>(null);
   const [status, setStatus] = useState("");
 
   const rows = useRef(new Map<string, HTMLLIElement>());
   const undoRef = useRef<HTMLButtonElement>(null);
+  // Set by a delete made here, so the way to undo it takes focus. A delete
+  // left over from before the sheet was last closed does not take it.
+  const focusUndo = useRef(false);
   // Where focus goes once the list has caught up with what was asked of it.
   // NEWEST stands for a preset that is about to exist and has no id yet.
   const focusNext = useRef<{
@@ -668,7 +664,9 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
 
   // The row that held focus is gone; the way to bring it back takes over.
   useEffect(() => {
-    if (deleted) undoRef.current?.focus();
+    if (!deleted || !focusUndo.current) return;
+    focusUndo.current = false;
+    undoRef.current?.focus();
   }, [deleted]);
 
   if (!isHydrated) return null;
@@ -708,12 +706,8 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
     setStatus(`${preset.name} duplicated. Name the copy.`);
   };
 
-  const remove = (preset: SavedPreset, index: number) => {
-    setDeleted({
-      preset,
-      afterId: index > 0 ? presets[index - 1].id : null,
-      wasApplied: preset.id === appliedId,
-    });
+  const remove = (preset: SavedPreset) => {
+    focusUndo.current = true;
     if (openId === preset.id) setOpenId(null);
     deletePreset(preset.id);
     setStatus(`${preset.name} deleted.`);
@@ -722,14 +716,8 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
   const undoDelete = () => {
     if (!deleted) return;
     focusNext.current = { id: deleted.preset.id, control: "edit" };
-    insertPreset(
-      deleted.preset,
-      deleted.afterId,
-      // Not if another preset was applied in the meantime.
-      deleted.wasApplied && appliedId === null,
-    );
+    undoDeleted();
     setStatus(`${deleted.preset.name} is back.`);
-    setDeleted(null);
   };
 
   // A built-in deleted just now comes back the way it was when it was
@@ -840,7 +828,7 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
               onApply={() => apply(preset)}
               onToggleOpen={() => toggleOpen(preset)}
               onDuplicate={() => duplicate(preset)}
-              onDelete={() => remove(preset, index)}
+              onDelete={() => remove(preset)}
               onSetHeroes={(keys) => setHeroes(preset, keys)}
               announce={setStatus}
             />

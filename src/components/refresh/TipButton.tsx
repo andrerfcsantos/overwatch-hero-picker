@@ -37,16 +37,21 @@ export default function TipButton({
   const tipRef = useRef<HTMLSpanElement>(null);
   const [dismissed, setDismissed] = useState(false);
 
-  // Runs as the tip is about to show, when it already has its size: a tip
-  // that would cross an edge of the window is moved back inside it.
+  // A tip that would cross an edge of the window is moved back inside it.
+  // Measured on the next frame, once the tip has its size: focus can arrive
+  // while what the button opened still covers the tip, as it does when
+  // Escape closes a popover and hands focus back to its button.
   const place = () => {
-    const node = tipRef.current;
-    if (!node) return;
-    node.style.setProperty("--tip-shift", "0px");
-    const { left, right } = node.getBoundingClientRect();
-    const max = document.documentElement.clientWidth - EDGE;
-    const shift = right > max ? max - right : left < EDGE ? EDGE - left : 0;
-    node.style.setProperty("--tip-shift", `${Math.round(shift)}px`);
+    requestAnimationFrame(() => {
+      const node = tipRef.current;
+      if (!node) return;
+      node.style.setProperty("--tip-shift", "0px");
+      const { left, right, width } = node.getBoundingClientRect();
+      if (width <= 1) return;
+      const max = document.documentElement.clientWidth - EDGE;
+      const shift = right > max ? max - right : left < EDGE ? EDGE - left : 0;
+      node.style.setProperty("--tip-shift", `${Math.round(shift)}px`);
+    });
   };
 
   return (

@@ -199,9 +199,15 @@ export default function OverlaySheet({
   const show = (via: "button" | "link") => {
     track("overlay_setup_opened", { via });
     setOpen(true);
-    dialogRef.current?.showModal();
     writePanel("overlay");
   };
+
+  // Opened once its contents are on the page, so the browser has the Close
+  // button to put focus on rather than an empty dialog.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (open && dialog && !dialog.open) dialog.showModal();
+  }, [open]);
 
   // A link that names the sheet opens it, so a copied address brings whoever
   // follows it to the same place.
@@ -229,6 +235,9 @@ export default function OverlaySheet({
         ref={dialogRef}
         className={`${ui.page} ${sheet.sheet} ph-no-capture`}
         aria-labelledby={titleId}
+        // The picker's shortcuts roll and apply presets, which is not what a
+        // key pressed in here is for.
+        data-shortcuts="off"
         onClose={() => {
           setOpen(false);
           setQrShown(false);
