@@ -18,7 +18,7 @@ import OverlayCard from "@/components/OverlayCard";
 import QrCode from "@/components/QrCode";
 import overlay from "@/components/OverlayContent.module.css";
 import sheet from "./Sheet.module.css";
-import { closeOnBackdrop } from "./sheet";
+import { backdropClose } from "./sheet";
 import ui from "./ui.module.css";
 import styles from "./OverlaySheet.module.css";
 
@@ -244,7 +244,7 @@ export default function OverlaySheet({
           setQrShown(false);
           clearPanel("overlay");
         }}
-        onClick={closeOnBackdrop}
+        {...backdropClose}
       >
         {open && (
           <div className={sheet.body}>

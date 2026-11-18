@@ -173,6 +173,9 @@ function PresetName({ preset, position, onRename }: PresetNameProps) {
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
         onKeyDown={(e) => {
+          // Keys that finish or cancel a word being composed with an input
+          // method are the method's, not the field's.
+          if (e.nativeEvent.isComposing) return;
           // Saves and stays put: blurring here would drop focus to the page.
           if (e.key === "Enter") commit();
           // Only while there is something to take back. Otherwise Escape is
@@ -618,6 +621,10 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
       tops.set(id, row.offsetTop);
       const before = lastTops.current.get(id);
       if (!moved || still || before === undefined) continue;
+      // The row about to take focus goes straight to its place, so the
+      // browser scrolls to where it ends up rather than to where it starts
+      // sliding from.
+      if (focusNext.current?.id === id) continue;
       const delta = before - row.offsetTop;
       if (delta !== 0) {
         row.animate(
@@ -656,6 +663,11 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
             block: "start",
             behavior: still ? "auto" : "smooth",
           });
+        } else {
+          // A control that kept focus through a move is not scrolled to by
+          // focusing it again, and a move past an open preset can take it
+          // far off the screen.
+          control?.scrollIntoView({ block: "nearest" });
         }
       }
     }

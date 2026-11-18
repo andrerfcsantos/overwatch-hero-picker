@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef } from "react";
 import PresetManager, { PresetIntro } from "./PresetManager";
 import sheet from "./Sheet.module.css";
-import { closeOnBackdrop } from "./sheet";
+import { backdropClose } from "./sheet";
 import ui from "./ui.module.css";
 
 interface PresetSheetProps {
@@ -36,7 +36,7 @@ export default function PresetSheet({ open, onClose }: PresetSheetProps) {
       // not what a key pressed in here is for.
       data-shortcuts="off"
       onClose={onClose}
-      onClick={closeOnBackdrop}
+      {...backdropClose}
     >
       {open && (
         <div className={sheet.body}>

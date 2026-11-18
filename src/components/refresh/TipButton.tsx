@@ -38,12 +38,24 @@ export default function TipButton({
   const [dismissed, setDismissed] = useState(false);
   const [hovered, setHovered] = useState(false);
 
+  // Escape first puts away a tip that is showing, and only that: the sheet
+  // the button is in stays open until the next Escape. One that is not
+  // showing lets Escape do whatever else it does.
+  const dismiss = (event: { preventDefault: () => void }) => {
+    const node = tipRef.current;
+    const style = node && getComputedStyle(node);
+    if (style && style.visibility === "visible" && style.display !== "none") {
+      event.preventDefault();
+    }
+    setDismissed(true);
+  };
+
   // A tip shown by the pointer is put away by Escape wherever focus is, so
   // it can be got out of the way without moving the pointer.
   useEffect(() => {
     if (!hovered || !tip) return;
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setDismissed(true);
+      if (event.key === "Escape") dismiss(event);
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -95,7 +107,7 @@ export default function TipButton({
         {...props}
         aria-describedby={tip && !tipIsName ? id : undefined}
         onKeyDown={(event) => {
-          if (event.key === "Escape") setDismissed(true);
+          if (event.key === "Escape") dismiss(event);
           onKeyDown?.(event);
         }}
       />

@@ -610,7 +610,8 @@ function NewPresetForm({ initialName, onSave, onCancel }: NewPresetFormProps) {
         maxLength={60}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={(event) => {
-          if (event.key !== "Escape") return;
+          // An input method's own Escape cancels the word being composed.
+          if (event.key !== "Escape" || event.nativeEvent.isComposing) return;
           // Cancels the naming and nothing else that listens for Escape.
           event.stopPropagation();
           onCancel();
