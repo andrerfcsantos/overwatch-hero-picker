@@ -28,6 +28,12 @@
     z-index: 20;
   }
 
+  /* A hero reached with Tab is scrolled clear of the stuck row and the
+     navbar above it, not left behind them. */
+  :global(html):has(.dock) {
+    scroll-padding-top: calc(var(--hp-nav-h) + 4.75rem);
+  }
+
   /* The gap kept above the stuck row, filled in, so no hero shows through
      between it and the navbar. */
   .dock::before {

@@ -53,7 +53,7 @@ export default function HeroPool({
 
   const summary =
     count === 0
-      ? "No heroes are selected, so rolls use every hero."
+      ? "None selected, so rolls use every hero."
       : count === total
         ? `All ${total} heroes are selected.`
         : `${count} of ${total} heroes are selected.`;

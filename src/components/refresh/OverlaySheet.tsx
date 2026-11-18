@@ -18,6 +18,7 @@ import OverlayCard from "@/components/OverlayCard";
 import QrCode from "@/components/QrCode";
 import overlay from "@/components/OverlayContent.module.css";
 import sheet from "./Sheet.module.css";
+import { closeOnBackdrop } from "./sheet";
 import ui from "./ui.module.css";
 import styles from "./OverlaySheet.module.css";
 
@@ -243,10 +244,7 @@ export default function OverlaySheet({
           setQrShown(false);
           clearPanel("overlay");
         }}
-        onClick={(e) => {
-          // Only the backdrop is the dialog itself; everything else is inside.
-          if (e.target === e.currentTarget) e.currentTarget.close();
-        }}
+        onClick={closeOnBackdrop}
       >
         {open && (
           <div className={sheet.body}>

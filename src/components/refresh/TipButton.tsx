@@ -75,11 +75,20 @@ export default function TipButton({
         place();
       }}
       onFocus={place}
-      onPointerLeave={() => {
+      // Put away by Escape, a tip stays away until both the pointer and
+      // focus have left the button, so neither brings it straight back.
+      onPointerLeave={(event) => {
         setHovered(false);
-        setDismissed(false);
+        if (!event.currentTarget.contains(document.activeElement)) {
+          setDismissed(false);
+        }
       }}
-      onBlur={() => setDismissed(false)}
+      onBlur={(event) => {
+        const next = event.relatedTarget;
+        if (!hovered && !(next && event.currentTarget.contains(next))) {
+          setDismissed(false);
+        }
+      }}
     >
       <button
         type="button"
