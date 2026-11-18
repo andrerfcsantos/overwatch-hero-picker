@@ -22,3 +22,28 @@ export function insertAfter(
   next.splice(anchor + 1, 0, preset);
   return next;
 }
+
+/**
+ * Puts back every built-in preset missing from `presets`. Each comes back as
+ * stock, at the end of the list, except one deleted just now (`deleted`),
+ * which comes back the way it was when it was deleted, in its place, as an
+ * undo would bring it: restoring it as stock would throw away whatever the
+ * visitor had made of it.
+ */
+export function restoreBuiltIns(
+  presets: SavedPreset[],
+  builtIns: SavedPreset[],
+  deleted: { preset: SavedPreset; afterId: string | null } | null,
+): SavedPreset[] {
+  const present = new Set(presets.map((preset) => preset.id));
+  const putBack =
+    deleted &&
+    !present.has(deleted.preset.id) &&
+    builtIns.some((preset) => preset.id === deleted.preset.id);
+  const next = putBack
+    ? insertAfter(presets, deleted.preset, deleted.afterId)
+    : presets;
+  const have = new Set(next.map((preset) => preset.id));
+  const missing = builtIns.filter((preset) => !have.has(preset.id));
+  return missing.length ? [...next, ...missing] : next;
+}

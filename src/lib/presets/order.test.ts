@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vite-plus/test";
 
-import { insertAfter } from "./order";
+import { insertAfter, restoreBuiltIns } from "./order";
 import { SavedPreset } from "./types";
 
 const preset = (id: string, name = id, heroes: string[] = []): SavedPreset => ({
@@ -51,5 +51,53 @@ describe("insertAfter", () => {
     const list = [preset("a")];
     insertAfter(list, preset("b"), "a");
     expect(ids(list)).toEqual(["a"]);
+  });
+});
+
+describe("restoreBuiltIns", () => {
+  const stock = [
+    preset("default:ranked", "Ranked", ["ana", "zarya"]),
+    preset("default:tank", "Tank", ["zarya"]),
+  ];
+
+  test("adds every missing built-in at the end, as stock", () => {
+    const list = [preset("mine")];
+    expect(restoreBuiltIns(list, stock, null)).toEqual([
+      preset("mine"),
+      ...stock,
+    ]);
+  });
+
+  test("brings a built-in deleted just now back as it was, in its place", () => {
+    // Ranked was renamed, then deleted from under "first".
+    const mine = preset("default:ranked", "My ranked", ["ana"]);
+    const list = [preset("first"), preset("second")];
+
+    const result = restoreBuiltIns(list, stock, {
+      preset: mine,
+      afterId: "first",
+    });
+
+    expect(ids(result)).toEqual([
+      "first",
+      "default:ranked",
+      "second",
+      "default:tank",
+    ]);
+    expect(result[1]).toBe(mine);
+  });
+
+  test("ignores a deleted preset that is not a built-in", () => {
+    const list = [preset("first")];
+    const result = restoreBuiltIns(list, stock, {
+      preset: preset("custom"),
+      afterId: null,
+    });
+    expect(ids(result)).toEqual(["first", "default:ranked", "default:tank"]);
+  });
+
+  test("leaves a list that has every built-in as it is", () => {
+    const list = [...stock];
+    expect(restoreBuiltIns(list, stock, null)).toBe(list);
   });
 });

@@ -452,6 +452,15 @@
     flex-wrap: wrap;
   }
 
+  /* While a new preset is named, the row is the preset and the form under
+     it, and nothing else: the buttons that come and go with the selection
+     would otherwise wrap onto a line of their own on a narrow phone, and
+     going would move the roster. Cancel brings them back. */
+  .bar:has(.naming) .pending,
+  .bar:has(.naming) .tray {
+    display: none;
+  }
+
   .label,
   .bar[data-changed] > span:has(.saveNew) {
     display: none;

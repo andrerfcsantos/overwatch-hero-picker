@@ -64,6 +64,22 @@
   }
 }
 
+/* The pointer can move from the button onto a tip it showed, to read it,
+   without the tip going: the tip is part of the button's hover, and this
+   strip bridges the gap between the two. */
+@media (hover: hover) {
+  .anchor:hover .tip {
+    pointer-events: auto;
+    overflow: visible;
+  }
+
+  .anchor:hover .tip::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem 0 100%;
+  }
+}
+
 @keyframes appear {
   from {
     opacity: 0;

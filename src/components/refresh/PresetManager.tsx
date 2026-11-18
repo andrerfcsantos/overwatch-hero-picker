@@ -721,21 +721,18 @@ export default function PresetManager({ onApplied }: PresetManagerProps) {
   };
 
   // A built-in deleted just now comes back the way it was when it was
-  // deleted, in its place, as "Undo" would bring it: restoring it as stock
-  // instead would throw away what the visitor had made of it, and leave an
-  // "Undo" that has nothing left to undo. Any others come back as stock, at
-  // the end of the list.
+  // deleted, in its place, as "Undo" would bring it; any others come back
+  // as stock, at the end of the list. That is the provider's doing, so it
+  // holds for the classic design's restore too.
   const restoreBuiltIns = () => {
     const undone =
       deleted && missingDefaults.includes(deleted.preset.id) ? deleted : null;
     const stock = missingDefaults.filter((id) => id !== undone?.preset.id);
-    if (undone) undoDelete();
     restoreDefaults();
     // The button goes once nothing is left to restore, so focus goes to a
     // preset it brought back.
-    if (!undone && stock.length > 0) {
-      focusNext.current = { id: stock[0], control: "edit" };
-    }
+    const first = undone?.preset.id ?? stock[0];
+    if (first) focusNext.current = { id: first, control: "edit" };
     const atEnd =
       stock.length === 0
         ? ""

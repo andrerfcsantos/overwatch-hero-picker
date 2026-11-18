@@ -1,6 +1,6 @@
 "use client";
 
-import { type ComponentProps, useId, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useId, useRef, useState } from "react";
 import styles from "./TipButton.module.css";
 
 interface TipButtonProps extends ComponentProps<"button"> {
@@ -36,6 +36,18 @@ export default function TipButton({
   const id = useId();
   const tipRef = useRef<HTMLSpanElement>(null);
   const [dismissed, setDismissed] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  // A tip shown by the pointer is put away by Escape wherever focus is, so
+  // it can be got out of the way without moving the pointer.
+  useEffect(() => {
+    if (!hovered || !tip) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setDismissed(true);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [hovered, tip]);
 
   // A tip that would cross an edge of the window is moved back inside it.
   // Measured on the next frame, once the tip has its size: focus can arrive
@@ -58,9 +70,15 @@ export default function TipButton({
     <span
       className={styles.anchor}
       data-dismissed={dismissed || undefined}
-      onPointerEnter={place}
+      onPointerEnter={() => {
+        setHovered(true);
+        place();
+      }}
       onFocus={place}
-      onPointerLeave={() => setDismissed(false)}
+      onPointerLeave={() => {
+        setHovered(false);
+        setDismissed(false);
+      }}
       onBlur={() => setDismissed(false)}
     >
       <button

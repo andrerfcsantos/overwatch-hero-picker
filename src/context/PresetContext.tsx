@@ -14,7 +14,7 @@ import {
   DEFAULT_PRESET_ID_PREFIX,
   buildDefaultPresets,
 } from "@/lib/presets/defaults";
-import { insertAfter } from "@/lib/presets/order";
+import { insertAfter, restoreBuiltIns } from "@/lib/presets/order";
 import { loadPresets, savePresets } from "@/lib/presets/storage";
 import { SavedPreset } from "@/lib/presets/types";
 
@@ -72,7 +72,10 @@ interface PresetContextValue {
    * someone goes back to a plain hand-picked selection.
    */
   clearApplied: () => void;
-  /** Appends any built-in preset that is no longer in the list. */
+  /**
+   * Appends any built-in preset that is no longer in the list, except the
+   * last one deleted, which goes back where it was, as it was.
+   */
   restoreDefaults: () => void;
 }
 
@@ -94,6 +97,14 @@ function builtinId(id: string): string | undefined {
   return id.startsWith(DEFAULT_PRESET_ID_PREFIX)
     ? id.slice(DEFAULT_PRESET_ID_PREFIX.length)
     : undefined;
+}
+
+/**
+ * A deleted preset that was the one applied stops being the one to apply
+ * again on undo once the visitor has chosen something else, or nothing.
+ */
+function forgetApplied(last: DeletedPreset | null): DeletedPreset | null {
+  return last?.wasApplied ? { ...last, wasApplied: false } : last;
 }
 
 function sameHeroes(a: string[], b: string[]): boolean {
@@ -140,6 +151,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       if (!preset) return;
       setSelected(preset.heroes);
       setAppliedId(id);
+      setLastDeleted(forgetApplied);
       track("preset_applied", {
         preset_kind: presetKind(id),
         builtin_id: builtinId(id),
@@ -159,6 +171,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       };
       setPresets((current) => [...current, preset]);
       setAppliedId(preset.id);
+      setLastDeleted(forgetApplied);
       track("preset_created", {
         hero_count: selectedKeys.length,
         source: "selection",
@@ -242,7 +255,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
     if (!lastDeleted) return;
     const { preset, afterId, wasApplied } = lastDeleted;
     setPresets((current) => insertAfter(current, preset, afterId));
-    // Not if another preset was applied in the meantime.
+    // Not if another preset, or none, was chosen in the meantime.
     if (wasApplied && appliedId === null) setAppliedId(preset.id);
     setLastDeleted(null);
     track("preset_managed", { action: "delete_undone" });
@@ -284,24 +297,27 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
 
   const clearApplied = useCallback(() => {
     setAppliedId(null);
+    setLastDeleted(forgetApplied);
     track("preset_managed", { action: "unselected" });
   }, []);
 
   const restoreDefaults = useCallback(() => {
     track("preset_managed", { action: "restored_defaults" });
-    // A built-in that comes back as stock takes the place of the one deleted,
-    // so that one can no longer be put back over it, edits and all.
-    setLastDeleted((last) =>
-      last?.preset.id.startsWith(DEFAULT_PRESET_ID_PREFIX) ? null : last,
+    // A built-in deleted just now comes back as it was rather than as stock,
+    // whichever design asked for the restore, and that uses up its undo.
+    const pending = lastDeleted?.preset.id.startsWith(DEFAULT_PRESET_ID_PREFIX)
+      ? lastDeleted
+      : null;
+    setPresets((current) =>
+      restoreBuiltIns(current, buildDefaultPresets(), pending),
     );
-    setPresets((current) => {
-      const present = new Set(current.map((preset) => preset.id));
-      const missing = buildDefaultPresets().filter(
-        (preset) => !present.has(preset.id),
-      );
-      return missing.length ? [...current, ...missing] : current;
-    });
-  }, []);
+    if (pending) {
+      if (pending.wasApplied && appliedId === null) {
+        setAppliedId(pending.preset.id);
+      }
+      setLastDeleted(null);
+    }
+  }, [lastDeleted, appliedId]);
 
   const value = useMemo(
     () => ({
