@@ -2,23 +2,71 @@
   min-width: 0;
   max-width: 76rem;
   padding: 1.5rem 2rem 4rem;
+  container: pool / inline-size;
 }
 
-/* One wrapping row: the title, then the tools pushed to the far edge. */
+/* The title, the preset beside it, the tools at the far edge, and the
+   summary under all three. The preset's cell is as wide as the preset
+   control can get, with its save and revert buttons and a long name, so
+   which layout applies depends on the width alone: a change to the
+   selection never makes the row wrap. */
 .head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-areas:
+    "heading preset tools"
+    "summary summary summary";
+  grid-template-columns: auto minmax(28.5rem, 1fr) auto;
+  align-items: center;
+  gap: 0.2rem 1rem;
   margin-bottom: 1.5rem;
 }
 
-.title {
-  flex: 1 1 18rem;
-  margin-right: auto;
+.preset {
+  grid-area: preset;
+}
+
+.tools {
+  display: flex;
+  grid-area: tools;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Not room for all three in a row: the buttons go under the summary. */
+@container pool (max-width: 61rem) {
+  .head {
+    grid-template-areas:
+      "heading heading"
+      "summary summary"
+      "preset tools";
+    grid-template-columns: minmax(28.5rem, 1fr) auto;
+  }
+
+  .preset,
+  .tools {
+    margin-top: 0.5rem;
+  }
+}
+
+/* Not even for the preset and the tools: one row each. */
+@container pool (max-width: 48rem) {
+  .head {
+    grid-template-areas:
+      "heading"
+      "summary"
+      "preset"
+      "tools";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tools {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 }
 
 .heading {
+  grid-area: heading;
   margin: 0;
   font-family: var(--hp-font-display);
   font-size: 2.25rem;
@@ -28,6 +76,7 @@
 
 .summary {
   display: flex;
+  grid-area: summary;
   flex-wrap: wrap;
   align-items: center;
   gap: 0 1rem;
@@ -35,32 +84,30 @@
   color: var(--hp-muted);
 }
 
-.head :global(.share-fallback-input) {
+.tools :global(.share-fallback-input) {
   flex-basis: 100%;
   max-width: none;
   margin: 0;
 }
 
-.dirty {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
-  margin: -0.5rem 0 1.5rem;
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--hp-line);
-  border-radius: var(--hp-radius);
-  background: var(--hp-rail);
-}
-
-.dirtyActions {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.dirty button {
+/* Naming a new preset happens in the line of links, at their height. */
+.summary :global(.preset-name-edit) {
   min-height: 2.25rem;
+}
+
+.summary :global(.preset-name-field) {
+  width: 11rem;
+  height: 2rem;
+  border-color: var(--hp-orange);
+  background: var(--hp-rail);
+  font-size: 1.05rem;
+}
+
+.summary :global(.preset-name-action) {
+  width: 2rem;
+  height: 2rem;
+  border-color: var(--hp-line);
+  background: var(--hp-rail);
 }
 
 @media (max-width: 63.99rem) {
@@ -68,9 +115,5 @@
     max-width: none;
     /* Room to scroll the last row clear of the fixed roll button. */
     padding: 1.25rem 1rem 6.5rem;
-  }
-
-  .title {
-    flex-basis: 100%;
   }
 }

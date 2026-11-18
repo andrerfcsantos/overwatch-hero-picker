@@ -2,10 +2,100 @@
   position: relative;
 }
 
-.applied {
-  max-width: 14rem;
+.bar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.solo,
+.split {
+  display: flex;
+}
+
+/* The name and the buttons beside it read as one control: one outline, a
+   seam between each part. */
+.split > * + * {
+  margin-left: -1px;
+}
+
+.split .trigger,
+.split .icon {
+  border-color: var(--hp-orange);
+  border-radius: 0;
+}
+
+.split > :first-child .trigger {
+  min-width: 0;
+  border-top-left-radius: var(--hp-radius);
+  border-bottom-left-radius: var(--hp-radius);
+}
+
+.split > :last-child .icon {
+  border-top-right-radius: var(--hp-radius);
+  border-bottom-right-radius: var(--hp-radius);
+}
+
+.icon {
+  width: 2.75rem;
+  padding: 0;
+  color: var(--hp-muted);
+}
+
+.icon:hover {
+  color: var(--hp-text);
+}
+
+/* Waiting on a decision, so it arrives the way the roster answers a click. */
+.pending {
+  animation: arrive 0.15s ease-out;
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pending {
+    animation: none;
+  }
+}
+
+.split .save {
+  color: var(--hp-orange);
+}
+
+.split .save:hover {
+  background: rgb(240 100 20 / 0.16);
+  color: var(--hp-text);
+}
+
+.label {
+  color: var(--hp-muted);
+  font-weight: 400;
+}
+
+.name {
+  max-width: 12rem;
   overflow: hidden;
+  font-weight: 600;
   text-overflow: ellipsis;
+}
+
+/* The selection no longer matches the preset. Its place is kept while it
+   still does, so the dot turning up never widens the button. */
+.dot {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--hp-orange);
+}
+
+.dotOff {
+  visibility: hidden;
 }
 
 .panel {
@@ -86,6 +176,92 @@
   font-weight: 700;
 }
 
+/* What changed, above the list, for whoever opened it to find out. */
+.changes {
+  margin-bottom: 0.35rem;
+  padding: 0.5rem 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--hp-line-soft);
+}
+
+.changesTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.changesTitle::before {
+  content: "";
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--hp-orange);
+}
+
+.changeList {
+  display: grid;
+  gap: 0.35rem;
+  max-height: 11rem;
+  margin: 0;
+  overflow-y: auto;
+}
+
+.changeRow {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  align-items: start;
+}
+
+.changeRow dt {
+  padding-top: 0.15rem;
+  color: var(--hp-muted);
+  font-size: 1rem;
+}
+
+.changeRow dd {
+  margin: 0;
+}
+
+.changeHeroes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changeHero {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.changeIcon {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.2rem;
+}
+
+/* Out of the selection, so drawn the way the roster draws a hero left out. */
+.removed .changeIcon {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.changeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  margin-top: 0.2rem;
+}
+
 .empty {
   margin: 0;
   padding: 0.6rem;
@@ -98,8 +274,14 @@
   flex-direction: column;
   align-items: flex-start;
   margin-top: 0.35rem;
-  padding: 0.35rem 0.6rem 0.15rem;
+  padding: 0.15rem 0.6rem 0;
   border-top: 1px solid var(--hp-line-soft);
+}
+
+@media (max-width: 40rem) {
+  .name {
+    max-width: 8rem;
+  }
 }
 
 @media (max-width: 63.99rem) {

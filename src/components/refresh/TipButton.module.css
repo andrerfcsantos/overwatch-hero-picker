@@ -1,0 +1,63 @@
+.anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.tip {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 50%;
+  z-index: 40;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--hp-line);
+  border-radius: var(--hp-radius);
+  background: var(--hp-nav);
+  box-shadow: 0 0.5rem 1.25rem rgb(0 0 0 / 0.4);
+  color: var(--hp-text);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -2px);
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease,
+    visibility 0s linear 0.12s;
+}
+
+.anchor:has(:focus-visible) .tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+
+/* Only where there is a pointer to hover with: a tap would otherwise leave
+   the tip stuck on. A short wait first, so sweeping the pointer across the
+   row does not flash every tip on the way. */
+@media (hover: hover) {
+  .anchor:hover .tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition-delay: 0.35s;
+  }
+}
+
+/* Put away with Escape, or covered by what the button opened. */
+.anchor[data-dismissed] .tip,
+.anchor:has([aria-expanded="true"]) .tip {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tip {
+    transition: none;
+  }
+}
