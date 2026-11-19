@@ -252,11 +252,17 @@ let initialized = false;
 /**
  * Events fired so often that sending each one would dominate the event quota,
  * mapped to "send one in this many". Rolling is the site's core loop: users
- * re-roll dozens to thousands of times per visit, and before sampling
- * `hero_randomized` alone was over a third of all events.
+ * re-roll dozens to thousands of times per visit, and even at one in ten
+ * `hero_randomized` was a third of all events. Role buttons get clicked in
+ * bursts, and every roll already carries the whole pool. Most shortcuts are
+ * `r`, which is a roll. Keep these in step with the Valorant Agent Picker: the
+ * two sites share one event quota.
  */
 const SAMPLE_EVERY: Partial<Record<keyof EventMap, number>> = {
-  hero_randomized: 10,
+  hero_randomized: 20,
+  perks_randomized: 10,
+  hero_filters_changed: 10,
+  keyboard_shortcut_used: 10,
 };
 
 /** Added to every event listed in {@link SAMPLE_EVERY}. */
