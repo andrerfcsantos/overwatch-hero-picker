@@ -116,6 +116,61 @@
   margin-bottom: 0.4rem;
 }
 
+/* A roster with a page's width to itself. Each role's name, count and
+   shortcut stand in a column at the left of its heroes, so no role spends a
+   row on its heading. Only where that still leaves the heroes most of their
+   columns: narrower than this, losing a column costs more rows than the
+   headings did. */
+.rail {
+  container: roster / inline-size;
+}
+
+@container roster (min-width: 50rem) {
+  .rail .group {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0 1rem;
+  }
+
+  .rail .group + .group {
+    margin-top: 1.25rem;
+  }
+
+  .rail .groupHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    margin: 0;
+  }
+
+  .rail .roleCheck {
+    min-height: 2.5rem;
+  }
+
+  /* Under the role's name rather than under its checkbox. */
+  .rail .count,
+  .rail .only {
+    margin-left: 1.725rem;
+  }
+
+  .rail .only {
+    min-height: 2rem;
+  }
+}
+
+/* With a pointer to aim with, the tiles can be a little shorter, which is
+   what lets a whole roster fit a laptop's window. */
+@media (min-width: 64rem) {
+  .rail .tiles {
+    grid-template-columns: repeat(auto-fill, minmax(9.75rem, 1fr));
+  }
+
+  .rail .hero {
+    height: 2.5rem;
+  }
+}
+
 @media (max-width: 63.99rem) {
   .tiles {
     grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));

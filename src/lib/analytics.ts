@@ -148,7 +148,11 @@ type EventMap = {
     hero_count: number;
     source: "chip" | "keyboard" | "manage_page";
   };
-  preset_created: { hero_count: number };
+  preset_created: {
+    hero_count: number;
+    /** Saved from the heroes selected, or started empty in the manager. */
+    source: "selection" | "blank";
+  };
   preset_updated: { preset_kind: PresetKind; hero_count: number };
   preset_deleted: { preset_kind: PresetKind };
   preset_managed: {
@@ -158,7 +162,9 @@ type EventMap = {
       | "moved"
       | "reverted"
       | "unselected"
-      | "restored_defaults";
+      | "restored_defaults"
+      | "heroes_edited"
+      | "delete_undone";
   };
   keyboard_shortcut_used: { key: string };
   /**
@@ -178,7 +184,10 @@ type EventMap = {
   design_feedback_clicked: Record<string, never>;
   /** The banner asking for feedback on the new design was closed. */
   design_feedback_dismissed: Record<string, never>;
-  overlay_setup_opened: Record<string, never>;
+  overlay_setup_opened: {
+    /** "link" means it opened by itself, from a link that named it. */
+    via: "button" | "link";
+  };
   overlay_link_copied: {
     /** "fallback" means the clipboard failed and the link was selected instead. */
     method: "clipboard" | "fallback";

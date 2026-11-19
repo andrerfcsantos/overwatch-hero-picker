@@ -8,6 +8,10 @@ type ShortcutMap = Record<string, () => void>;
 export function useKeyboardShortcuts(shortcuts: ShortcutMap) {
   // Reads the latest shortcuts without re-subscribing on every render.
   const handleKeyDown = useEffectEvent((e: KeyboardEvent) => {
+    // A surface that covers the page can ask for the page's shortcuts to stay
+    // out of it, so a key pressed there does not act on what is behind.
+    if ((e.target as HTMLElement).closest?.('[data-shortcuts="off"]')) return;
+
     const tag = (e.target as HTMLElement).tagName;
     const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
     const isEditable = (e.target as HTMLElement).isContentEditable;

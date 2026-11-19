@@ -1,24 +1,25 @@
 .pool {
   min-width: 0;
-  max-width: 76rem;
-  padding: 1.5rem 2rem 4rem;
+  max-width: 80rem;
+  padding: 1.5rem 2rem;
+  container: pool / inline-size;
 }
 
-/* One wrapping row: the title, then the tools pushed to the far edge. */
+/* One row where there is room: the title, the summary beside it, and the
+   tools at the far edge. The preset has a row of its own below, so nothing
+   here changes size when the selection does. The summary's cell takes the
+   room that is left, so a longer sentence in it never moves the tools. */
 .head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.title {
-  flex: 1 1 18rem;
-  margin-right: auto;
+  display: grid;
+  grid-template-areas: "heading summary tools";
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.2rem 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .heading {
+  grid-area: heading;
   margin: 0;
   font-family: var(--hp-font-display);
   font-size: 2.25rem;
@@ -28,39 +29,65 @@
 
 .summary {
   display: flex;
+  grid-area: summary;
   flex-wrap: wrap;
   align-items: center;
   gap: 0 1rem;
-  margin-top: 0.2rem;
+  /* The display face sits high in its line, so text set beside it is nudged
+     down to share its baseline. */
+  padding-top: 0.2rem;
   color: var(--hp-muted);
 }
 
-.head :global(.share-fallback-input) {
+.tools {
+  display: flex;
+  grid-area: tools;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.tools :global(.share-fallback-input) {
   flex-basis: 100%;
   max-width: none;
   margin: 0;
 }
 
-.dirty {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
-  margin: -0.5rem 0 1.5rem;
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--hp-line);
-  border-radius: var(--hp-radius);
-  background: var(--hp-rail);
+/* Not room for all three in a row: the summary goes under the title. */
+@container pool (max-width: 62rem) {
+  .head {
+    grid-template-areas:
+      "heading tools"
+      "summary summary";
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .summary {
+    padding-top: 0;
+  }
 }
 
-.dirtyActions {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
+/* Not even for the title and the tools: one row each. */
+@container pool (max-width: 36rem) {
+  .head {
+    grid-template-areas:
+      "heading"
+      "summary"
+      "tools";
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-.dirty button {
-  min-height: 2.25rem;
+  .tools {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  /* The count on a line of its own and the links on the next, whichever
+     links there are. Sharing a line, "Select all" turning up would push
+     "Clear selection" onto a second one, and the roster down with it. */
+  .summary > [role="status"] {
+    flex-basis: 100%;
+  }
 }
 
 @media (max-width: 63.99rem) {
@@ -68,9 +95,5 @@
     max-width: none;
     /* Room to scroll the last row clear of the fixed roll button. */
     padding: 1.25rem 1rem 6.5rem;
-  }
-
-  .title {
-    flex-basis: 100%;
   }
 }

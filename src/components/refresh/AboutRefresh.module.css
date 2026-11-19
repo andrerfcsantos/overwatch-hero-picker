@@ -1,0 +1,125 @@
+/* One column at a reading measure, centred in the window. The picker's rail
+   and side are for keeping controls in reach while the selection changes; a
+   page that is only read has no use for them. */
+
+.app {
+  padding: 2rem 1.5rem 4rem;
+}
+
+.column {
+  max-width: 44rem;
+  margin: 0 auto;
+}
+
+/* A plain title, and what the site is in a line. */
+.intro {
+  padding: 0.5rem 0 1.75rem;
+  border-bottom: 1px solid var(--hp-line-soft);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--hp-font-display);
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.subtitle {
+  margin: 0.4rem 0 0;
+  font-family: inherit;
+  color: var(--hp-muted);
+}
+
+/* The reading. Headings sit over their text, as in any article. */
+.section {
+  padding-top: 2.5rem;
+  font-size: 1.25rem;
+  line-height: 1.55;
+}
+
+.section p {
+  margin: 0 0 1rem;
+  font-family: inherit;
+}
+
+.section p:last-child {
+  margin-bottom: 0;
+}
+
+.heading {
+  margin: 0 0 0.75rem;
+  font-family: var(--hp-font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.section p a:link,
+.section p a:visited {
+  color: var(--hp-text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--hp-muted);
+  text-underline-offset: 0.2em;
+}
+
+.section p a:hover {
+  color: var(--hp-text);
+  text-decoration-color: var(--hp-orange);
+}
+
+/* A section's one thing to do, under what it says. */
+.action {
+  margin-top: 0.25rem;
+  font-size: 1.125rem;
+}
+
+/* The notices nobody reads but that have to be there, set small. */
+.fine {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hp-line-soft);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--hp-muted);
+}
+
+.fine p {
+  margin: 0 0 0.6rem;
+  font-family: inherit;
+}
+
+.fine strong {
+  font-weight: 600;
+  color: var(--hp-text);
+}
+
+.fineTitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--hp-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hp-text);
+}
+
+@media (max-width: 40rem) {
+  .app {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .section {
+    font-size: 1.125rem;
+  }
+
+  .heading {
+    font-size: 2rem;
+  }
+}

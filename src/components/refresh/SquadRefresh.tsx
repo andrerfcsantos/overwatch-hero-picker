@@ -139,7 +139,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
             className={`${ui.link} ${styles.resetAll}`}
             onClick={resetAllFilters}
           >
-            Add everyone to every player&apos;s pool
+            Select every hero for every player
           </button>
         )}
 
@@ -155,7 +155,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
         {sharedPresetApplied && (
           <div className={styles.notice}>
             <SharedPresetNotice
-              message="A shared link set up this squad, replacing your own pools and settings."
+              message="A shared link set up this squad, replacing your own players, selections and settings."
               onUndo={handleUndoShared}
               onDismiss={handleDismissShared}
             />
@@ -182,7 +182,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
             shareSource="squad"
             label="Share this setup"
             copiedLabel="Setup link copied"
-            title="Copy a link that sets up these players, pools and settings"
+            title="Copy a link that sets up these players, selections and settings"
           />
           <button
             type="button"

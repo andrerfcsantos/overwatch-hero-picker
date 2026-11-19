@@ -1,0 +1,97 @@
+/* A sheet on the right edge of the page, over whatever it was opened from.
+   It is a modal <dialog>, so the browser handles focus, Escape and the
+   backdrop. The stream overlay's setup and the preset manager both open in
+   one. */
+
+/* Named with its element so it outranks the page class it is used with,
+   whichever of the two stylesheets happens to load last. */
+dialog.sheet {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(38rem, 100vw);
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--hp-line-soft);
+  background: var(--hp-rail);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* For a sheet whose rows hold more than a form's worth across. */
+dialog.wide {
+  width: min(41rem, 100vw);
+}
+
+.sheet[open] {
+  animation: slideIn 0.2s ease-out;
+}
+
+.sheet::backdrop {
+  background: rgb(10 15 20 / 0.6);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+
+/* The page behind stays where it was while the sheet is read. */
+:global(html):has(.sheet[open]) {
+  overflow: hidden;
+}
+
+.body {
+  padding: 1.5rem 2rem 3rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--hp-font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.intro {
+  max-width: 26rem;
+  margin: 0.5rem 0 0;
+  font-family: inherit;
+  color: var(--hp-muted);
+}
+
+/* An introduction of more than one paragraph. */
+.intro p {
+  margin: 0.4rem 0 0;
+  font-family: inherit;
+}
+
+/* What the sheet is for, under its introduction. */
+.content {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 30rem) {
+  .body {
+    padding: 1rem 1rem 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] {
+    animation: none;
+  }
+}

@@ -194,7 +194,7 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
         {sharedPresetApplied && (
           <div className={styles.notice}>
             <SharedPresetNotice
-              message="A shared link set this pool and these roll settings, replacing your own."
+              message="A shared link selected these heroes and set these roll settings, replacing your own."
               onUndo={handleUndoShared}
               onDismiss={handleDismissShared}
             />

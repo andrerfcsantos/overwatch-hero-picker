@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
+import { clearPanel, readPanel, writePanel } from "@/lib/panels";
 import { DESIGNS, type Design } from "@/lib/design";
 import { OVERLAY_SIZES, OverlaySize } from "@/lib/overlay";
 import {
@@ -16,6 +17,8 @@ import { Hero } from "@/types/hero";
 import OverlayCard from "@/components/OverlayCard";
 import QrCode from "@/components/QrCode";
 import overlay from "@/components/OverlayContent.module.css";
+import sheet from "./Sheet.module.css";
+import { backdropClose } from "./sheet";
 import ui from "./ui.module.css";
 import styles from "./OverlaySheet.module.css";
 
@@ -191,14 +194,28 @@ export default function OverlaySheet({
   const poolPhrase = everyHero
     ? `all ${totalHeroes} heroes`
     : heroCount === 1
-      ? "the one hero in your pool"
-      : `the ${heroCount} heroes in your pool`;
+      ? "the one hero you selected"
+      : `the ${heroCount} heroes you selected`;
 
-  const show = () => {
-    track("overlay_setup_opened", {});
+  const show = (via: "button" | "link") => {
+    track("overlay_setup_opened", { via });
     setOpen(true);
-    dialogRef.current?.showModal();
+    writePanel("overlay");
   };
+
+  // Opened once its contents are on the page, so the browser has the Close
+  // button to put focus on rather than an empty dialog.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (open && dialog && !dialog.open) dialog.showModal();
+  }, [open]);
+
+  // A link that names the sheet opens it, so a copied address brings whoever
+  // follows it to the same place.
+  useEffect(() => {
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the URL is only read after mount
+    if (readPanel(window.location.search) === "overlay") show("link");
+  }, []);
 
   return (
     <>
@@ -206,7 +223,7 @@ export default function OverlaySheet({
         type="button"
         className={ui.btn}
         aria-haspopup="dialog"
-        onClick={show}
+        onClick={() => show("button")}
         title="Show your random hero on stream with OBS"
       >
         Stream overlay
@@ -217,21 +234,22 @@ export default function OverlaySheet({
       {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- a click on the backdrop closes the sheet; the keyboard has Escape and the Close button */}
       <dialog
         ref={dialogRef}
-        className={`${ui.page} ${styles.sheet} ph-no-capture`}
+        className={`${ui.page} ${sheet.sheet} ph-no-capture`}
         aria-labelledby={titleId}
+        // The picker's shortcuts roll and apply presets, which is not what a
+        // key pressed in here is for.
+        data-shortcuts="off"
         onClose={() => {
           setOpen(false);
           setQrShown(false);
+          clearPanel("overlay");
         }}
-        onClick={(e) => {
-          // Only the backdrop is the dialog itself; everything else is inside.
-          if (e.target === e.currentTarget) e.currentTarget.close();
-        }}
+        {...backdropClose}
       >
         {open && (
-          <div className={styles.body}>
-            <header className={styles.head}>
-              <h2 id={titleId} className={styles.title}>
+          <div className={sheet.body}>
+            <header className={sheet.head}>
+              <h2 id={titleId} className={sheet.title}>
                 Stream overlay
               </h2>
               <button
@@ -242,7 +260,7 @@ export default function OverlaySheet({
                 Close
               </button>
             </header>
-            <p className={styles.intro}>
+            <p className={sheet.intro}>
               A card on your stream that shows a new random hero each time you
               press a hotkey in OBS, or a button on another screen.
             </p>
@@ -349,8 +367,8 @@ export default function OverlaySheet({
                   {preview.nonRepeating
                     ? ", and never the same hero twice in a row"
                     : ""}
-                  . The link carries the pool and roll settings you have now, so
-                  copy it again after you change them.
+                  . The link carries the heroes you selected and the roll
+                  settings you have now, so copy it again after you change them.
                 </p>
               </li>
 

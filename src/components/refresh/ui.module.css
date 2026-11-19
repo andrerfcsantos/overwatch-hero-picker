@@ -56,6 +56,22 @@
   background: var(--hp-tile);
 }
 
+/* The action a small surface is there for, in the roll button's orange and
+   white. White on this orange is 3.2:1, so the label is set bold and large
+   enough to count as large type. */
+.primary,
+.primary:hover {
+  border-color: var(--hp-orange);
+  background: var(--hp-orange);
+  color: #fff;
+  font-size: 1.1875rem;
+  font-weight: 700;
+}
+
+.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
 .caret::after {
   content: "";
   flex: none;

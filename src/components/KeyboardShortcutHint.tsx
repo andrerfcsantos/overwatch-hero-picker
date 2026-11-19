@@ -26,7 +26,7 @@ const soloShortcutsRefresh = [
   { key: "T", description: "Add or remove all tanks" },
   { key: "D", description: "Add or remove all damage" },
   { key: "S", description: "Add or remove all supports" },
-  { key: "U", description: "Clear the pool" },
+  { key: "U", description: "Clear selection" },
   { key: "1–0", description: "Apply preset 1 to 10" },
 ];
 
