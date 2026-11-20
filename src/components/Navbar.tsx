@@ -31,8 +31,9 @@ export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  // Every link in the menu takes the visitor somewhere, so it closes. Focus
-  // goes back to the button, since the link it was on is no longer reachable.
+  // Every link in the menu takes the visitor somewhere, so it closes, as does
+  // a click outside it. Focus goes back to the button, since the link it was
+  // on is no longer reachable.
   const closeMenu = () => {
     setIsOpen(false);
     toggleRef.current?.focus();
@@ -91,12 +92,14 @@ export default function Navbar() {
       <div
         className={styles.backdrop}
         data-open={isOpen}
-        onClick={() => setIsOpen(false)}
+        onClick={closeMenu}
         aria-hidden="true"
       />
 
       <nav
         ref={navRef}
+        // Keys pressed in the open menu must not act on the picker behind it.
+        data-shortcuts={isOpen ? "off" : undefined}
         className={`site-nav ${styles.nav} bg-[#343a40] min-h-[5vh] flex items-center justify-between gap-3 px-4 py-2 lg:px-6`}
         aria-label="Main"
       >
@@ -114,7 +117,7 @@ export default function Navbar() {
               width={225}
               height={96}
             />
-            <span className="truncate text-[1.5rem] text-white">
+            <span className="truncate text-[1.25rem] min-[22.5rem]:text-[1.5rem] text-white">
               Overwatch Hero Picker
             </span>
           </Link>

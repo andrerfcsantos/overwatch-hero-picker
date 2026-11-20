@@ -144,6 +144,10 @@
   border-top: 1px solid var(--menu-line);
   border-bottom: 3px solid var(--menu-accent);
   box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.45);
+  /* On a short window the menu scrolls rather than running off the bottom. */
+  max-height: calc(100dvh - 3.75rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   visibility: hidden;
   opacity: 0;
   transform: translateY(-0.5rem);
@@ -322,6 +326,11 @@
   .toggle:focus-visible {
     outline: 2px solid Highlight;
     outline-offset: 2px;
+  }
+
+  .row[aria-current="page"],
+  .tile[aria-current="page"] {
+    text-decoration: underline;
   }
 }
 
