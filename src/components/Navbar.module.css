@@ -115,7 +115,7 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: 25;
+  z-index: 110;
   background: rgba(10, 14, 19, 0.55);
   opacity: 0;
   visibility: hidden;
@@ -297,6 +297,31 @@
     border-bottom: 3px solid var(--menu-accent);
     border-radius: 0.625rem;
     transform-origin: top right;
+  }
+}
+
+/* The open menu has to sit above everything on the page, including the
+   shortcuts button pinned to the corner of the window. */
+@media (max-width: 63.999rem) {
+  .nav {
+    z-index: 120;
+  }
+}
+
+/* High-contrast themes repaint backgrounds, which is all the icon is made
+   of, so it is drawn in the theme's own button colour instead. */
+@media (forced-colors: active) {
+  .toggle {
+    border: 1px solid ButtonText;
+  }
+
+  .toggleBars span {
+    background: ButtonText;
+  }
+
+  .toggle:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }
 
