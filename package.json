@@ -20,8 +20,7 @@
     "rooms:dev": "wrangler dev -c workers/rooms/wrangler.jsonc --port 8787 --var ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000",
     "rooms:deploy": "wrangler deploy -c workers/rooms/wrangler.jsonc",
     "deps:check": "node scripts/deps.mts",
-    "deps:update": "vp update && node scripts/deps.mts",
-    "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
+    "deps:update": "vp update && node scripts/deps.mts"
   },
   "dependencies": {
     "next": "^16.2.6",
