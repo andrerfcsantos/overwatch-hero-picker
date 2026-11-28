@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ROLES, getAllHeroes } from "@/data/heroes";
 import { SHARED_SQUAD_ERRORS, type SharedSquad } from "@/hooks/useSharedSquad";
@@ -10,6 +10,7 @@ import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
 import SealedCard from "./SealedCard";
+import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
@@ -28,6 +29,20 @@ export default function SharedSquadRefresh({
   // Armed by the Reveal button, so only that turns the card over: not a
   // switch back from the classic design, which shows the result straight away.
   const [unveilArmed, setUnveilArmed] = useState(false);
+  // Hooks first: the early returns below would otherwise skip them. The
+  // reveal and a whole-squad reroll change every row, from a button fixed to
+  // the bottom of a phone's screen.
+  const playerList = useRef<HTMLOListElement>(null);
+  const ready = shared.status === "ready";
+  const squadRolls = ready ? shared.squadRolls : 0;
+  const revealed = ready && shared.revealed;
+  useResultIntoView(playerList, `${squadRolls}-${revealed}`);
+  // One player's reroll, from the button below their result: on a phone
+  // scrolled so the button is near the top, the hero changes above it.
+  const rerolledRow = useRef<HTMLElement | null>(null);
+  const [rowRerolls, setRowRerolls] = useState(0);
+  useResultIntoView(rerolledRow, rowRerolls, { ownRow: true });
+
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -159,6 +174,7 @@ export default function SharedSquadRefresh({
         </h2>
 
         <ol
+          ref={playerList}
           className={`${styles.players} ${rolls === 0 ? styles.inOrder : ""} ${unveiling ? styles.revealing : ""}`}
         >
           {players.map((player) => (
@@ -198,7 +214,7 @@ export default function SharedSquadRefresh({
                 )}
               </span>
 
-              <div className={styles.who}>
+              <div className={styles.who} data-result>
                 <span className={styles.playerName}>{player.name}</span>
                 {sealed ? (
                   <span className={styles.redacted}>
@@ -246,7 +262,12 @@ export default function SharedSquadRefresh({
                   type="button"
                   className={`${ui.btn} ${styles.playerReroll}`}
                   aria-label={`Reroll ${player.name}`}
-                  onClick={() => shared.handleRerollSlot(player.index)}
+                  data-roll-source
+                  onClick={(event) => {
+                    shared.handleRerollSlot(player.index);
+                    rerolledRow.current = event.currentTarget.closest("li");
+                    setRowRerolls((count) => count + 1);
+                  }}
                 >
                   Reroll
                 </button>

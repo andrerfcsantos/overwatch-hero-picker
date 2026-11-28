@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ROLES } from "@/data/heroes";
 import { SHARED_HERO_ERRORS, type SharedHero } from "@/hooks/useSharedHero";
@@ -9,6 +9,7 @@ import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
 import SealedCard from "./SealedCard";
+import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
@@ -22,6 +23,14 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   // Armed by the Reveal button, so only that turns the card over: not a
   // switch back from the classic design, which shows the result straight away.
   const [unveilArmed, setUnveilArmed] = useState(false);
+  // Hooks first: the early returns below would otherwise skip them. Hero
+  // rolls and the reveal only: "Reroll perks" sits right below the perks.
+  const rail = useRef<HTMLElement>(null);
+  const ready = shared.status === "ready";
+  const heroRolls = ready ? shared.heroRolls : 0;
+  const revealed = ready && shared.revealed;
+  useResultIntoView(rail, `${heroRolls}-${revealed}`);
+
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -46,7 +55,6 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
     pool,
     picker,
     ownRoll,
-    heroRolls,
     perkRolls,
     handleReroll,
     handleRerollPerks,
@@ -87,6 +95,7 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   return (
     <main className={`${ui.page} ${styles.app}`}>
       <section
+        ref={rail}
         className={`${styles.rail} ${picker.showPortrait && hero ? "" : styles.noPortrait}`}
         aria-labelledby="shared-heading"
       >
@@ -116,7 +125,7 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
 
             {sealed ? (
               <>
-                <p className={styles.name}>
+                <p className={styles.name} data-result>
                   {inLineup ? `One of ${pool.length}` : "Who is it?"}
                 </p>
                 <div className={styles.role}>Reveal it to see who</div>
@@ -126,6 +135,7 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
                 <p
                   key={`name-${heroRolls}`}
                   className={`${styles.name} ${ui.land}`}
+                  data-result
                 >
                   {hero.name}
                 </p>

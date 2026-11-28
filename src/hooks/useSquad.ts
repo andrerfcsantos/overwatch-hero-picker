@@ -60,6 +60,7 @@ export function useSquad() {
   const [randomizePerks, setRandomizePerks] = useState(false);
   const [copied, setCopied] = useState(false);
   const [rollCount, setRollCount] = useState(0);
+  const [squadRollCount, setSquadRollCount] = useState(0);
   const [sharedPresetApplied, setSharedPresetApplied] = useState(false);
   const setupBeforeShare = useRef<SquadSetup | null>(null);
 
@@ -134,6 +135,7 @@ export function useSquad() {
     const newHeroes = computeSquad(configs, squadSize, force122, force222);
     setHeroes(newHeroes);
     setRollCount((count) => count + 1);
+    setSquadRollCount((count) => count + 1);
     if (randomizePerks) setPerkAssignments(assignPerks(newHeroes));
     track("squad_randomized", {
       source: "generator",
@@ -384,6 +386,8 @@ export function useSquad() {
     perkAssignments,
     /** Rolls the visitor asked for, whole squad or one player. */
     rollCount,
+    /** Rolls of the whole squad only. */
+    squadRollCount,
     force122,
     force222,
     randomizePerks,
