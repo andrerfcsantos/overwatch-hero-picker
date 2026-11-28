@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ROLES } from "@/data/heroes";
 import { SHARED_HERO_ERRORS, type SharedHero } from "@/hooks/useSharedHero";
@@ -8,17 +8,21 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import SealedCard from "./SealedCard";
 import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
 /**
  * The new design of the page a "Share this roll" link opens. A roll somebody
- * sent arrives sealed: the portrait out of focus, the pool it came from laid
- * out beside it as the line-up of who it could be, and one button to find
- * out. After that it is the picker's rail, rolling from the sender's pool.
+ * sent arrives sealed: a blank card where the portrait goes, the sender's
+ * selection laid out beside it as the line-up of who it could be, and one
+ * button to find out. After that it is the picker's rail, rolling from the sender's pool.
  */
 export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
+  // Armed by the Reveal button, so only that turns the card over: not a
+  // switch back from the classic design, which shows the result straight away.
+  const [unveilArmed, setUnveilArmed] = useState(false);
   // Hooks first: the early returns below would otherwise skip them. Hero
   // rolls and the reveal only: "Reroll perks" sits right below the perks.
   const rail = useRef<HTMLElement>(null);
@@ -59,6 +63,16 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   // Only a roll somebody else made is sealed. A hero this version of the site
   // does not know has nothing to reveal.
   const sealed = !ownRoll && !shared.revealed && hero !== undefined;
+  // The first portrait after the reveal turns over; later rolls land.
+  const unveiling = unveilArmed && heroRolls === 0;
+  // A line-up of just the rolled hero is the answer, so it waits for the
+  // reveal too, and so does the link that would open it in the picker.
+  const lineupHidden = sealed && pool.length === 1 && pool[0].key === hero.key;
+  // A roll is shared with the selection as it is when the link is made, and
+  // the selection may have changed since the roll. So the pool is described
+  // as what rolling again uses, never as where the roll came from, and is
+  // offered as the line-up only when the roll is in it.
+  const inLineup = hero !== undefined && pool.some((h) => h.key === hero.key);
   const roleLabel = hero
     ? (ROLES.find((role) => role.key === hero.role)?.label ?? "")
     : "";
@@ -93,21 +107,26 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
           <>
             {picker.showPortrait && (
               <div className={styles.portraitFrame}>
-                <SpriteIcon
-                  key={heroRolls}
-                  heroKey={hero.key}
-                  type="portrait"
-                  className={`${styles.portrait} ${sealed ? styles.sealedPortrait : ""} ${heroRolls > 0 ? ui.land : ""}`}
-                  // Sealed, the picture must not say who it is either.
-                  alt={sealed ? "" : `${hero.name} portrait`}
-                />
+                {sealed ? (
+                  // Not the portrait blurred: a blurred hero is still easy to
+                  // tell by its colours and shape, so nothing of it is drawn.
+                  <SealedCard className={styles.portrait} />
+                ) : (
+                  <SpriteIcon
+                    key={heroRolls}
+                    heroKey={hero.key}
+                    type="portrait"
+                    className={`${styles.portrait} ${unveiling ? styles.unveil : ""} ${heroRolls > 0 ? ui.land : ""}`}
+                    alt={`${hero.name} portrait`}
+                  />
+                )}
               </div>
             )}
 
             {sealed ? (
               <>
                 <p className={styles.name} data-result>
-                  One of {pool.length}
+                  {inLineup ? `One of ${pool.length}` : "Who is it?"}
                 </p>
                 <div className={styles.role}>Reveal it to see who</div>
               </>
@@ -177,7 +196,14 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
 
         <div className={ui.rollBar} data-roll-bar>
           {sealed ? (
-            <button type="button" className={ui.roll} onClick={shared.reveal}>
+            <button
+              type="button"
+              className={ui.roll}
+              onClick={() => {
+                setUnveilArmed(true);
+                shared.reveal();
+              }}
+            >
               Reveal the hero
             </button>
           ) : (
@@ -198,68 +224,84 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
         <div className={styles.head}>
           <div className={styles.headText}>
             <h2 id="shared-pool-heading" className={styles.title}>
-              {sealed ? "It is one of these" : "The heroes it came from"}
+              {lineupHidden
+                ? "It is the only one selected"
+                : sealed && inLineup
+                  ? "It is one of these"
+                  : "Rolling again picks from these"}
             </h2>
             <p className={styles.summary}>
               {shared.everyHero
-                ? `It could have been any hero, all ${pool.length} of them.`
+                ? `No heroes were selected, so all ${pool.length} are in play.`
                 : `${pool.length} ${pool.length === 1 ? "hero was" : "heroes were"} selected.`}
-              {picker.nonRepeating
+              {/* With one hero there is no other to give. */}
+              {picker.nonRepeating && pool.length > 1
                 ? " Rolling again never gives the same hero twice in a row."
                 : ""}
             </p>
           </div>
           {/* A full page load, not a client navigation: the picker reads a
               shared pool once, as it starts. */}
-          <a
-            className={ui.btn}
-            href={shared.presetHref}
-            title="Open the picker with these heroes selected and these roll settings"
-          >
-            Open this selection in the picker
-          </a>
+          {!lineupHidden && (
+            <a
+              className={ui.btn}
+              href={shared.presetHref}
+              title="Open the picker with these heroes selected and these roll settings"
+            >
+              Open this selection in the picker
+            </a>
+          )}
           <Link className={ui.btn} href="/" prefetch={false}>
             Use your own selection
           </Link>
         </div>
 
-        {groups.map((group) => (
-          <section
-            key={group.key}
-            className={styles.group}
-            aria-label={group.label}
-          >
-            <h3 className={styles.groupTitle}>
-              <RoleSpriteIcon
-                roleKey={group.key}
-                alt=""
-                className={`${ui.roleIcon} ${styles.groupIcon}`}
-              />
-              {group.label}
-              <span className={styles.count}>{group.heroes.length}</span>
-            </h3>
-            <ul className={styles.lineup}>
-              {group.heroes.map((candidate) => {
-                const rolled = !sealed && candidate.key === hero?.key;
-                return (
-                  <li
-                    key={candidate.key}
-                    className={`${styles.suspect} ${rolled ? styles.rolled : ""}`}
-                  >
-                    <SpriteIcon
-                      heroKey={candidate.key}
-                      type="icon"
-                      alt=""
-                      className={styles.suspectIcon}
-                    />
-                    <span className={styles.suspectName}>{candidate.name}</span>
-                    {rolled && <span className={ui.vh}>, the roll</span>}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
+        {lineupHidden ? (
+          <p className={styles.summary}>
+            With only one hero to pick from, the selection would give it away,
+            so it stays hidden until the reveal too.
+          </p>
+        ) : (
+          groups.map((group) => (
+            <section
+              key={group.key}
+              className={styles.group}
+              aria-label={group.label}
+            >
+              <h3 className={styles.groupTitle}>
+                <RoleSpriteIcon
+                  roleKey={group.key}
+                  alt=""
+                  className={`${ui.roleIcon} ${styles.groupIcon}`}
+                />
+                {group.label}
+                <span className={styles.count}>{group.heroes.length}</span>
+              </h3>
+              <ul className={styles.lineup}>
+                {group.heroes.map((candidate) => {
+                  const rolled = !sealed && candidate.key === hero?.key;
+                  return (
+                    <li
+                      key={candidate.key}
+                      className={`${styles.suspect} ${rolled ? styles.rolled : ""}`}
+                    >
+                      <SpriteIcon
+                        heroKey={candidate.key}
+                        type="icon"
+                        alt=""
+                        className={styles.suspectIcon}
+                      />
+                      <span className={styles.suspectName}>
+                        {candidate.name}
+                      </span>
+                      {rolled && <span className={ui.vh}>, the roll</span>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))
+        )}
       </section>
     </main>
   );
