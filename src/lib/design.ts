@@ -1,6 +1,7 @@
 /**
- * The site wears one of two designs while the redesign is being adopted, and
- * every visitor can move between them whenever they like. This module is the
+ * The site wears one of two designs: the new one, which is the default, and
+ * the classic one, kept for now for visitors who prefer it. Every visitor can
+ * move between them whenever they like. This module is the
  * single place that knows which design applies; nothing else reads the
  * storage key or the overlay's link parameter.
  */
@@ -11,8 +12,9 @@ export type Design = (typeof DESIGNS)[number];
 /** Where a visitor's own choice is kept. */
 export const DESIGN_STORAGE_KEY = "design";
 
-/** Set once the invitation to try the new design has been closed. */
-export const DESIGN_INVITE_DISMISSED_KEY = "designInviteDismissed";
+/** Set once the notice that the classic design is going away has been closed. */
+export const DESIGN_CLASSIC_NOTICE_DISMISSED_KEY =
+  "designClassicNoticeDismissed";
 
 /** Set once the request for feedback on the new design has been closed. */
 export const DESIGN_FEEDBACK_DISMISSED_KEY = "designFeedbackDismissed";
@@ -41,7 +43,7 @@ export const DEFAULT_DESIGN: Design = isDesign(
   process.env.NEXT_PUBLIC_DEFAULT_DESIGN,
 )
   ? process.env.NEXT_PUBLIC_DEFAULT_DESIGN
-  : "classic";
+  : "refresh";
 
 export interface DesignChoice {
   design: Design;
@@ -86,6 +88,13 @@ export function storeDesign(
   }
 }
 
+/**
+ * Pages whose design comes from their link rather than the visitor's saved
+ * choice: the overlay runs in OBS, which has no access to it, and the
+ * companion is opened on a phone or second screen that usually has none.
+ */
+export const LINK_DESIGN_PATHS = ["/overlay", "/overlay/companion"];
+
 /** The design an overlay link asks for. */
 export function overlayDesignFromSearch(search: string): Design {
   const value = new URLSearchParams(search).get(OVERLAY_DESIGN_PARAM);
@@ -104,6 +113,8 @@ const REFRESH_FONTS = [
  * the server cannot know the visitor's design; this stamps it on `<html>`
  * early enough that the navbar and page background never flash the wrong one.
  * It repeats {@link readDesignChoice} in plain JavaScript because it runs
- * before any module has loaded.
+ * before any module has loaded. On the overlay pages it repeats
+ * {@link overlayDesignFromSearch} instead: OBS has no saved choice, so the
+ * default would otherwise restyle overlays already on stream.
  */
-export const DESIGN_BOOT_SCRIPT = `(function(){var d=${JSON.stringify(DEFAULT_DESIGN)};try{var s=localStorage.getItem(${JSON.stringify(DESIGN_STORAGE_KEY)});if(${DESIGNS.map((design) => `s===${JSON.stringify(design)}`).join("||")})d=s}catch(e){}document.documentElement.dataset.design=d;if(d==="refresh"){${JSON.stringify(REFRESH_FONTS)}.forEach(function(h){var l=document.createElement("link");l.rel="preload";l.as="font";l.type="font/otf";l.crossOrigin="anonymous";l.href=h;document.head.appendChild(l)})}})();`;
+export const DESIGN_BOOT_SCRIPT = `(function(){var d=${JSON.stringify(DEFAULT_DESIGN)};try{var p=location.pathname;if(p.length>1&&p.charAt(p.length-1)==="/")p=p.slice(0,-1);if(${JSON.stringify(LINK_DESIGN_PATHS)}.indexOf(p)>=0){var q=new URLSearchParams(location.search).get(${JSON.stringify(OVERLAY_DESIGN_PARAM)});d=${DESIGNS.map((design) => `q===${JSON.stringify(design)}`).join("||")}?q:"classic"}else{var s=localStorage.getItem(${JSON.stringify(DESIGN_STORAGE_KEY)});if(${DESIGNS.map((design) => `s===${JSON.stringify(design)}`).join("||")})d=s}}catch(e){}document.documentElement.dataset.design=d;if(d==="refresh"){${JSON.stringify(REFRESH_FONTS)}.forEach(function(h){var l=document.createElement("link");l.rel="preload";l.as="font";l.type="font/otf";l.crossOrigin="anonymous";l.href=h;document.head.appendChild(l)})}})();`;

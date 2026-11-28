@@ -38,6 +38,13 @@ describe("isDesign", () => {
   });
 });
 
+describe("DEFAULT_DESIGN", () => {
+  test("is the new design unless the build says otherwise", () => {
+    expect(process.env.NEXT_PUBLIC_DEFAULT_DESIGN).toBeUndefined();
+    expect(DEFAULT_DESIGN).toBe("refresh");
+  });
+});
+
 describe("readDesignChoice", () => {
   test("falls back to the default, unchosen, when nothing is stored", () => {
     expect(readDesignChoice(memoryStorage())).toEqual({
@@ -114,7 +121,11 @@ describe("overlayDesignFromSearch", () => {
 describe("DESIGN_BOOT_SCRIPT", () => {
   // The script duplicates readDesignChoice for the moment before any module
   // has loaded, so it is run here against the same cases.
-  function boot(stored: string | null, storageThrows = false) {
+  function boot(
+    stored: string | null,
+    storageThrows = false,
+    url = "https://owheropicker.com/",
+  ) {
     const dataset: Record<string, string> = {};
     const appended: { href: string }[] = [];
     const document = {
@@ -129,9 +140,10 @@ describe("DESIGN_BOOT_SCRIPT", () => {
       },
     };
     // oxlint-disable-next-line typescript/no-implied-eval -- the script ships as a string for an inline <script>, so running that string is the test
-    new Function("document", "localStorage", DESIGN_BOOT_SCRIPT)(
+    new Function("document", "localStorage", "location", DESIGN_BOOT_SCRIPT)(
       document,
       localStorage,
+      new URL(url),
     );
     return { design: dataset.design, preloads: appended.length };
   }
@@ -145,6 +157,21 @@ describe("DESIGN_BOOT_SCRIPT", () => {
     expect(boot(null).design).toBe(DEFAULT_DESIGN);
     expect(boot("neon").design).toBe(DEFAULT_DESIGN);
     expect(boot(null, true).design).toBe(DEFAULT_DESIGN);
+  });
+
+  test("keeps the overlay pages on their link's design, whatever is saved", () => {
+    const overlay = "https://owheropicker.com/overlay";
+    expect(boot(null, false, overlay).design).toBe("classic");
+    expect(boot("refresh", false, `${overlay}/`).design).toBe("classic");
+    expect(boot("classic", false, `${overlay}?look=refresh`).design).toBe(
+      "refresh",
+    );
+    expect(boot(null, false, `${overlay}/companion?look=refresh`).design).toBe(
+      "refresh",
+    );
+    expect(boot(null, false, `${overlay}/companion?look=neon`).design).toBe(
+      "classic",
+    );
   });
 
   test("preloads the new design's fonts only for visitors on it", () => {
