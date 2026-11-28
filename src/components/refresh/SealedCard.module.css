@@ -25,7 +25,8 @@
   user-select: none;
 }
 
-/* Now and then a glint crosses the card, asking to be turned over. */
+/* A glint crosses the card twice as the page opens, asking to be turned
+   over, and is done within five seconds so nothing keeps moving. */
 .card::after {
   content: "";
   position: absolute;
@@ -37,7 +38,7 @@
     transparent 65%
   );
   transform: translateX(-100%);
-  animation: glint 4.5s ease-in-out 1s infinite;
+  animation: glint 2.2s ease-in-out 0.6s 2;
 }
 
 @keyframes glint {
@@ -45,7 +46,7 @@
     transform: translateX(-100%);
   }
 
-  30%,
+  50%,
   100% {
     transform: translateX(100%);
   }
