@@ -281,7 +281,10 @@
 }
 
 .faceEmpty {
+  display: block;
+  box-sizing: border-box;
   border: 1px dashed var(--hp-line);
+  border-radius: inherit;
 }
 
 .face {
