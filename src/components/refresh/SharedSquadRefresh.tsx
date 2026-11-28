@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ROLES, getAllHeroes } from "@/data/heroes";
 import { SHARED_SQUAD_ERRORS, type SharedSquad } from "@/hooks/useSharedSquad";
@@ -8,6 +9,7 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import SealedCard from "./SealedCard";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
@@ -15,14 +17,17 @@ const heroByKey = new Map(getAllHeroes().map((hero) => [hero.key, hero]));
 
 /**
  * The new design of the page a "Share this squad" link opens. A squad
- * somebody sent arrives sealed, one row per player with the hero out of
- * focus, and one button turns them over in order.
+ * somebody sent arrives sealed, one row per player with a blank card where the
+ * hero goes, and one button turns them over in order.
  */
 export default function SharedSquadRefresh({
   shared,
 }: {
   shared: SharedSquad;
 }) {
+  // Armed by the Reveal button, so only that turns the card over: not a
+  // switch back from the classic design, which shows the result straight away.
+  const [unveilArmed, setUnveilArmed] = useState(false);
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -43,6 +48,8 @@ export default function SharedSquadRefresh({
 
   const { squad, heroes, perks, ownRoll, rolls, handleReroll } = shared;
   const sealed = !ownRoll && !shared.revealed;
+  // The first faces after the reveal turn over; later rolls just swap them.
+  const unveiling = unveilArmed && rolls === 0;
 
   const players = Array.from({ length: squad.size }, (_, index) => {
     const heroKey = heroes[index] ?? null;
@@ -93,7 +100,14 @@ export default function SharedSquadRefresh({
 
         <div className={ui.rollBar} data-roll-bar>
           {sealed ? (
-            <button type="button" className={ui.roll} onClick={shared.reveal}>
+            <button
+              type="button"
+              className={ui.roll}
+              onClick={() => {
+                setUnveilArmed(true);
+                shared.reveal();
+              }}
+            >
               Reveal the squad
             </button>
           ) : (
@@ -115,14 +129,18 @@ export default function SharedSquadRefresh({
               title="Copy a link that reveals this squad"
             />
           )}
-          {/* Full page load so the squad generator reads the setup as it starts. */}
-          <a
-            className={ui.btn}
-            href={shared.presetHref}
-            title="Open the squad generator with these players, selections and settings"
-          >
-            Open this setup in the generator
-          </a>
+          {/* Full page load so the squad generator reads the setup as it starts.
+              Not while sealed: a player with one hero to pick from would get
+              it again there. */}
+          {!sealed && (
+            <a
+              className={ui.btn}
+              href={shared.presetHref}
+              title="Open the squad generator with these players, selections and settings"
+            >
+              Open this setup in the generator
+            </a>
+          )}
           <Link className={ui.btn} href="/squad" prefetch={false}>
             Set up your own squad
           </Link>
@@ -141,7 +159,7 @@ export default function SharedSquadRefresh({
         </h2>
 
         <ol
-          className={`${styles.players} ${rolls === 0 ? styles.inOrder : ""}`}
+          className={`${styles.players} ${rolls === 0 ? styles.inOrder : ""} ${unveiling ? styles.revealing : ""}`}
         >
           {players.map((player) => (
             <li
@@ -149,18 +167,36 @@ export default function SharedSquadRefresh({
               className={styles.player}
               style={{ "--i": player.index } as React.CSSProperties}
             >
-              {player.hero ? (
-                <span className={styles.faceFrame}>
-                  <SpriteIcon
-                    heroKey={player.hero.key}
-                    type="icon"
-                    alt=""
-                    className={`${styles.face} ${sealed ? styles.sealedFace : ""}`}
-                  />
-                </span>
-              ) : (
-                <span className={`${styles.faceFrame} ${styles.faceEmpty}`} />
-              )}
+              {/* Every sealed player gets the same card, even one left without
+                  a hero, so the cards say nothing until the reveal. */}
+              <span className={styles.faceFrame}>
+                {sealed ? (
+                  <SealedCard className={styles.face} />
+                ) : (
+                  <>
+                    {/* No hero left: the empty frame is the face that turns in. */}
+                    {!player.hero && (
+                      <span
+                        className={`${styles.face} ${styles.faceEmpty} ${unveiling ? styles.unveil : ""}`}
+                      />
+                    )}
+                    {player.hero && (
+                      <SpriteIcon
+                        heroKey={player.hero.key}
+                        type="icon"
+                        alt=""
+                        className={`${styles.face} ${unveiling ? styles.unveil : ""}`}
+                      />
+                    )}
+                    {/* The card stays a moment to turn away first. */}
+                    {unveiling && (
+                      <SealedCard
+                        className={`${styles.face} ${styles.cardOut}`}
+                      />
+                    )}
+                  </>
+                )}
+              </span>
 
               <div className={styles.who}>
                 <span className={styles.playerName}>{player.name}</span>
