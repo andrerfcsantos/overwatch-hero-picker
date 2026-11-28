@@ -1,11 +1,12 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Hero, HeroRole } from "@/types/hero";
 import { ROLES, getAllHeroes } from "@/data/heroes";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import SpriteIcon from "@/components/SpriteIcon";
 import PoolEditor from "./PoolEditor";
+import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./SquadSlotRefresh.module.css";
 
@@ -42,6 +43,11 @@ export default function SquadSlotRefresh({
 }: SquadSlotRefreshProps) {
   const [poolOpen, setPoolOpen] = useState(false);
   const poolId = useId();
+  // A reroll from the button below the result, on a phone scrolled so the
+  // button is near the top, changes the hero above the screen.
+  const row = useRef<HTMLDivElement>(null);
+  const [rerolls, setRerolls] = useState(0);
+  useResultIntoView(row, rerolls, { ownRow: true });
 
   const player = name.trim() || `Player ${index + 1}`;
   const total = ALL_HEROES.length;
@@ -85,7 +91,7 @@ export default function SquadSlotRefresh({
 
   return (
     <li className={styles.slot}>
-      <div className={styles.row}>
+      <div ref={row} className={styles.row}>
         {hero ? (
           <SpriteIcon
             heroKey={hero.key}
@@ -97,7 +103,7 @@ export default function SquadSlotRefresh({
           <span className={`${styles.face} ${styles.faceEmpty}`} />
         )}
 
-        <div className={styles.who}>
+        <div className={styles.who} data-result>
           <input
             className={styles.nameInput}
             type="text"
@@ -143,7 +149,11 @@ export default function SquadSlotRefresh({
             type="button"
             className={ui.btn}
             aria-label={`Reroll ${player}`}
-            onClick={() => onReroll(index)}
+            data-roll-source
+            onClick={() => {
+              onReroll(index);
+              setRerolls((count) => count + 1);
+            }}
           >
             Reroll
           </button>

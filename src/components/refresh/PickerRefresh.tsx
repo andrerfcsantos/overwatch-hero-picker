@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { ROLES } from "@/data/heroes";
 import type { Picker } from "@/hooks/usePicker";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
@@ -8,6 +9,7 @@ import SharedPresetNotice from "@/components/SharedPresetNotice";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
 import HeroPool from "./HeroPool";
+import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./PickerRefresh.module.css";
 
@@ -39,6 +41,10 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
     handleDismissShared,
   } = picker;
 
+  // Hero rolls only: "Reroll perks" sits right below the perks it changes.
+  const rail = useRef<HTMLElement>(null);
+  useResultIntoView(rail, heroCount);
+
   const roleLabel = selectedHero
     ? (ROLES.find((role) => role.key === selectedHero.role)?.label ?? "")
     : "";
@@ -61,6 +67,7 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
   return (
     <main className={`${ui.page} ${styles.app}`}>
       <section
+        ref={rail}
         className={`${styles.rail} ${showPortrait ? "" : styles.noPortrait}`}
         aria-labelledby="picker-heading"
       >
@@ -87,6 +94,7 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
             <p
               key={`name-${heroCount}`}
               className={`${styles.name} ${ui.land}`}
+              data-result
             >
               {selectedHero.name}
             </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { perksFromIndices } from "@/lib/heroService";
 import { emptySlotConfig } from "@/lib/squadService";
 import { getAllHeroes } from "@/data/heroes";
@@ -7,6 +8,7 @@ import type { Squad } from "@/hooks/useSquad";
 import ShareButton from "@/components/ShareButton";
 import SharedPresetNotice from "@/components/SharedPresetNotice";
 import FeedbackBanner from "./FeedbackBanner";
+import { useResultIntoView } from "./scroll";
 import SquadSlotRefresh from "./SquadSlotRefresh";
 import ui from "./ui.module.css";
 import styles from "./SquadRefresh.module.css";
@@ -26,6 +28,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
     heroes,
     perkAssignments,
     rollCount,
+    squadRollCount,
     force122,
     force222,
     randomizePerks,
@@ -47,6 +50,11 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
     handleUndoShared,
     handleDismissShared,
   } = squad;
+  // A whole-squad roll from the fixed bar, made while editing a pool further
+  // down, changes every row above. A single player's reroll is handled by
+  // that player's row.
+  const slotList = useRef<HTMLOListElement>(null);
+  useResultIntoView(slotList, squadRollCount);
 
   // Counted against the heroes that exist. A saved pool can still name a hero
   // that has since been removed, which leaves nothing to add back.
@@ -194,7 +202,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
           </button>
         </div>
 
-        <ol className={styles.slots}>
+        <ol ref={slotList} className={styles.slots}>
           {Array.from({ length: squadSize }, (_, index) => {
             const config = configs[index] || emptySlotConfig();
             const hero = heroes[index] || null;
