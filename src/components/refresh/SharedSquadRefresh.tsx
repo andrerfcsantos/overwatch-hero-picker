@@ -129,14 +129,18 @@ export default function SharedSquadRefresh({
               title="Copy a link that reveals this squad"
             />
           )}
-          {/* Full page load so the squad generator reads the setup as it starts. */}
-          <a
-            className={ui.btn}
-            href={shared.presetHref}
-            title="Open the squad generator with these players, selections and settings"
-          >
-            Open this setup in the generator
-          </a>
+          {/* Full page load so the squad generator reads the setup as it starts.
+              Not while sealed: a player with one hero to pick from would get
+              it again there. */}
+          {!sealed && (
+            <a
+              className={ui.btn}
+              href={shared.presetHref}
+              title="Open the squad generator with these players, selections and settings"
+            >
+              Open this setup in the generator
+            </a>
+          )}
           <Link className={ui.btn} href="/squad" prefetch={false}>
             Set up your own squad
           </Link>
@@ -163,30 +167,32 @@ export default function SharedSquadRefresh({
               className={styles.player}
               style={{ "--i": player.index } as React.CSSProperties}
             >
-              {player.hero ? (
-                <span className={styles.faceFrame}>
-                  {sealed ? (
-                    <SealedCard className={styles.face} />
-                  ) : (
-                    <>
+              {/* Every sealed player gets the same card, even one left without
+                  a hero, so the cards say nothing until the reveal. */}
+              <span
+                className={`${styles.faceFrame} ${!sealed && !player.hero ? styles.faceEmpty : ""}`}
+              >
+                {sealed ? (
+                  <SealedCard className={styles.face} />
+                ) : (
+                  <>
+                    {player.hero && (
                       <SpriteIcon
                         heroKey={player.hero.key}
                         type="icon"
                         alt=""
                         className={`${styles.face} ${unveiling ? styles.unveil : ""}`}
                       />
-                      {/* The card stays a moment to turn away first. */}
-                      {unveiling && (
-                        <SealedCard
-                          className={`${styles.face} ${styles.cardOut}`}
-                        />
-                      )}
-                    </>
-                  )}
-                </span>
-              ) : (
-                <span className={`${styles.faceFrame} ${styles.faceEmpty}`} />
-              )}
+                    )}
+                    {/* The card stays a moment to turn away first. */}
+                    {unveiling && (
+                      <SealedCard
+                        className={`${styles.face} ${styles.cardOut}`}
+                      />
+                    )}
+                  </>
+                )}
+              </span>
 
               <div className={styles.who}>
                 <span className={styles.playerName}>{player.name}</span>
