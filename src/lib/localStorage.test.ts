@@ -31,7 +31,16 @@ describe("storage helpers", () => {
     expect(getBoolFromLS("flag", true)).toBe(true);
     expect(getJsonFromLS("value")).toBeNull();
     expect(() => setBoolToLS("flag", true)).not.toThrow();
-    expect(() => setJsonToLS("value", { a: 1 })).not.toThrow();
+  });
+
+  test("still report a JSON write that storage rejects", () => {
+    stubStorage({
+      getItem: () => null,
+      setItem: () => {
+        throw new DOMException("full", "QuotaExceededError");
+      },
+    });
+    expect(() => setJsonToLS("value", { a: 1 })).toThrow();
   });
 
   test("drop the write when storage is full, without throwing", () => {

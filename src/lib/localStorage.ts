@@ -34,13 +34,14 @@ export function getJsonFromLS<T>(key: string): T | null {
   }
 }
 
+/**
+ * Throws when storage is full or blocked, unlike the helpers around it: what
+ * goes through here (presets, the overlay's room secret) is data whose loss
+ * the caller has to hear about, not a preference that can quietly fall back.
+ */
 export function setJsonToLS(key: string, value: unknown): void {
   if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Storage can be full or blocked; losing the write is better than throwing.
-  }
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 interface SlotConfigJson {
