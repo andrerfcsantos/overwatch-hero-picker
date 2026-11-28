@@ -14,9 +14,9 @@ import styles from "./Shared.module.css";
 
 /**
  * The new design of the page a "Share this roll" link opens. A roll somebody
- * sent arrives sealed: a blank card where the portrait goes, the pool it came
- * from laid out beside it as the line-up of who it could be, and one button
- * to find out. After that it is the picker's rail, rolling from the sender's pool.
+ * sent arrives sealed: a blank card where the portrait goes, the sender's
+ * selection laid out beside it as the line-up of who it could be, and one
+ * button to find out. After that it is the picker's rail, rolling from the sender's pool.
  */
 export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   // Armed by the Reveal button, so only that turns the card over: not a
@@ -60,6 +60,11 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   // A line-up of just the rolled hero is the answer, so it waits for the
   // reveal too, and so does the link that would open it in the picker.
   const lineupHidden = sealed && pool.length === 1 && pool[0].key === hero.key;
+  // A roll is shared with the selection as it is when the link is made, and
+  // the selection may have changed since the roll. So the pool is described
+  // as what rolling again uses, never as where the roll came from, and is
+  // offered as the line-up only when the roll is in it.
+  const inLineup = hero !== undefined && pool.some((h) => h.key === hero.key);
   const roleLabel = hero
     ? (ROLES.find((role) => role.key === hero.role)?.label ?? "")
     : "";
@@ -111,7 +116,9 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
 
             {sealed ? (
               <>
-                <p className={styles.name}>One of {pool.length}</p>
+                <p className={styles.name}>
+                  {inLineup ? `One of ${pool.length}` : "Who is it?"}
+                </p>
                 <div className={styles.role}>Reveal it to see who</div>
               </>
             ) : (
@@ -209,15 +216,16 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
             <h2 id="shared-pool-heading" className={styles.title}>
               {lineupHidden
                 ? "It is the only one selected"
-                : sealed
+                : sealed && inLineup
                   ? "It is one of these"
-                  : "The heroes it came from"}
+                  : "Rolling again picks from these"}
             </h2>
             <p className={styles.summary}>
               {shared.everyHero
-                ? `It could have been any hero, all ${pool.length} of them.`
+                ? `No heroes were selected, so all ${pool.length} are in play.`
                 : `${pool.length} ${pool.length === 1 ? "hero was" : "heroes were"} selected.`}
-              {picker.nonRepeating
+              {/* With one hero there is no other to give. */}
+              {picker.nonRepeating && pool.length > 1
                 ? " Rolling again never gives the same hero twice in a row."
                 : ""}
             </p>
