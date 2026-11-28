@@ -7,14 +7,15 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import SealedCard from "./SealedCard";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
 /**
  * The new design of the page a "Share this roll" link opens. A roll somebody
- * sent arrives sealed: the portrait out of focus, the pool it came from laid
- * out beside it as the line-up of who it could be, and one button to find
- * out. After that it is the picker's rail, rolling from the sender's pool.
+ * sent arrives sealed: a blank card where the portrait goes, the pool it came
+ * from laid out beside it as the line-up of who it could be, and one button
+ * to find out. After that it is the picker's rail, rolling from the sender's pool.
  */
 export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   if (shared.status === "loading") {
@@ -50,6 +51,8 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
   // Only a roll somebody else made is sealed. A hero this version of the site
   // does not know has nothing to reveal.
   const sealed = !ownRoll && !shared.revealed && hero !== undefined;
+  // The first portrait after the reveal turns over; later rolls land.
+  const unveiling = shared.revealed && heroRolls === 0;
   const roleLabel = hero
     ? (ROLES.find((role) => role.key === hero.role)?.label ?? "")
     : "";
@@ -83,14 +86,19 @@ export default function SharedHeroRefresh({ shared }: { shared: SharedHero }) {
           <>
             {picker.showPortrait && (
               <div className={styles.portraitFrame}>
-                <SpriteIcon
-                  key={heroRolls}
-                  heroKey={hero.key}
-                  type="portrait"
-                  className={`${styles.portrait} ${sealed ? styles.sealedPortrait : ""} ${heroRolls > 0 ? ui.land : ""}`}
-                  // Sealed, the picture must not say who it is either.
-                  alt={sealed ? "" : `${hero.name} portrait`}
-                />
+                {sealed ? (
+                  // Not the portrait blurred: a blurred hero is still easy to
+                  // tell by its colours and shape, so nothing of it is drawn.
+                  <SealedCard className={styles.portrait} />
+                ) : (
+                  <SpriteIcon
+                    key={heroRolls}
+                    heroKey={hero.key}
+                    type="portrait"
+                    className={`${styles.portrait} ${unveiling ? styles.unveil : ""} ${heroRolls > 0 ? ui.land : ""}`}
+                    alt={`${hero.name} portrait`}
+                  />
+                )}
               </div>
             )}
 

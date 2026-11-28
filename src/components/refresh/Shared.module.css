@@ -74,17 +74,19 @@
   height: 100%;
   aspect-ratio: 180 / 310;
   border-radius: 0.25rem;
-  /* Coming into focus is the reveal. */
-  transition:
-    filter 0.5s ease-out,
-    clip-path 0.5s ease-out;
   clip-path: inset(0 round 0.25rem);
 }
 
-/* Out of focus: enough to guess from, not enough to know. The clip keeps the
-   blur from spilling past the frame. */
-.sealedPortrait {
-  filter: blur(1.1rem) saturate(0.55) brightness(0.8);
+/* The reveal: the sealed card turns over and the picture is on its back. */
+.unveil {
+  animation: unveil 0.45s ease-out backwards;
+}
+
+@keyframes unveil {
+  from {
+    opacity: 0;
+    transform: perspective(40rem) rotateY(-90deg);
+  }
 }
 
 .name {
@@ -284,11 +286,6 @@
 .face {
   width: 100%;
   height: 100%;
-  transition: filter 0.4s ease-out;
-}
-
-.sealedFace {
-  filter: blur(0.55rem) saturate(0.55) brightness(0.8);
 }
 
 .who {
@@ -346,10 +343,7 @@
 
 /* The reveal turns the players over one after another. Later rolls land
    together, as they do in the generator. */
-.inOrder .face {
-  transition-delay: calc(var(--i) * 90ms);
-}
-
+.inOrder .unveil,
 .inOrder .heroName,
 .inOrder .playerPerks {
   animation-delay: calc(var(--i) * 90ms);
@@ -498,9 +492,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .portrait,
-  .face {
-    transition: none;
+  .unveil {
+    animation: none;
   }
 
   .inOrder .heroName,

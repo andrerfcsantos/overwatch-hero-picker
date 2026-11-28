@@ -1,0 +1,59 @@
+/* A face-down card: the rail's tiles with an orange question mark, sized by
+   the frame it sits in (the tall portrait or a squad face). */
+.card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  container-type: inline-size;
+  border: 1px solid rgb(240 100 20 / 0.45);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 0.6rem,
+      rgb(255 255 255 / 0.025) 0.6rem 1.2rem
+    ),
+    linear-gradient(160deg, var(--hp-tile-hi), var(--hp-rail));
+}
+
+.mark {
+  font-family: var(--hp-font-display);
+  font-size: 62cqi;
+  line-height: 1;
+  color: var(--hp-orange);
+  text-shadow: 0 0.04em 0 rgb(0 0 0 / 0.35);
+  user-select: none;
+}
+
+/* Now and then a glint crosses the card, asking to be turned over. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.12) 50%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  animation: glint 4.5s ease-in-out 1s infinite;
+}
+
+@keyframes glint {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  30%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::after {
+    animation: none;
+    display: none;
+  }
+}
