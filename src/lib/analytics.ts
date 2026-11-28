@@ -20,6 +20,7 @@ import { HeroRole } from "@/types/hero";
 import {
   type Design,
   type DesignChoice,
+  LINK_DESIGN_PATHS,
   overlayDesignFromSearch,
   readDesignChoice,
 } from "@/lib/design";
@@ -50,7 +51,7 @@ export type PresetKind = "builtin" | "custom";
 export type DesignOrigin = "default" | "chosen" | "link";
 
 /** Which control a visitor used to change design. */
-export type DesignSwitchSource = "invite" | "nav";
+export type DesignSwitchSource = "classic_notice" | "nav";
 
 interface HeroPoolProps {
   pool_size: number;
@@ -178,9 +179,13 @@ type EventMap = {
     to: Design;
     source: DesignSwitchSource;
   };
-  /** The invitation to try the new design was closed without trying it. */
-  design_invite_dismissed: Record<string, never>;
-  /** The banner asking for feedback on the new design led to Discord. */
+  /** The notice that the classic design is going away was closed. */
+  design_classic_notice_dismissed: Record<string, never>;
+  /**
+   * A design banner's feedback link led to Discord. The registered `design`
+   * and `design_origin` tell which banner it was: the classic design's
+   * notice, or the new design's for those who chose it or got it by default.
+   */
   design_feedback_clicked: Record<string, never>;
   /** The banner asking for feedback on the new design was closed. */
   design_feedback_dismissed: Record<string, never>;
@@ -457,13 +462,6 @@ export function initAnalytics(projectToken: string, host: string): void {
   );
   registerDesign(design, origin);
 }
-
-/**
- * Pages whose design comes from their link rather than the visitor's saved
- * choice: the overlay runs in OBS, which has no access to it, and the
- * companion is opened on a phone or second screen that usually has none.
- */
-const LINK_DESIGN_PATHS = ["/overlay", "/overlay/companion"];
 
 /** The design a page is shown in, and where that came from, for analytics. */
 export function designForPage(

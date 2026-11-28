@@ -4,12 +4,13 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
 import {
   type DesignSwitchSource,
+  designForPage,
   registerDesign,
   track,
 } from "@/lib/analytics";
@@ -43,9 +44,23 @@ export function DesignProvider({ children }: { children: React.ReactNode }) {
   });
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  // A layout effect, so it runs before any page's passive effects: those can
+  // send an event as they mount (a shared link being opened), and it has to
+  // carry the design registered here.
+  useLayoutEffect(() => {
+    const initial = readDesignChoice();
+    // The boot script and analytics read storage too, a moment earlier;
+    // another tab may have switched design in between. Stamp what React is
+    // about to render on both, so CSS, the page and the events agree.
+    document.documentElement.dataset.design = initial.design;
+    const { design, origin } = designForPage(
+      window.location.pathname,
+      window.location.search,
+      initial,
+    );
+    registerDesign(design, origin);
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- the saved design is in localStorage, read after mount
-    setChoice(readDesignChoice());
+    setChoice(initial);
     setReady(true);
   }, []);
 

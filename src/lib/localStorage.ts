@@ -1,28 +1,44 @@
 import { SlotConfig } from "@/types/hero";
 
+/** Reads a flag, falling back to `defaultValue` when unset or unreadable. */
 export function getBoolFromLS(key: string, defaultValue: boolean): boolean {
   if (typeof window === "undefined") return defaultValue;
-  const val = localStorage.getItem(key);
-  if (val === null) return defaultValue;
-  return val === "true";
+  try {
+    const val = localStorage.getItem(key);
+    if (val === null) return defaultValue;
+    return val === "true";
+  } catch {
+    // Storage can be blocked outright, in which case reading throws.
+    return defaultValue;
+  }
 }
 
 export function setBoolToLS(key: string, value: boolean): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(key, String(value));
+  try {
+    localStorage.setItem(key, String(value));
+  } catch {
+    // Storage can be full or blocked; losing the write is better than throwing.
+  }
 }
 
+/** Reads a JSON value, treating anything unreadable as "not stored". */
 export function getJsonFromLS<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
-  const item = localStorage.getItem(key);
-  if (item === null) return null;
   try {
+    const item = localStorage.getItem(key);
+    if (item === null) return null;
     return JSON.parse(item) as T;
   } catch {
     return null;
   }
 }
 
+/**
+ * Throws when storage is full or blocked, unlike the helpers around it: what
+ * goes through here (presets, the overlay's room secret) is data whose loss
+ * the caller has to hear about, not a preference that can quietly fall back.
+ */
 export function setJsonToLS(key: string, value: unknown): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
